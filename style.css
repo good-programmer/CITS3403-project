@@ -34,6 +34,12 @@
     margin-bottom: 8px;
 }
 
+input[type="checkbox"] {
+    position: relative;
+    top: 2px;
+    accent-color: var(--primary);
+}
+
 #login {
     display: flex;
     width: 100%;
@@ -50,6 +56,7 @@
     flex-direction: column;
     justify-content: center;
     font-family: var(--main-font);
+    position: relative;
 }
 
 #login-inner > label {
@@ -78,8 +85,15 @@
     text-align: right;
     position: relative;
 }
-input[type="checkbox"] {
-    position: relative;
-    top: 2px;
-    accent-color: var(--primary);
+
+#login-inner > #create-account {
+    text-align: right;
+    padding-top: 3px;
+    padding-bottom: 0px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-right: 8px;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
 }
