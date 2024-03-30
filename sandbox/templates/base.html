@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% block body %}{% endblock %}
+    {% if session['logged_in'] %}
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+    {% endif %}
+</body>
+</html>
