@@ -6,3 +6,23 @@
 |23477174|Thomas Nguyen |tnguyen7523    |
 |23402727|Nathan Buluran|naetnaetnaet   |
 |22705919|Jakem Pinchin |JakePinchin    |
+
+A website for uploading "Spelling Bee"-esque puzzles. Users can upload a set of letters (A-Z) and 'request' for other users to create words using combinations of the given letters. A leaderboard ranked by lengths of words could be created (in a limit, i.e. 5 words) for each puzzle that all users could view.
+Users could rate each puzzle (by enjoyment or by difficulty).
+
+Primary webpages include:
+- login
+- account registration
+- landing page (for example, recently added / 'hot' puzzles)
+- puzzle search page
+- account profile editor
+- (other) user profile view
+
+The search page features:
+- sort by creator name
+- rating
+- date created
+- completed/incomplete
+- popularity
+- puzzle title (?)
+- tags (?)
