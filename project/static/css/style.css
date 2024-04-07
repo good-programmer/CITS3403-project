@@ -57,7 +57,7 @@
 .one-fourth {
     width: var(--one-fourth);
 }
-.one-eigth {
+.one-eighth {
     width: calc(var(--one-fourth) * 0.5);
 }
 
@@ -130,19 +130,23 @@ input[type="checkbox"] {
 }
 
 #post-list {
-    background-color: lightgrey;
+    background-color: rgba(0,0,0,0);
     width: 40%;
-    top: 80%;
-    bottom: 10%;
-    position:sticky;
+    top: 10%;
+    height: 90%;
+    position:absolute;
     overflow-y:scroll;
     overflow-x:hidden;
     left: 30%;
 }
 
+#post-list
+
 .post-body {
     width: 100%;
-    height: 400px;
-    background-color: darkgrey;
+    height: 150px;
+    background-color: darkcyan;
     border: 2px solid white;
+    padding: 30px;
+    margin-bottom: 20px;
 }
