@@ -1,22 +1,21 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-
-
-db = SQLAlchemy()
+from .config import DEBUG, PORT, SECRETKEY
 
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'AAAAAA123'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.secret_key = SECRETKEY
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.root_path}/db/users.db"
 
+    from .blueprints.models import db
     db.init_app(app)
 
     with app.app_context():
         db.create_all()
 
-    from . import main, auth
+    from .blueprints import main, auth
     app.add_url_rule('/', view_func=main.index)
     app.add_url_rule('/profile', view_func=main.profile)
     app.add_url_rule('/login', view_func=auth.login, methods=['GET'])
@@ -25,7 +24,7 @@ def create_app():
     app.add_url_rule('/register',view_func=auth.register_post, methods=['POST'])
     app.add_url_rule('/logout',view_func=auth.logout, methods=['GET', 'POST'])
 
-    from .models import User
+    from .blueprints.models import User
 
     login_manager = LoginManager()
     login_manager.login_view = 'login'

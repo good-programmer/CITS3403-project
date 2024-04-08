@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
-from . import db
+from .models import db
 from flask_login import login_user, login_required, logout_user
+
+from ..utils import auth_utils
 
 def login():
     return render_template('login.html')
@@ -34,15 +36,9 @@ def register_post():
     if user:
         flash('Username already exists')
         return redirect(url_for('register'))
-    
-    if len(name) < 3:
-        flash('Username must be 3 characters or longer')
-        return redirect(url_for('register'))
-    
-    if len(password) < 4:
-        flash('Password must be 4 characters or longer')
-        return redirect(url_for('register'))
-    
+
+    auth_utils.validate_user_information(name, password)
+
     if password != confirm:
         flash('Passwords do not match')
         return redirect(url_for('register'))

@@ -1,11 +1,20 @@
 import json
 import os
 import hashlib
-from flask import session
-from config import PATH
+from flask import session, flash, redirect, url_for
+from ..config import PATH
 
+def validate_user_information(name, password):
+    
+    if len(name) < 3:
+        flash('Username must be 3 characters or longer')
+        return redirect(url_for('register'))
+    
+    if len(password) < 4:
+        flash('Password must be 4 characters or longer')
+        return redirect(url_for('register'))
 
-def load_users():
+"""def load_users():
     users_path = os.path.join(PATH, 'users', 'users.json')
     with open(users_path, 'r') as f:
         return json.load(f)   
@@ -43,4 +52,4 @@ def register_user(username, password):
     return True
 
 def get_user_id(username):
-    return hashlib.sha256(username.encode()).hexdigest()
+    return hashlib.sha256(username.encode()).hexdigest()"""
