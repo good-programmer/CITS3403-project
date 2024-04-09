@@ -6,9 +6,10 @@ from .config import DEBUG, PORT, SECRETKEY
 from .blueprints.main import main
 from .blueprints.auth import auth
 
+from .utils import route_utils as route
+
 def create_app():
     app = Flask(__name__)
-    app.debug = DEBUG
     app.secret_key = SECRETKEY
     app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.root_path}/db/users.db"
 
@@ -23,7 +24,7 @@ def create_app():
 
     from .blueprints.models import User
     login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = route.login
     login_manager.init_app(app)
 
     @login_manager.user_loader

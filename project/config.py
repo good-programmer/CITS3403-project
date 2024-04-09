@@ -1,6 +1,5 @@
 import os
 
-
 PORT=5500
 DEBUG=True
 SECRETKEY='secret'
