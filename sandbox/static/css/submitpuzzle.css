@@ -1,0 +1,14 @@
+body {
+    background-color: black;
+    color: white;
+}
+
+h1 {
+    text-align: center;
+    color: green;
+}
+
+#instructions {
+    padding: 50px;
+    display: none;
+  }
