@@ -11,14 +11,21 @@
 
     <body>
         <h1> Submit a Puzzle! </h1>
+    
+        <div class="puzzleFormContainer">
+            <form>
+                <label for="puzzle">Puzzle String:</label><br>
+                <input type="text" id="puzzle" name="puzzle" value="e.g. ajgsmczl">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+
         <button id="showInstructions"> Show Instructions </button>
         <p id="instructions"> Insert a string of alphabetical characters only, that can be used to form potentially new words. 
             Example: inputting 'asdkflkasc' as a puzzle. Users can then submit answers based on this string, e.g. 'flask'. 
-            String length is limited too **DECIDED BETWEEN GROUP LATER** and cannot contain special characters * . , - etc.</p>
-        <form>
-            <label for="puzzle">Puzzle String:</label><br>
-            <input type="text" id="puzzle" name="puzzle" value="e.g. ajgsmczl">
-            <input type="submit" value="Submit">
-        </form>
+            String length is limited too **DECIDED BETWEEN GROUP LATER** and cannot contain special characters * . , - etc.
+        </p>
+        
+            
     </body>
 </html>
