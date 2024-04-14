@@ -1,0 +1,152 @@
+:root {
+    --main-font: Arial, Helvetica, sans-serif;
+    --font-color: black;
+    --font-color-alt: rgb(255, 255, 255);
+    --primary: rgb(96, 154, 255);
+    --error-color: rgb(247, 72, 72);
+    --one-fourth: calc(max(25vw, 400px));
+}
+
+.primary {
+    color: var(--primary);
+}
+
+.button {
+    background-color: var(--primary);
+    font-family: var(--main-font);
+    color: var(--primary);
+    transition: box-shadow 200ms ease;
+}
+.button:hover {
+    filter: brightness(95%);
+    box-shadow: 1px 1px 0px var(--primary);
+}
+
+.hint {
+    color: var(--primary);
+    filter: saturate(50%) brightness(100%);
+    font-family: var(--main-font);
+    font-size: small;
+    user-select: none;
+}
+
+.header {
+    color: var(--primary);
+    padding: 0px;
+    margin-top: 0px;
+    margin-bottom: 8px;
+}
+
+.error-message {
+    display: flex;
+    background-color: var(--error-color);
+    padding: 15px;
+    width: 100%;
+    height: 10px;;
+    position: relative;
+    border-radius: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--font-color-alt);
+    font-family: var(--main-font);
+    font-size: 0.8em;
+    user-select: none;
+}
+
+.one-fourth {
+    width: var(--one-fourth);
+}
+.one-eighth {
+    width: calc(var(--one-fourth) * 0.5);
+}
+
+input[type="checkbox"] {
+    position: relative;
+    top: 2px;
+    accent-color: var(--primary);
+}
+
+#login {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    margin: auto;
+}
+#login-inner {
+    width: calc(var(--one-fourth) * 0.5);
+    border: 1px solid var(--primary);
+    border-radius: 3px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-family: var(--main-font);
+    position: relative;
+}
+
+#login-inner > label {
+    color: var(--font-color);
+    width: 100%;
+}
+
+#login-inner > input {
+    width: 100%;
+    margin-bottom: 8px;
+    outline-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: 0 0.5em;
+}
+
+#login-inner > #submit {
+    width: 40%;
+    margin-left: 30%;
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    background-color: white;
+    position: relative;
+}
+
+#login-inner > #remember-me {
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    position: relative;
+}
+
+#login-inner > #create-account {
+    text-align: right;
+    padding-top: 3px;
+    padding-bottom: 0px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    margin-right: 8px;
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+#post-list {
+    background-color: rgba(0,0,0,0);
+    width: 40%;
+    top: 10%;
+    height: 90%;
+    position:absolute;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    left: 30%;
+}
+
+#post-list
+
+.post-body {
+    width: 100%;
+    height: 150px;
+    background-color: darkcyan;
+    border: 2px solid white;
+    padding: 30px;
+    margin-bottom: 20px;
+}
