@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body id="body">
+    <div class="col-sm-12" id="gameArea">
+        <div class="container" id="randStringContainer">
+            <p class="Screen MatrixTextGreen" id="randomString"></p>
+            <button class="Screen MatrixTextGreen" onclick="shuffleString()" id="shuffleButton">
+                [SHUFFLE]
+            </button>
+        </div>
+        <div class="container" id="userInputContainer">
+            <div id="submittedWords"></div>
+            <label for="userInput" class="Screen MatrixTextYellow">$></label>
+            <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="updateString()" autofocus>
+        </div>
+    </div>
+    <script src="wordGame.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

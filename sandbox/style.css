@@ -1,0 +1,121 @@
+@import url(https://fonts.googleapis.com/css?family=VT323);
+
+* {
+    font-family: 'VT323', monospace;
+    user-select: none;
+}
+
+#body {
+    background-color: black;
+    cursor: default;
+}
+
+#gameArea {
+    margin: 50px;
+}
+
+/* containers */
+
+.container {
+    margin: 5px;
+    background-color: rgb(10, 15, 10);
+
+
+    /* scanline concept source: https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css */
+    background:
+    radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 0   0   /3px 3px,
+    radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 1px 1px /3px 3px,
+    radial-gradient(rgba(55, 70, 55, 0.2) 0.5px,transparent 0.5px) 2px 2px /3px 3px
+
+}
+
+#userInputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 250px;
+    margin-top: 0px;
+    max-width: 550px;
+}
+
+#randStringContainer {
+    display: grid;
+    place-items: center;
+    margin-bottom: 0px;
+    max-width: 550px;
+}
+
+/* randomString */
+
+#randomString {
+    padding-left: 25px;
+    padding-right: 10px;
+    font-size: 50px;
+    letter-spacing: 10px;
+    text-align: center;
+}
+
+#shuffleButton {
+    background-color: rgba(0,0,0,0);
+    border: none;
+}
+
+/* userInput */
+ 
+#userInputContainer label, #userInput, .wordTile, #shuffleButton {
+    font-size: 30px;
+}
+
+#userInputContainer label {
+    position: absolute;
+    margin-left: 10px;
+    line-height: 30px;
+}
+
+#userInput {
+    border: none;
+    outline: none;
+    background: none;
+    text-align: left;
+    text-transform: uppercase;
+    caret-color: rgba(225, 225, 125, 0.75);
+    color: rgba(225,225,125,0.75);
+    margin-left: 45px;
+}
+
+.wordTile {
+    max-height: 35px;
+    display: column;
+    align-items: center;
+    padding: 0px;
+    margin-left: 46px;
+    text-transform: uppercase;
+    width: fit-content;
+}
+
+/* "Matrix" font - modified version of: https://codepen.io/freelesio/pen/MWQaGPb */
+
+.Screen {
+    animation: ScreenEffect 0.3s ease infinite;
+}
+
+@keyframes ScreenEffect {
+    0% { opacity: 0.92 }
+    50% { opacity: 1 }
+    100% { opacity: 0.95}
+}
+
+.MatrixTextGreen {
+    color: rgba(125,225,125,0.75);
+    text-shadow: 0 0 5px rgba(125,225,125,0.5), 0 0 15px rgba(125,250,125,1);
+}
+  
+.MatrixTextYellow {
+    color: rgba(225,225,125,0.75);
+    text-shadow: 0 0 5px rgba(225,225,125,0.5), 0 0 15px rgba(225,250,125,1);
+}
+
+.MatrixTextRed {
+    color: rgba(225, 125, 125, 0.75);
+    text-shadow: 0 0 5px rgba(225,125,125,0.5), 0 0 15px rgba(225,125,125,1);
+}
