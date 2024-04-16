@@ -46,28 +46,18 @@
 /* randomString */
 
 #randomString {
-    min-height: 75px;
-    padding-left: 25px;
-    padding-right: 10px;
+    text-align: center;
     font-size: 50px;
     letter-spacing: 10px;
-    text-align: center;
+    min-height: 75px;
     margin-bottom: 0px;
-}
-
-#userButtons {
-    margin-top: 0px;
-    display: flex table;
-    justify-content: space-between;
-    align-items: center;
-    grid-template-columns: 1fr 1fr 1fr;
+    padding-left: 25px;
+    padding-right: 10px;
 }
 
 #userButtons button {
-    flex: 1;
     text-align: center;
     margin-top: 0px;
-    padding: 0px;
     background-color: rgba(0,0,0,0);
     border: none;
 }
@@ -79,7 +69,7 @@
 
 #score {
     display: inline-block;
-    min-width: fit-content * 1.1;
+    min-width: fit-content;
 }
 
 /* userInput */
@@ -106,13 +96,13 @@
 }
 
 .wordTile {
-    max-height: 35px;
     display: column;
     align-items: center;
+    text-transform: uppercase;
+    max-height: 35px;
+    width: fit-content;
     padding: 0px;
     margin-left: 46px;
-    text-transform: uppercase;
-    width: fit-content;
 }
 
 /* "Matrix" font - modified version of: https://codepen.io/freelesio/pen/MWQaGPb */
