@@ -20,13 +20,11 @@
     margin: 5px;
     background-color: rgb(10, 15, 10);
 
-
     /* scanline concept source: https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css */
     background:
     radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 0   0   /3px 3px,
     radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 1px 1px /3px 3px,
     radial-gradient(rgba(55, 70, 55, 0.2) 0.5px,transparent 0.5px) 2px 2px /3px 3px
-
 }
 
 #userInputContainer {
@@ -53,16 +51,39 @@
     font-size: 50px;
     letter-spacing: 10px;
     text-align: center;
+    margin-bottom: 0px;
 }
 
-#shuffleButton {
+#userButtons {
+    margin-top: 0px;
+    display: flex table;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#userButtons button {
+    flex: 1;
+    text-align: center;
+    margin-top: 0px;
+    padding: 0px;
     background-color: rgba(0,0,0,0);
     border: none;
 }
 
+#resetButton {
+    margin-left: 40px;
+    margin-right: 40px;
+}
+
+#score {
+    display: inline-block;
+    min-width: fit-content * 1.1;
+}
+
 /* userInput */
  
-#userInputContainer label, #userInput, .wordTile, #shuffleButton {
+#userInputContainer label, #userInput, .wordTile, #userButtons {
     font-size: 30px;
 }
 

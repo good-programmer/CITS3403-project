@@ -2,10 +2,17 @@ let randomString = generateRandomString(15);
 let displayString = randomString
 let submittedWords = [];
 let shuffleInterval;
-let selectedWord = -1;
 
+let score = 0;
+
+window.onload = function() {
+    let scoreElement = document.getElementById('score');
+    let oneCharWidth = scoreElement.offsetWidth / 8;
+    scoreElement.style.width = (oneCharWidth * 9) + 'px';
+}
 
 document.getElementById('randomString').innerText = displayString.toUpperCase();
+document.getElementById('scoreValue').innerText = score;
 
 /* keep userInput in focus */
 document.getElementById('userInput').addEventListener('blur', function() {
@@ -53,12 +60,6 @@ function updateString() {
 }
 
 document.getElementById('userInput').addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowUp') {
-        if (selectedWord === -1) {
-            selectedWord = submittedWords.length;
-        }
-    }
-    
     if (event.key === 'Enter') {
         event.preventDefault();
         let word = document.getElementById('userInput').value;
@@ -71,6 +72,7 @@ document.getElementById('userInput').addEventListener('keydown', function(event)
                 return;
             }
             updateSubmittedWords();
+            updateScore();
             document.getElementById('userInput').value = '';
             displayString = randomString; // reset the display string to the shuffled string
             document.getElementById('randomString').innerText = displayString.toUpperCase();
@@ -95,6 +97,7 @@ function updateSubmittedWords() {
             div.addEventListener('click', function() {
                 submittedWords.splice(index, 1);
                 updateSubmittedWords();
+                updateScore();
             });
 
             div.addEventListener('mouseover', function() {
@@ -110,6 +113,20 @@ function updateSubmittedWords() {
     }
 }
 
+function updateScore() {
+    score = submittedWords.reduce((total, word) => total + word.length, 0);
+    document.getElementById('scoreValue').innerText = score;
+}
+
+function reset() {
+    score = 0;
+    document.getElementById('scoreValue').innerText = score;
+    submittedWords = [];
+    updateSubmittedWords();
+    document.getElementById('userInput').value = '';
+}
+
+
 // implements 'click and hold' shuffleButton
 document.getElementById('shuffleButton').addEventListener('mousedown', function() {
     // start shuffling when the button is pressed
@@ -121,7 +138,6 @@ document.getElementById('shuffleButton').addEventListener('mouseup', function() 
     clearInterval(shuffleInterval);
 });
 
-
 // highlight shuffleButton on hover
 document.getElementById('shuffleButton').addEventListener('mouseover', function() {
     this.classList.add('MatrixTextYellow')
@@ -130,4 +146,14 @@ document.getElementById('shuffleButton').addEventListener('mouseover', function(
 document.getElementById('shuffleButton').addEventListener('mouseout', function() {
     clearInterval(shuffleInterval);
     this.classList.remove('MatrixTextYellow')
+});
+
+// highlight resetButton on hover
+document.getElementById('resetButton').addEventListener('mouseover', function() {
+    this.classList.add('MatrixTextRed')
+});
+
+document.getElementById('resetButton').addEventListener('mouseout', function() {
+    clearInterval(shuffleInterval);
+    this.classList.remove('MatrixTextRed')
 });

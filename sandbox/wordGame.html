@@ -8,9 +8,15 @@
     <div class="col-sm-12" id="gameArea">
         <div class="container" id="randStringContainer">
             <p class="Screen MatrixTextGreen" id="randomString"></p>
-            <button class="Screen MatrixTextGreen" onclick="shuffleString()" id="shuffleButton">
+            <div id="userButtons">
+            <button class="Screen MatrixTextGreen Button" onclick="shuffleString()" id="shuffleButton">
                 [SHUFFLE]
             </button>
+            <button class="Screen MatrixTextGreen Button" onclick="reset()" id="resetButton">
+                [RESET]
+            </button>
+            <p class="Screen MatrixTextGreen" id="score">SCORE: <span id="scoreValue"></span></p>
+            </div>
         </div>
         <div class="container" id="userInputContainer">
             <div id="submittedWords"></div>
