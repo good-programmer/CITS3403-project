@@ -86,7 +86,7 @@ function updateSubmittedWords() {
         container.innerHTML = '';
         submittedWords.forEach((word, index) => {
             let div = document.createElement('div');
-            div.className = 'wordTile MatrixTextGreen';
+            div.className = 'wordTile Screen MatrixTextGreen';
             div.style.cursor = 'pointer';
             let p = document.createElement('p');
             p.innerText = word;
