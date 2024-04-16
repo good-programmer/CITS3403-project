@@ -6,12 +6,38 @@ let shuffleInterval;
 let score = 0;
 
 window.onload = function() {
+    // allocate enough width for double digit score
     let scoreElement = document.getElementById('score');
     let oneCharWidth = scoreElement.offsetWidth / 8;
     scoreElement.style.width = (oneCharWidth * 9) + 'px';
+
+    let shuffleButton = document.getElementById('shuffleButton');
+    let resetButton = document.getElementById('resetButton');
+    let userInput = document.getElementById('userInput')
+
+    // disable user inputs while animation plays
+    shuffleButton.disabled = true;
+    resetButton.disabled = true;
+    userInput.disabled = true;
+
+    // animate randomString to appear letter by letter
+    let i = 0;
+    let animInterval = setInterval(function() {
+        if (i < displayString.length) {
+            document.getElementById('randomString').innerText += displayString[i].toUpperCase();
+            i++;
+        } else {
+            clearInterval(animInterval);
+            // enable user inputs
+            shuffleButton.disabled = false;
+            resetButton.disabled = false;
+            userInput.disabled = false;
+            userInput.focus();
+        }
+    }, 30);
 }
 
-document.getElementById('randomString').innerText = displayString.toUpperCase();
+document.getElementById('randomString').innerText = '';
 document.getElementById('scoreValue').innerText = score;
 
 /* keep userInput in focus */

@@ -46,6 +46,7 @@
 /* randomString */
 
 #randomString {
+    min-height: 75px;
     padding-left: 25px;
     padding-right: 10px;
     font-size: 50px;
