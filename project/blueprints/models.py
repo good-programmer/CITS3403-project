@@ -9,12 +9,27 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
 
+    def follow_user(self, user):
+        follow = Follow(userID=user.id, followerID=self.id)
+        db.session.add(follow)
+        db.session.commit()    
+    
+    def is_following(self, user):
+        return user.id in [u.userID for u in self.following]
+
+    def unfollow_user(self, user):
+        if self.is_following(user):
+                db.session.query(Follow).filter( (Follow.followerID==self.id) & (Follow.userID==user.id) ).delete()
+                db.session.commit()
+                return True
+        return False
+
 class Puzzle(db.Model):
     __tablename__ = 'Puzzles'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1000))
     authorID = db.Column(db.Integer, db.ForeignKey('Users.id'))
-    author = db.relationship("User", backref=db.backref("Users", uselist=False))
+    author = db.relationship("User", backref=db.backref("puzzles", uselist=False))
     dateCreated = db.Column(db.DateTime)
     content = db.Column(db.Text)
 
@@ -34,5 +49,7 @@ class LeaderboardRecord(db.Model):
 
 class Follow(db.Model):
      __tablename__ = "Followers"
+     followerID = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
      userID = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
-     follows = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
+     follower = db.relationship("User", foreign_keys=[followerID], backref=db.backref("following"))
+     user = db.relationship("User", foreign_keys=[userID], backref=db.backref("followers"))
