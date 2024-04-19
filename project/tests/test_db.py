@@ -4,7 +4,6 @@ topdir = os.path.join(os.path.dirname(__file__), "..")
 sys.path.append(topdir)
 
 os.environ['DATABASE_URL'] = f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/db/test.db"
-print(os.environ['DATABASE_URL'])
 
 from datetime import datetime, timezone, timedelta
 import unittest
