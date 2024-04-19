@@ -91,7 +91,7 @@ document.getElementById('userInput').addEventListener('keydown', function(event)
     }
     if (event.key === 'Enter') {
         event.preventDefault();
-        let word = document.getElementById('userInput').value;
+        let word = document.getElementById('userInput').value.toLowerCase();
         if (word !== '') {
 
             // Check if the word is already in submittedWords
