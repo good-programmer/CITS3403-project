@@ -10,7 +10,7 @@ game = Blueprint('game', __name__)
 def wordGame():
     if request.method == 'POST':
         user_input = request.form['userInput']
-        is_valid = game_utils.dict_check_input(user_input)
+        is_valid = game_utils.validate_input(user_input)
         print(f"'{user_input}': {is_valid}")
         return jsonify(is_valid=is_valid)
     else:
