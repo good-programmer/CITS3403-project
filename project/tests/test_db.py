@@ -8,6 +8,8 @@ os.environ['DATABASE_URL'] = f"sqlite:///{os.path.dirname(os.path.abspath(__file
 from datetime import datetime, timezone, timedelta
 import unittest
 
+from sqlalchemy import exc
+
 from project import app
 from project.blueprints.models import db, User, Follow
 
@@ -24,10 +26,27 @@ class UserModelCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
+    def test_account(self):
+        current_user = user_utils.add_user("MAIN_USER", "132131")
+        self.assertIsNotNone(db.session.query(User).filter_by(id=current_user.id).first())
+        self.assertIsNotNone(user_utils.verify_user("MAIN_USER"))
+        self.assertIsNone(user_utils.verify_user("__DNE__"))
+        self.assertIsNotNone(user_utils.verify_user("MAIN_USER", "132131"))
+        self.assertIsNone(user_utils.verify_user("MAIN_USER", "__INCORRECT__"))
+        self.assertRaises(exc.IntegrityError, user_utils.add_user, "MAIN_USER", "789")
+
+    def test_follow_integrity(self):
+        current_user = user_utils.add_user("MAIN_USER", "132131")
+        u2 = user_utils.add_user("TEST2", "123")
+        u2.follow_user(current_user)
+
+        self.assertRaises(exc.IntegrityError, u2.follow_user, current_user)
+        db.session.rollback()
+        self.assertTrue(u2.unfollow_user(current_user))
+        self.assertFalse(u2.unfollow_user(current_user))
+
     def test_follow(self):
-        current_user = User(name="MAIN_USER", password="132131")
-        db.session.add(current_user)
-        db.session.commit()
+        current_user = user_utils.add_user("MAIN_USER", "132131")
         
         for i in range(20):
             user_utils.add_user("TEST_FOLLOWER" + str(i), "123").follow_user(current_user)
