@@ -5,6 +5,7 @@ from .config import DEBUG, PORT, SECRETKEY
 
 from .blueprints.main import main
 from .blueprints.auth import auth
+from .blueprints.game import game
 
 from .utils import route_utils as route
 
@@ -21,6 +22,7 @@ def create_app():
     
     app.register_blueprint(main)
     app.register_blueprint(auth)
+    app.register_blueprint(game)
 
     from .blueprints.models import User
     login_manager = LoginManager()
