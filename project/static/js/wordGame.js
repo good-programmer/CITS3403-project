@@ -86,10 +86,23 @@ function updateString() {
 }
 
 document.getElementById('userInput').addEventListener('keydown', function(event) {
+    if (event.key === 'Backspace' ) {
+        document.getElementById('userInput').classList.remove('MatrixTextRed');
+    }
     if (event.key === 'Enter') {
         event.preventDefault();
         let word = document.getElementById('userInput').value;
         if (word !== '') {
+
+            // Check if the word is already in submittedWords
+            if (submittedWords.includes(word)) {
+                console.log('Duplicate word')
+                // reset input and randomString
+                document.getElementById('userInput').value = '';
+                displayString = randomString; // reset the display string to the shuffled string
+                document.getElementById('randomString').innerText = displayString.toUpperCase();
+                return;
+            }
             submittedWords.push(word);
             // check the length of submittedWords after a word is added
             if (submittedWords.length > 5) {
@@ -97,11 +110,35 @@ document.getElementById('userInput').addEventListener('keydown', function(event)
                 submittedWords.pop();
                 return;
             }
-            updateSubmittedWords();
-            updateScore();
-            document.getElementById('userInput').value = '';
-            displayString = randomString; // reset the display string to the shuffled string
-            document.getElementById('randomString').innerText = displayString.toUpperCase();
+
+            // send user input to the server
+            fetch('/wordGame', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'userInput=' + encodeURIComponent(word),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data.is_valid) {
+                    // The word is valid, update the submitted words and score
+                    updateSubmittedWords();
+                    updateScore();
+                    // reset input and randomString
+                    document.getElementById('userInput').value = '';
+                    displayString = randomString; // reset the display string to the shuffled string
+                    document.getElementById('randomString').innerText = displayString.toUpperCase();
+                } else {
+                    console.log('Invalid word');
+                    document.getElementById('userInput').classList.add('MatrixTextRed')
+                    submittedWords.pop();
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
         }
     }
 });
@@ -150,8 +187,8 @@ function reset() {
     submittedWords = [];
     updateSubmittedWords();
     document.getElementById('userInput').value = '';
+    document.getElementById('userInput').classList.remove('MatrixTextRed');
 }
-
 
 // implements 'click and hold' shuffleButton
 document.getElementById('shuffleButton').addEventListener('mousedown', function() {
