@@ -86,9 +86,6 @@ function updateString() {
 }
 
 document.getElementById('userInput').addEventListener('keydown', function(event) {
-    if (event.key === 'Backspace' ) {
-        document.getElementById('userInput').classList.remove('MatrixTextRed');
-    }
     if (event.key === 'Enter') {
         event.preventDefault();
         let word = document.getElementById('userInput').value.toLowerCase();
@@ -97,17 +94,11 @@ document.getElementById('userInput').addEventListener('keydown', function(event)
             // Check if the word is already in submittedWords
             if (submittedWords.includes(word)) {
                 console.log('Duplicate word')
-                // reset input and randomString
-                document.getElementById('userInput').value = '';
-                displayString = randomString; // reset the display string to the shuffled string
-                document.getElementById('randomString').innerText = displayString.toUpperCase();
                 return;
             }
-            submittedWords.push(word);
             // check the length of submittedWords after a word is added
-            if (submittedWords.length > 5) {
-                // if length exceeds 5, remove the last word added
-                submittedWords.pop();
+            if (submittedWords.length + 1 > 5) {
+                console.log('Too many submittedWords')
                 return;
             }
 
@@ -124,6 +115,8 @@ document.getElementById('userInput').addEventListener('keydown', function(event)
                 console.log(data);
                 if (data.is_valid) {
                     // The word is valid, update the submitted words and score
+                    console.log('Valid word');
+                    submittedWords.push(word);
                     updateSubmittedWords();
                     updateScore();
                     // reset input and randomString
@@ -133,13 +126,15 @@ document.getElementById('userInput').addEventListener('keydown', function(event)
                 } else {
                     console.log('Invalid word');
                     document.getElementById('userInput').classList.add('MatrixTextRed')
-                    submittedWords.pop();
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
         }
+    }
+    if (event.key === 'Backspace' ) {
+        document.getElementById('userInput').classList.remove('MatrixTextRed');
     }
 });
 
