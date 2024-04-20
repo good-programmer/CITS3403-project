@@ -33,7 +33,7 @@ let Game = {
         let i = 0;
         let animInterval = setInterval(() => {
             if (i < this.displayString.length) {
-                document.getElementById('randomString').innerText += this.displayString[i].toUpperCase();
+                document.getElementById('puzzleString').innerText += this.displayString[i].toUpperCase();
                 i++;
             } else {
                 clearInterval(animInterval);
@@ -95,13 +95,13 @@ let Game = {
             if (tempString.includes(lowerCaseChar)) {
                 tempString = tempString.replace(lowerCaseChar, '');
             } else {
-                // remove the character from userInput if it's not in the random string
+                // remove the character from userInput if it's not in the puzzleString
                 document.getElementById('userInput').value = userInput.slice(0, i) + userInput.slice(i + 1);
                 return;
             }
         }
         this.displayString = tempString;
-        document.getElementById('randomString').innerText = this.displayString.toUpperCase();
+        document.getElementById('puzzleString').innerText = this.displayString.toUpperCase();
     },
 
     // shuffle the order of puzzleString chars
@@ -112,7 +112,7 @@ let Game = {
             [array[i], array[j]] = [array[j], array[i]];
         }
         this.puzzleString = array.join('');
-        document.getElementById('randomString').innerText = this.puzzleString.toUpperCase();
+        document.getElementById('puzzleString').innerText = this.puzzleString.toUpperCase();
         document.getElementById('userInput').value = ''; // clear the user input
     },
 
@@ -163,10 +163,10 @@ let Game = {
                             this.submittedWords.push(word);
                             this.updateSubmittedWords();
                             this.updateScore();
-                            // reset input and randomString
+                            // reset input and puzzleString
                             document.getElementById('userInput').value = '';
                             this.displayString = this.puzzleString; // reset the display string to the shuffled string
-                            document.getElementById('randomString').innerText = this.displayString.toUpperCase();
+                            document.getElementById('puzzleString').innerText = this.displayString.toUpperCase();
                         } else {
                             console.log('Invalid word');
                             document.getElementById('userInput').classList.add('MatrixTextRed')

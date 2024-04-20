@@ -36,16 +36,16 @@
     max-width: 550px;
 }
 
-#randStringContainer {
+#puzzleStringContainer {
     display: grid;
     place-items: center;
     margin-bottom: 0px;
     max-width: 550px;
 }
 
-/* randomString */
+/* puzzleString */
 
-#randomString {
+#puzzleString {
     text-align: center;
     font-size: 50px;
     letter-spacing: 10px;
