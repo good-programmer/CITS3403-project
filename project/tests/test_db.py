@@ -76,7 +76,8 @@ class PuzzleModelCase(unittest.TestCase):
         self.app_context = app.app_context()
         self.app_context.push()
         db.create_all()
-        tests.generate_users(app, db)
+        self.t = tests.TestObject(app, db)
+        self.t.generate_users()
 
     def tearDown(self):
         db.session.remove()
@@ -84,15 +85,18 @@ class PuzzleModelCase(unittest.TestCase):
         self.app_context.pop()
     
     def test_create(self):
-        user = tests.get_random_user()
+        user = self.t.get_random_user()
         current_time = datetime.now()
         puzzle = puzzle_utils.add_puzzle(title = "TEST_PUZZLE", creator=user, content="QWOISAD")
         
         self.assertTrue(puzzle.title=="TEST_PUZZLE")
         self.assertTrue(puzzle.creatorID==user.id and puzzle.creator==user)
         self.assertTrue(puzzle.content=="QWOISAD")
-        self.assertTrue((puzzle.dateCreated-current_time).total_seconds() < 0.5)
+        self.assertTrue((puzzle.dateCreated-current_time).total_seconds() < 0.1)
         self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id,creatorID=user.id).first())
+    
+    def test_score(self):
+        pass
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
