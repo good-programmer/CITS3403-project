@@ -17,3 +17,13 @@ def validate_input(user_input):
 def sanitise_input(user_input):
     sanitised_input = re.sub('[^a-z]', '', user_input.lower())
     return sanitised_input
+
+# verify the score of a user's puzzle solution
+def verify_score(submittedWords):
+    total_score = 0
+    for word in submittedWords:
+        if validate_input(word):
+            total_score += len(word)
+    return total_score
+
+    

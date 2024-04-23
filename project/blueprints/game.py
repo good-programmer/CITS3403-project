@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, jsonify
+from flask import Blueprint, request, render_template, jsonify, json
 from .models import db
 from flask_login import login_required, current_user
 
@@ -15,3 +15,12 @@ def wordGame():
         return jsonify(is_valid=is_valid)
     else:
         return render_template('wordGame.html')
+    
+@game.route('/wordGame/solve', methods=['POST'])
+def solve():
+    data = json.loads(request.data)
+    submittedWords = data['submittedWords']
+    score = game_utils.verify_score(submittedWords)
+    print(data)
+    print(f"Score: {score}")
+    return data

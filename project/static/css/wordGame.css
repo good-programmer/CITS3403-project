@@ -36,6 +36,13 @@
     max-width: 550px;
 }
 
+#userSubmission {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-start;   
+}
+
 #puzzleStringContainer {
     display: grid;
     place-items: center;
@@ -55,7 +62,7 @@
     padding-right: 10px;
 }
 
-#userButtons button {
+#userButtons button, #submitButton {
     text-align: center;
     margin-top: 0px;
     background-color: rgba(0,0,0,0);
@@ -67,6 +74,11 @@
     margin-right: 40px;
 }
 
+#submitButton {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
 #score {
     display: inline-block;
     min-width: fit-content;
@@ -74,7 +86,7 @@
 
 /* userInput */
  
-#userInputContainer label, #userInput, .wordTile, #userButtons {
+#userInputContainer label, #userInput, .wordTile, #userButtons, #submitButton {
     font-size: 30px;
 }
 
@@ -85,6 +97,7 @@
 }
 
 #userInput {
+    flex-grow: 1;
     border: none;
     outline: none;
     background: none;

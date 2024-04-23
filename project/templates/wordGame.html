@@ -23,7 +23,12 @@
         <div class="container" id="userInputContainer">
             <div id="submittedWords"></div>
             <label for="userInput" class="Screen MatrixTextYellow">$></label>
-            <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="Game.updateString()" autofocus>
+            <div id="userSubmission">
+                <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="Game.updateString()" autofocus>
+                <button class="Screen MatrixTextYellow Button" onclick="Game.solve()" id="submitButton">
+                    [FINISH]
+                </button>
+            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

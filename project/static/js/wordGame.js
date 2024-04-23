@@ -126,6 +126,30 @@ let Game = {
         document.getElementById('userInput').classList.remove('MatrixTextRed');
     },
 
+    solve: function() {
+        let solveData = {
+            submittedWords: this.submittedWords,
+            date: new Date()
+        };
+
+        let jsonData = JSON.stringify(solveData);
+
+        fetch('/wordGame/solve', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: jsonData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    },
+
     // sets EventListeners for word submission
     setUserInputs: function() {
         document.getElementById('userInput').addEventListener('keydown', (event) => {
@@ -232,8 +256,18 @@ function setEventListeners() {
     });
 
     document.getElementById('resetButton').addEventListener('mouseout', function() {
-        clearInterval(Game.shuffleInterval);
         this.classList.remove('MatrixTextRed')
+    });
+
+    // highlight submitButton on hover
+    document.getElementById('submitButton').addEventListener('mouseover', function() {
+        this.classList.remove('MatrixTextYellow')
+        this.classList.add('MatrixTextGreen')
+    });
+
+    document.getElementById('submitButton').addEventListener('mouseout', function() {
+        this.classList.remove('MatrixTextGreen')
+        this.classList.add('MatrixTextYellow')
     });
 }
 
