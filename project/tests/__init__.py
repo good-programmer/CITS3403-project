@@ -6,9 +6,10 @@ from project.utils import user_utils, puzzle_utils
 import random
 import string
 
-numUsers = 15
-numPuzzles = 35
-numScores = 10
+numUsers = 5
+numPuzzles = 10
+numScores = 5
+numRatings = 3
 
 class TestObject:
     def __init__(self, app, db):
@@ -38,3 +39,11 @@ class TestObject:
                 user = self.get_random_user()
                 if not puzzle.has_record(user):
                     puzzle.add_record(user, random.randrange(1, 1000))
+
+    def generate_ratings(self):
+         for i in range(numPuzzles):
+            puzzle = self.get_random_puzzle()
+            for j in range(numRatings):
+                user = self.get_random_user()
+                if not puzzle.has_rating(user):
+                    puzzle.add_rating(user, random.randrange(0, 10) / 2)

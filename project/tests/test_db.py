@@ -81,6 +81,7 @@ class PuzzleModelCase(unittest.TestCase):
         t.generate_users()
         t.generate_puzzles()
         t.generate_scores()
+        t.generate_ratings()
 
     def tearDown(self):
         db.session.remove()
@@ -109,9 +110,13 @@ class PuzzleModelCase(unittest.TestCase):
 
         self.assertFalse(puzzle.has_record(user))
         puzzle.add_record(user, 10)
+        self.assertRaises(exc.IntegrityError, puzzle.add_record, user, 70)
+        db.session.rollback()
         self.assertRaises(AssertionError, self.assertListEqual, before, puzzle.scores)
         self.assertTrue(puzzle.has_record(user))
         self.assertEqual(puzzle.get_record(user).score, 10)
+        self.assertIn(puzzle.get_record(user), user.scores)
+        self.assertIn(puzzle.get_record(user), puzzle.scores)
         self.assertIsNotNone(user.get_record(puzzle))
         self.assertEqual(user.get_record(puzzle).score, puzzle.get_record(user).score)
         puzzle.update_record(user, 20)
@@ -121,6 +126,30 @@ class PuzzleModelCase(unittest.TestCase):
         self.assertFalse(puzzle.has_record(user))
         self.assertIsNone(user.get_record(puzzle))
         self.assertListEqual(before, puzzle.scores)
+    
+    def test_rating(self):
+        puzzle = self.t.get_random_puzzle()
+        user = user_utils.add_user("MAIN_USER", "132131")
+        before = puzzle.ratings.copy()
+
+        self.assertFalse(puzzle.has_rating(user))
+        puzzle.add_rating(user, 3.5)
+        self.assertRaises(exc.IntegrityError, puzzle.add_rating, user, 1.0)
+        db.session.rollback()
+        self.assertRaises(AssertionError, self.assertListEqual, before, puzzle.ratings)
+        self.assertTrue(puzzle.has_rating(user))
+        self.assertEqual(puzzle.get_rating(user).rating, 3.5)
+        self.assertIn(puzzle.get_rating(user), user.ratings)
+        self.assertIn(puzzle.get_rating(user), puzzle.ratings)
+        self.assertIsNotNone(user.get_rating(puzzle))
+        self.assertEqual(user.get_rating(puzzle).rating, puzzle.get_rating(user).rating)
+        puzzle.update_rating(user, 2.5)
+        self.assertEqual(puzzle.get_rating(user).rating, 2.5)
+        self.assertEqual(user.get_rating(puzzle).rating, puzzle.get_rating(user).rating)
+        puzzle.remove_rating(user)
+        self.assertFalse(puzzle.has_rating(user))
+        self.assertIsNone(user.get_rating(puzzle))
+        self.assertListEqual(before, puzzle.ratings)
 
 
 if __name__ == '__main__':
