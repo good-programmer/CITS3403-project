@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
         return puzzle.get_record(self)
     
     def rate_puzzle(self, puzzle, rating):
-        puzzle.add_rating(self, rating)
+        return puzzle.add_rating(self, rating)
     
     def get_rating(self, puzzle):
         return puzzle.get_rating(self)
@@ -52,6 +52,18 @@ class Puzzle(db.Model):
 
     scores = db.relationship("LeaderboardRecord", back_populates="puzzle")
     ratings = db.relationship("Rating", back_populates="puzzle")
+
+    @property
+    def average_score(self):
+        if self.scores and len(self.scores) > 0:
+            return sum(s.score for s in self.scores) / len(self.scores)
+        return 0
+    
+    @property
+    def average_rating(self):
+        if self.ratings and len(self.ratings) > 0:
+            return sum(r.rating for r in self.ratings) / len(self.ratings)
+        return 0
      
     def __init__(self, title, creator, content):
         self.title = title
@@ -119,9 +131,12 @@ class Rating(db.Model):
     puzzleID = db.Column(db.Integer, db.ForeignKey('Puzzles.id'), primary_key=True)
     user = db.relationship("User", foreign_keys=[userID], back_populates="ratings")
     puzzle = db.relationship("Puzzle", foreign_keys=[puzzleID], back_populates="ratings")
-    rating = db.Column(db.Float, )
+    rating = db.Column(db.Float)
     dateRated = db.Column(db.DateTime)
 
+    def __repr__(self):
+        return f'({self.user.name}, {self.rating})'
+    
     def __init__(self, user, puzzle, rating):
         self.userID = user.id
         self.puzzleID = puzzle.id
@@ -152,3 +167,6 @@ class Follow(db.Model):
      userID = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
      follower = db.relationship("User", back_populates="following", foreign_keys=[followerID])
      user = db.relationship("User", back_populates="followers", foreign_keys=[userID])
+
+     def __repr__(self):
+        return f'({self.user.name}, {self.follower.name})'

@@ -13,7 +13,7 @@ from sqlalchemy import exc
 import tests
 
 from project import app
-from project.blueprints.models import db, User, Follow, Puzzle
+from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
 
 from project.utils import user_utils, puzzle_utils
 
@@ -150,7 +150,21 @@ class PuzzleModelCase(unittest.TestCase):
         self.assertFalse(puzzle.has_rating(user))
         self.assertIsNone(user.get_rating(puzzle))
         self.assertListEqual(before, puzzle.ratings)
+    
+    def test_averages(self):
+        puzzle = self.t.get_random_puzzle()
+        while len(puzzle.scores) == 0 or len(puzzle.ratings) == 0:
+            puzzle = self.t.get_random_puzzle()
 
+        scores = db.session.query(LeaderboardRecord).filter_by(puzzleID=puzzle.id).all()
+        avg1 = sum(s.score for s in scores) / len(scores)
+        avg2 = puzzle.average_score
+        self.assertEqual(avg1, avg2)
+
+        ratings = db.session.query(Rating).filter_by(puzzleID=puzzle.id).all()
+        avg1 = sum(r.rating for r in ratings) / len(ratings)
+        avg2 = puzzle.average_rating
+        self.assertEqual(avg1, avg2)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
