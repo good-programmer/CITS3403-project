@@ -11,7 +11,7 @@ with open(words, 'r') as f:
 def validate_input(user_input):
         sanitised = sanitise_input(user_input)
         # check if the user's input is a valid word
-        return sanitised.lower() in valid_words
+        return sanitised.upper() in valid_words
 
 # remove non-alphabetic characters and ensure string is lowercase
 def sanitise_input(user_input):
