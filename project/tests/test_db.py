@@ -1,16 +1,9 @@
-import os
-import sys
-topdir = os.path.join(os.path.dirname(__file__), "..")
-sys.path.append(topdir)
-
-os.environ['DATABASE_URL'] = f"sqlite:///{os.path.dirname(os.path.abspath(__file__))}/db/test.db"
-
 from datetime import datetime, timezone, timedelta
 import unittest
 
 from sqlalchemy import exc
 
-import tests
+from project.tests import TestObject
 
 from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
@@ -76,7 +69,7 @@ class PuzzleModelCase(unittest.TestCase):
         self.app_context = app.app_context()
         self.app_context.push()
         db.create_all()
-        t = tests.TestObject(app, db)
+        t = TestObject(app, db)
         self.t = t
         t.generate_users()
         t.generate_puzzles()
