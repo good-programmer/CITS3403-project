@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>wordGame</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../static/css/wordGame.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+<body id="body">
+    <div class="col-sm-12" id="gameArea">
+        <div class="container" id="puzzleStringContainer">
+            <p class="Screen MatrixTextGreen" id="puzzleString"></p>
+            <div id="userButtons">
+            <button class="Screen MatrixTextGreen Button" onclick="Game.shuffleString()" id="shuffleButton">
+                [SHUFFLE]
+            </button>
+            <button class="Screen MatrixTextGreen Button" onclick="Game.reset()" id="resetButton">
+                [RESET]
+            </button>
+            <p class="Screen MatrixTextGreen" id="score">SCORE: <span id="scoreValue"></span></p>
+            </div>
+        </div>
+        <div class="container" id="userInputContainer">
+            <div id="submittedWords"></div>
+            <label for="userInput" class="Screen MatrixTextYellow">$></label>
+            <div id="userSubmission">
+                <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="Game.updateString()" autofocus>
+                <button class="Screen MatrixTextYellow Button" onclick="Game.solve()" id="submitButton">
+                    [FINISH]
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="../static/js/wordGame.js"></script>
+</body>
+</html>
