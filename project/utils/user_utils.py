@@ -11,3 +11,10 @@ def add_user(name, password):
     db.session.commit()
     return new_user
 
+def get_user(name=None, id=None):
+    user = None
+    if name:
+        user = User.query.filter_by(name=name).first()
+    if id:
+        user = User.query.filter_by(id=id).first()
+    return user
