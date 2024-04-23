@@ -10,10 +10,12 @@ import unittest
 
 from sqlalchemy import exc
 
-from project import app
-from project.blueprints.models import db, User, Follow
+import tests
 
-from project.utils import user_utils
+from project import app
+from project.blueprints.models import db, User, Follow, Puzzle
+
+from project.utils import user_utils, puzzle_utils
 
 class UserModelCase(unittest.TestCase):
     def setUp(self):
@@ -68,6 +70,29 @@ class UserModelCase(unittest.TestCase):
         u2.unfollow_user(current_user)
         self.assertFalse(u2.is_following(current_user))
         self.assertIsNone(db.session.query(Follow).filter_by(userID=current_user.id, followerID=u2.id).first())
+
+class PuzzleModelCase(unittest.TestCase):
+    def setUp(self):
+        self.app_context = app.app_context()
+        self.app_context.push()
+        db.create_all()
+        tests.generate_users(app, db)
+
+    def tearDown(self):
+        db.session.remove()
+        db.drop_all()
+        self.app_context.pop()
+    
+    def test_create(self):
+        user = tests.get_random_user()
+        current_time = datetime.now()
+        puzzle = puzzle_utils.add_puzzle(title = "TEST_PUZZLE", creator=user, content="QWOISAD")
+        
+        self.assertTrue(puzzle.title=="TEST_PUZZLE")
+        self.assertTrue(puzzle.creatorID==user.id and puzzle.creator==user)
+        self.assertTrue(puzzle.content=="QWOISAD")
+        self.assertTrue((puzzle.dateCreated-current_time).total_seconds() < 0.5)
+        self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id,creatorID=user.id).first())
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

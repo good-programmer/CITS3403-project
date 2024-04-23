@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
@@ -8,6 +10,8 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(1000), unique=True)
     password = db.Column(db.String(100))
+
+    puzzles = db.relationship("Puzzle", back_populates="creator")
 
     def follow_user(self, user):
         follow = Follow(userID=user.id, followerID=self.id)
@@ -28,10 +32,17 @@ class Puzzle(db.Model):
     __tablename__ = 'Puzzles'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(1000))
-    authorID = db.Column(db.Integer, db.ForeignKey('Users.id'))
-    author = db.relationship("User", foreign_keys=[authorID], backref=db.backref("puzzles"))
+    creatorID = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    creator = db.relationship("User", foreign_keys=[creatorID], back_populates="puzzles")
     dateCreated = db.Column(db.DateTime)
     content = db.Column(db.Text)
+     
+    def __init__(self, title, creator, content):
+         self.title = title
+         self.creatorID = creator.id
+         self.dateCreated = datetime.now()
+         self.content = content
+         
 
 class Rating(db.Model):
     __tablename__ = "Ratings"
