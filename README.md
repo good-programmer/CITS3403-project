@@ -26,3 +26,7 @@ The search page features:
 - popularity
 - puzzle title (?)
 - tags (?)
+
+
+To run tests, execute `run_tests.py` from CLI in the `RequestProject` directory, i.e. `cd RequestProject; python3 run_tests.py`
+Alternatively, you can execute the command `python3 -m unittest discover project/tests` from the same directory.
