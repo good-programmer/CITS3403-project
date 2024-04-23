@@ -76,8 +76,11 @@ class PuzzleModelCase(unittest.TestCase):
         self.app_context = app.app_context()
         self.app_context.push()
         db.create_all()
-        self.t = tests.TestObject(app, db)
-        self.t.generate_users()
+        t = tests.TestObject(app, db)
+        self.t = t
+        t.generate_users()
+        t.generate_puzzles()
+        t.generate_scores()
 
     def tearDown(self):
         db.session.remove()
@@ -94,9 +97,31 @@ class PuzzleModelCase(unittest.TestCase):
         self.assertTrue(puzzle.content=="QWOISAD")
         self.assertTrue((puzzle.dateCreated-current_time).total_seconds() < 0.1)
         self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id,creatorID=user.id).first())
+        self.assertIn(puzzle, user.puzzles)
     
     def test_score(self):
-        pass
+        puzzle = self.t.get_random_puzzle()
+        user = user_utils.add_user("MAIN_USER", "132131")
+        before = puzzle.scores.copy()
+
+        #print(puzzle.title + ": " + str(puzzle.scores))
+        #print(user.name + ": " + str(user.scores))
+
+        self.assertFalse(puzzle.has_record(user))
+        puzzle.add_record(user, 10)
+        self.assertRaises(AssertionError, self.assertListEqual, before, puzzle.scores)
+        self.assertTrue(puzzle.has_record(user))
+        self.assertEqual(puzzle.get_record(user).score, 10)
+        self.assertIsNotNone(user.get_record(puzzle))
+        self.assertEqual(user.get_record(puzzle).score, puzzle.get_record(user).score)
+        puzzle.update_record(user, 20)
+        self.assertEqual(puzzle.get_record(user).score, 20)
+        self.assertEqual(user.get_record(puzzle).score, puzzle.get_record(user).score)
+        puzzle.remove_record(user)
+        self.assertFalse(puzzle.has_record(user))
+        self.assertIsNone(user.get_record(puzzle))
+        self.assertListEqual(before, puzzle.scores)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

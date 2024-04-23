@@ -30,6 +30,11 @@ class User(UserMixin, db.Model):
                 db.session.commit()
                 return True
         return False
+    
+    def get_record(self, puzzle):
+        for s in self.scores:
+            if s.puzzleID == puzzle.id:
+                return s
 
 class Puzzle(db.Model):
     __tablename__ = 'Puzzles'
@@ -48,20 +53,32 @@ class Puzzle(db.Model):
         self.dateCreated = datetime.now()
         self.content = content
     
-    def record_score(self, user, score):
+    def add_record(self, user, score):
         score = LeaderboardRecord(user, self, score)
         db.session.add(score)
         db.session.commit()
 
-    def has_score(self, user):
-         return user.id in [u.userID for u in self.scores]
+    def has_record(self, user):
+        return user.id in [u.userID for u in self.scores]
     
-    def update_score(self, user, score):
-         record = db.session.query(LeaderboardRecord).filter( (LeaderboardRecord.userID==user.id) & (LeaderboardRecord.puzzleID==self.id) ).first()
-         if record:
-            record.score = score
+    def get_record(self, user):
+        for s in self.scores:
+            if s.userID == user.id:
+                return s
+    
+    def update_record(self, user, score):
+        if self.has_record(user):
+            self.get_record(user).score = score 
+            db.session.commit()
             return True
-         
+        return False
+    
+    def remove_record(self, user):
+        if self.has_record(user):
+            db.session.query(LeaderboardRecord).filter( (LeaderboardRecord.userID==user.id) & (LeaderboardRecord.puzzleID==self.id) ).delete()
+            db.session.commit()
+            return True
+        return False
 
 class Rating(db.Model):
     __tablename__ = "Ratings"
@@ -79,11 +96,14 @@ class LeaderboardRecord(db.Model):
     score = db.Column(db.Integer)
     dateSubmitted = db.Column(db.DateTime)
 
+    def __repr__(self):
+        return f'({self.user.name}, {self.score})'
+
     def __init__(self, user, puzzle, score):
          self.userID = user.id
          self.puzzleID = puzzle.id
          self.score = score
-         self.dateCreated = datetime.now()
+         self.dateSubmitted = datetime.now()
 
 class Follow(db.Model):
      __tablename__ = "Followers"
