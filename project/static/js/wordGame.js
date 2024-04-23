@@ -148,6 +148,7 @@ let Game = {
         .catch((error) => {
             console.error('Error:', error);
         });
+        displayLeaderboard();
     },
 
     // sets EventListeners for word submission
@@ -274,4 +275,69 @@ function setEventListeners() {
 window.onload = function() {
     Game.init();
     setEventListeners();
+}
+
+function displayLeaderboard() {
+    // hide the game content
+    $('#gameContent').hide();
+
+    // create new div for the leaderboard
+    let leaderboardDiv = $('<div>').attr('id', 'leaderboard');
+    leaderboardDiv.append($('<h2>').text('LEADERBOARD - PUZZLEID'));
+    leaderboardDiv.addClass('container Screen MatrixTextYellow')
+
+    // create a button for closing the leaderboard
+    let closeButton = $('<button>').text('[SHOW PUZZLE]');
+    closeButton.addClass('Screen MatrixTextYellow Button');
+    closeButton.attr('id', 'closeButton');
+
+    // add the close button to the leaderboard div
+    leaderboardDiv.append(closeButton);
+
+
+    // create a table
+    let table = $('<table>').addClass('leaderboard-table');
+
+    // create leadboard table
+    let thead = $('<thead>');
+    thead.append($('<tr>')
+        .append($('<th>').text('RANK'))
+        .append($('<th>').text('NAME'))
+        .append($('<th>').text('SCORE'))
+    );
+    table.append(thead);
+
+    let tbody = $('<tbody>');
+
+    // PLACEHOLDER SCORES
+    let scores = [
+        { userID: 'User1', score: 100 },
+        { userID: 'User2', score: 90 },
+        { userID: 'User3', score: 80 },
+    ];
+
+    // sort scores
+    scores.sort(function(a, b) { return b.score - a.score; });
+
+    // populate score
+    for (let i = 0; i < scores.length; i++) {
+        tbody.append($('<tr>')
+            .append($('<td>').text(i + 1))              // RANK
+            .append($('<td>').text(scores[i].userID))   // USER
+            .append($('<td>').text(scores[i].score))    // SCORE
+        );
+    }
+    table.append(tbody);
+
+    // add table to the leaderboard div
+    leaderboardDiv.append(table);
+
+    // add leaderboard to page
+    $('#gameArea').append(leaderboardDiv);
+
+    $('#closeButton').click(function() {
+        $('#leaderboard').remove();
+        $('#gameContent').show();
+    
+    });
 }
