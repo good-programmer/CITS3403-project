@@ -28,6 +28,7 @@ class UserModelCase(unittest.TestCase):
         self.assertIsNone(user_utils.verify_user("__DNE__"))
         self.assertIsNotNone(user_utils.verify_user("MAIN_USER", "132131"))
         self.assertIsNone(user_utils.verify_user("MAIN_USER", "__INCORRECT__"))
+        self.assertIsNotNone(user_utils.get_user("MAIN_USER"))
         self.assertRaises(exc.IntegrityError, user_utils.add_user, "MAIN_USER", "789")
 
     def test_follow_integrity(self):
@@ -80,6 +81,13 @@ class PuzzleModelCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
+    
+    def test_account(self):
+        user = user_utils.add_user("MAIN_USER", "132131")
+        puzzle = puzzle_utils.add_puzzle("MAIN_PUZZLE", user, "AHSDFADSF")
+        self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())
+        self.assertIsNotNone(db.session.query(Puzzle).filter_by(title=puzzle.title,creatorID=user.id).first())
+        self.assertIsNotNone(puzzle_utils.get_puzzle("MAIN_PUZZLE"))
     
     def test_create(self):
         user = self.t.get_random_user()
