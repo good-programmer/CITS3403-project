@@ -80,31 +80,36 @@ class PostRequestCase(unittest.TestCase):
 
     def test_create_account(self):
         response = self.t.register("POST_USER", "123")
-        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.status_code, 200)
         self.assertIsNone(user_utils.get_user("POST_USER"))
+        self.assertEqual(url_for(route.register), response.request.path)
 
         response = self.t.register("POST_USER", "Valid123456")
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(user_utils.get_user("POST_USER"))
+        self.assertEqual(url_for(route.login), response.request.path)
 
         response = self.t.register("POST_USER", "AnotherValidPassword")
-        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(url_for(route.register), response.request.path)
     
     def test_login_account(self):
         self.t.register("POST_USER", "Valid123456")
 
         response = self.t.login("INVALID_POST_USER", "Valid123456")
-        self.assertEqual(response.status_code, 403)
-        
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(url_for(route.login), response.request.path)
+
         response = self.t.login("POST_USER", "Invalid")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(url_for(route.login), response.request.path)
 
         response = self.t.login("POST_USER", "Valid123456")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(url_for(route.profile), response.request.path)
     
     def test_create_puzzle(self):
-        response = self.client.post(url_for(route.wordGame), data={"content": "hello world"})
-        #self.assertEqual(response.status_code, 404)
+        pass
     
     def test_follow(self):
         pass

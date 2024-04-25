@@ -26,7 +26,7 @@ def login_post():
         return redirect(url_for(route.profile))
     
     flash('Incorrect username or password')
-    return redirect(url_for(route.login), 403)
+    return redirect(url_for(route.login))
 
 @auth.route('/register', methods=["POST"])
 def register_post():
@@ -35,16 +35,16 @@ def register_post():
 
     if user_utils.verify_user(name):
         flash('Username already exists')
-        return redirect(url_for(route.register), 409)
+        return redirect(url_for(route.register))
 
     res, msg = auth_utils.validate_user_information(name, password)
     if not res:
         flash(msg)
-        return redirect(url_for(route.register), 409)
+        return redirect(url_for(route.register))
     
     if password != confirm:
         flash('Passwords do not match')
-        return redirect(url_for(route.register), 409)
+        return redirect(url_for(route.register))
     
     user_utils.add_user(name, password)
 
