@@ -28,6 +28,7 @@ class UserModelCase(unittest.TestCase):
         self.assertIsNone(user_utils.verify_user("__DNE__"))
         self.assertIsNotNone(user_utils.verify_user("MAIN_USER", "132131"))
         self.assertIsNone(user_utils.verify_user("MAIN_USER", "__INCORRECT__"))
+        self.assertIsNotNone(user_utils.get_user("MAIN_USER"))
         self.assertRaises(exc.IntegrityError, user_utils.add_user, "MAIN_USER", "789")
 
     def test_follow_integrity(self):
@@ -80,6 +81,13 @@ class PuzzleModelCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
+    
+    def test_puzzle(self):
+        user = user_utils.add_user("MAIN_USER", "132131")
+        puzzle = puzzle_utils.add_puzzle("MAIN_PUZZLE", user, "AHSDFADSF")
+        self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())
+        self.assertIsNotNone(db.session.query(Puzzle).filter_by(title=puzzle.title,creatorID=user.id).first())
+        self.assertIsNotNone(puzzle_utils.get_puzzle("MAIN_PUZZLE"))
     
     def test_create(self):
         user = self.t.get_random_user()
@@ -148,16 +156,24 @@ class PuzzleModelCase(unittest.TestCase):
         puzzle = self.t.get_random_puzzle()
         while len(puzzle.scores) == 0 or len(puzzle.ratings) == 0:
             puzzle = self.t.get_random_puzzle()
+        
+        user = user_utils.add_user("MAIN_USER", "132131")
 
         scores = db.session.query(LeaderboardRecord).filter_by(puzzleID=puzzle.id).all()
-        avg1 = sum(s.score for s in scores) / len(scores)
-        avg2 = puzzle.average_score
-        self.assertEqual(avg1, avg2)
+        s, l = sum(s.score for s in scores), len(scores)
+        avg1 = s / l
+        self.assertEqual(avg1, puzzle.average_score)
+        puzzle.add_record(user, 1000)
+        avg1 = (s + 1000) / (l + 1)
+        self.assertEqual(avg1, puzzle.average_score)
 
         ratings = db.session.query(Rating).filter_by(puzzleID=puzzle.id).all()
-        avg1 = sum(r.rating for r in ratings) / len(ratings)
-        avg2 = puzzle.average_rating
-        self.assertEqual(avg1, avg2)
+        r, l = sum(r.rating for r in ratings), len(ratings)
+        avg1 = r / l
+        self.assertEqual(avg1, puzzle.average_rating)
+        puzzle.add_rating(user, 5)
+        avg1 = (r + 5) / (l + 1)
+        self.assertEqual(avg1, puzzle.average_rating)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

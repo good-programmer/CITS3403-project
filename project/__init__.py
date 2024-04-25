@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from .config import DEBUG, PORT, SECRETKEY
+from .config import Config
 
 from .blueprints.main import main
 from .blueprints.auth import auth
@@ -11,8 +11,7 @@ from .utils import route_utils as route
 
 def create_app():
     app = Flask(__name__)
-    app.secret_key = SECRETKEY
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.root_path}/db/users.db"
+    app.config.from_object(Config)
 
     from .blueprints.models import db
     db.init_app(app)
