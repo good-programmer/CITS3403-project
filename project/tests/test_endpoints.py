@@ -80,6 +80,7 @@ class PostRequestCase(unittest.TestCase):
 
     def test_create_account(self):
         response = self.t.register("POST_USER", "123")
+        
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(user_utils.get_user("POST_USER"))
         self.assertEqual(url_for(route.register), response.request.path)
