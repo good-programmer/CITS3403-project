@@ -26,7 +26,7 @@ def solve():
     print(f"Score: {score}")
     return data
 
-@game.route('/wordGame/submitpuzzle', methods=['GET','POST'])
+@game.route('/puzzle/create', methods=['GET','POST'])
 def submitpuzzle():
     if request.method == 'POST':
         fget = request.form.get
