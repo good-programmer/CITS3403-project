@@ -54,6 +54,15 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 302)
         response = self.client.get(url_for(route.getuser))
         self.assertEqual(json.loads(response.data)['id'], -1)
+    
+    def test_get_puzzle(self):
+        pass
+
+    def test_search_puzzles(self):
+        pass
+
+    def test_get_user_info(self):
+        pass
 
 class PostRequestCase(unittest.TestCase):
     def setUp(self):
@@ -81,10 +90,6 @@ class PostRequestCase(unittest.TestCase):
         response = self.t.register("POST_USER", "AnotherValidPassword")
         self.assertEqual(response.status_code, 409)
     
-    def test_create_puzzle(self):
-        response = self.client.post(url_for(route.wordGame), data={"content": "hello world"})
-        #self.assertEqual(response.status_code, 404)
-    
     def test_login_account(self):
         self.t.register("POST_USER", "Valid123456")
 
@@ -96,6 +101,19 @@ class PostRequestCase(unittest.TestCase):
 
         response = self.t.login("POST_USER", "Valid123456")
         self.assertEqual(response.status_code, 200)
+    
+    def test_create_puzzle(self):
+        response = self.client.post(url_for(route.wordGame), data={"content": "hello world"})
+        #self.assertEqual(response.status_code, 404)
+    
+    def test_follow(self):
+        pass
+
+    def test_rate(self):
+        pass
+
+    def test_submit_score(self):
+        pass
         
 
 if __name__ == '__main__':
