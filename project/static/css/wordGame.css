@@ -63,7 +63,7 @@
     padding-right: 10px;
 }
 
-#userButtons button, #submitButton, #closeButton {
+#userButtons button, #submitButton, #closeButton, #exitButton {
     text-align: center;
     margin-top: 0px;
     background-color: rgba(0,0,0,0);
@@ -87,7 +87,7 @@
 
 /* userInput */
  
-#userInputContainer label, #userInput, .wordTile, #userButtons, #submitButton {
+#userInputContainer label, #userInput, .wordTile, #userButtons, #submitButton, #closeButton, #exitButton {
     font-size: 30px;
 }
 
@@ -125,8 +125,9 @@
     margin: 5px auto;
     width: 550px;
     height: 388px;
-    display: column;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
     text-align: center;
 }
@@ -145,6 +146,17 @@
     padding: 0 30px;
 }
 
+#buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+}
+
+#closeButton, #exitButton {
+    width: 100%;
+    box-sizing: border-box;
+}
 
 /* "Matrix" font - modified version of: https://codepen.io/freelesio/pen/MWQaGPb */
 

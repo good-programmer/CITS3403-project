@@ -183,7 +183,7 @@ let Game = {
                     .then(data => {
                         console.log(data);
                         if (data.is_valid) {
-                            // The word is valid, update the submitted words and score
+                            // the word is valid, update the submitted words and score
                             console.log('Valid word');
                             this.submittedWords.push(word);
                             this.updateSubmittedWords();
@@ -280,20 +280,13 @@ window.onload = function() {
 function displayLeaderboard() {
     // hide the game content
     $('#gameContent').hide();
+    $('#userInput').prop('disabled', true);
+    $('#submittedWords').find('div').css('pointer-events', 'none');
 
     // create new div for the leaderboard
     let leaderboardDiv = $('<div>').attr('id', 'leaderboard');
     leaderboardDiv.append($('<h2>').text('LEADERBOARD - PUZZLEID'));
     leaderboardDiv.addClass('container Screen MatrixTextYellow')
-
-    // create a button for closing the leaderboard
-    let closeButton = $('<button>').text('[SHOW PUZZLE]');
-    closeButton.addClass('Screen MatrixTextYellow Button');
-    closeButton.attr('id', 'closeButton');
-
-    // add the close button to the leaderboard div
-    leaderboardDiv.append(closeButton);
-
 
     // create a table
     let table = $('<table>').addClass('leaderboard-table');
@@ -311,13 +304,10 @@ function displayLeaderboard() {
 
     // PLACEHOLDER SCORES
     let scores = [
-        { userID: 'User1', score: 100 },
-        { userID: 'User2', score: 90 },
-        { userID: 'User3', score: 80 },
+        { userID: 'User1', score: 40 },
+        { userID: 'User2', score: 23 },
+        { userID: 'User3', score: 3 },
     ];
-
-    // sort scores
-    scores.sort(function(a, b) { return b.score - a.score; });
 
     // populate score
     for (let i = 0; i < scores.length; i++) {
@@ -335,9 +325,29 @@ function displayLeaderboard() {
     // add leaderboard to page
     $('#gameArea').append(leaderboardDiv);
 
+    // create a button for closing the leaderboard
+    let closeButton = $('<button>').text('[SHOW PUZZLE]');
+    closeButton.addClass('Screen MatrixTextYellow Button');
+    closeButton.attr('id', 'closeButton');
+
+    // create a button for exiting the game
+    let exitButton = $('<button>').text('[EXIT]');
+    exitButton.addClass('Screen MatrixTextYellow Button');
+    exitButton.attr('id', 'exitButton');
+
+    // create a div to contain the buttons
+    let buttonContainer = $('<div>').attr('id', 'buttonContainer');
+    buttonContainer.append(closeButton, exitButton);
+    leaderboardDiv.append(buttonContainer);
+
     $('#closeButton').click(function() {
         $('#leaderboard').remove();
         $('#gameContent').show();
-    
+        $('#shuffleButton').remove();
+        $('#resetButton').remove();
+    });
+
+    $('#exitButton').click(function() {
+        window.location.href = '/profile';
     });
 }
