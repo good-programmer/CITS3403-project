@@ -3,8 +3,7 @@ from datetime import datetime
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
-
+from project import db
 class User(UserMixin, db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
