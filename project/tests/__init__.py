@@ -55,18 +55,12 @@ class TestObject:
 
     def register(self, username, password, confirmpassword=None):
         if not confirmpassword: confirmpassword=password
-        return self.client.post(url_for(route.register), data=dict(
-        username=username,
-        password=password,
-        confirmpassword=confirmpassword
-        ), follow_redirects=True)
+        return self.client.post(url_for(route.register), 
+                                data=dict(username=username,password=password,confirmpassword=confirmpassword), follow_redirects=True)
     
     def login(self, username, password):
-        return self.client.post(url_for(route.login), data=dict(
-        username=username,
-        password=password,
-        remember=True
-        ), follow_redirects=True)
+        return self.client.post(url_for(route.login), 
+                                data=dict(username=username,password=password,remember=True), follow_redirects=True)
 
     def logout(self):
         return self.client.get(url_for(route.logout), follow_redirects=True)

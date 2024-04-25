@@ -82,7 +82,7 @@ class PuzzleModelCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
     
-    def test_account(self):
+    def test_puzzle(self):
         user = user_utils.add_user("MAIN_USER", "132131")
         puzzle = puzzle_utils.add_puzzle("MAIN_PUZZLE", user, "AHSDFADSF")
         self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())
@@ -156,16 +156,24 @@ class PuzzleModelCase(unittest.TestCase):
         puzzle = self.t.get_random_puzzle()
         while len(puzzle.scores) == 0 or len(puzzle.ratings) == 0:
             puzzle = self.t.get_random_puzzle()
+        
+        user = user_utils.add_user("MAIN_USER", "132131")
 
         scores = db.session.query(LeaderboardRecord).filter_by(puzzleID=puzzle.id).all()
-        avg1 = sum(s.score for s in scores) / len(scores)
-        avg2 = puzzle.average_score
-        self.assertEqual(avg1, avg2)
+        s, l = sum(s.score for s in scores), len(scores)
+        avg1 = s / l
+        self.assertEqual(avg1, puzzle.average_score)
+        puzzle.add_record(user, 1000)
+        avg1 = (s + 1000) / (l + 1)
+        self.assertEqual(avg1, puzzle.average_score)
 
         ratings = db.session.query(Rating).filter_by(puzzleID=puzzle.id).all()
-        avg1 = sum(r.rating for r in ratings) / len(ratings)
-        avg2 = puzzle.average_rating
-        self.assertEqual(avg1, avg2)
+        r, l = sum(r.rating for r in ratings), len(ratings)
+        avg1 = r / l
+        self.assertEqual(avg1, puzzle.average_rating)
+        puzzle.add_rating(user, 5)
+        avg1 = (r + 5) / (l + 1)
+        self.assertEqual(avg1, puzzle.average_rating)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
