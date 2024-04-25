@@ -107,6 +107,17 @@
     margin-left: 45px;
 }
 
+#showInstructions {
+    display: block; 
+    margin: 0 auto; 
+    margin-top: 20px;
+}
+
+#instructions {
+    padding: 20px;
+    display: none;
+}
+
 .wordTile {
     display: column;
     align-items: center;
@@ -142,4 +153,9 @@
 .MatrixTextRed {
     color: rgba(225, 125, 125, 0.75);
     text-shadow: 0 0 5px rgba(225,125,125,0.5), 0 0 15px rgba(225,125,125,1);
+}
+
+.puzzleFormContainer {
+    margin: 0 auto; 
+    text-align: center; 
 }
