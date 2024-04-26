@@ -5,4 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %} {% endblock %}</title>
   </head>
+  <body>
+    <div class="header">
+      <a href="{{ url_for('main.index') }}">Home</a>
+      <a href="{{ url_for('game.wordGame')}}">Word Game</a>
+      {% if current_user.is_anonymous %}
+      <a href="{{ url_for('auth.login') }}">Login</a>
+      <a href="{{ url_for('auth.register') }}">Register</a>
+      {% else %}
+      <a href="{{ url_for('game.submitpuzzle') }}">Submit Puzzle</a>
+      <a href="{{ url_for('main.profile') }}">Profile</a>
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
+      {% endif %}
+    </div>
+    <hr>
+    {% block content %} {% endblock %}
+  </body>
 </html>
