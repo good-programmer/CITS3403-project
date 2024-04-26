@@ -7,12 +7,16 @@ from . import route_utils as route
 def validate_user_information(name, password):
     
     if len(name) < 3:
-        flash('Username must be 3 characters or longer')
-        return redirect(url_for(route.register))
+        #flash('Username must be 3 characters or longer')
+        #return redirect(url_for(route.register))
+        return False, 'Username must be 3 characters or longer'
     
     if len(password) < 4:
-        flash('Password must be 4 characters or longer')
-        return redirect(url_for(route.register))
+        #flash('Password must be 4 characters or longer')
+        #return redirect(url_for(route.register))
+        return False, 'Password must be 4 characters or longer'
+    
+    return True, ''
     
 # Function to check puzzle submit input string for non-alphabetical characters and length
 def validate_puzzle_submit(input):

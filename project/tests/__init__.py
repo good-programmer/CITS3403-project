@@ -1,7 +1,9 @@
 import sqlalchemy
 
+from flask import url_for
+
 from project.blueprints.models import User, Follow, Puzzle
-from project.utils import user_utils, puzzle_utils
+from project.utils import user_utils, puzzle_utils, route_utils as route
 
 import random
 import string
@@ -15,6 +17,9 @@ class TestObject:
     def __init__(self, app, db):
         self.app = app
         self.db = db
+    
+    def add_test_client(self, client):
+         self.client = client
 
     def generate_users(self):
         for i in range(numUsers):
@@ -47,3 +52,15 @@ class TestObject:
                 user = self.get_random_user()
                 if not puzzle.has_rating(user):
                     puzzle.add_rating(user, random.randrange(0, 10) / 2)
+
+    def register(self, username, password, confirmpassword=None):
+        if not confirmpassword: confirmpassword=password
+        return self.client.post(url_for(route.register), 
+                                data=dict(username=username,password=password,confirmpassword=confirmpassword), follow_redirects=True)
+    
+    def login(self, username, password):
+        return self.client.post(url_for(route.login), 
+                                data=dict(username=username,password=password,remember=True), follow_redirects=True)
+
+    def logout(self):
+        return self.client.get(url_for(route.logout), follow_redirects=True)
