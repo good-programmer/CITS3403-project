@@ -7,8 +7,8 @@ from project import db
 class User(UserMixin, db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(1000), unique=True)
-    password = db.Column(db.String(100))
+    name = db.Column(db.String(1000), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
 
     following = db.relationship("Follow", back_populates="follower", foreign_keys='Follow.followerID')
     followers = db.relationship("Follow", back_populates="user", foreign_keys='Follow.userID')
@@ -43,8 +43,8 @@ class User(UserMixin, db.Model):
 class Puzzle(db.Model):
     __tablename__ = 'Puzzles'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(1000))
-    creatorID = db.Column(db.Integer, db.ForeignKey('Users.id'))
+    title = db.Column(db.String(1000), nullable=False)
+    creatorID = db.Column(db.Integer, db.ForeignKey('Users.id'), nullable=False)
     creator = db.relationship("User", foreign_keys=[creatorID], back_populates="puzzles")
     dateCreated = db.Column(db.DateTime)
     content = db.Column(db.Text)
@@ -130,7 +130,7 @@ class Rating(db.Model):
     puzzleID = db.Column(db.Integer, db.ForeignKey('Puzzles.id'), primary_key=True)
     user = db.relationship("User", foreign_keys=[userID], back_populates="ratings")
     puzzle = db.relationship("Puzzle", foreign_keys=[puzzleID], back_populates="ratings")
-    rating = db.Column(db.Float)
+    rating = db.Column(db.Float, nullable=False)
     dateRated = db.Column(db.DateTime)
 
     def __repr__(self):
@@ -148,7 +148,7 @@ class LeaderboardRecord(db.Model):
     puzzleID = db.Column(db.Integer, db.ForeignKey('Puzzles.id'), primary_key=True)
     user = db.relationship("User", foreign_keys=[userID], back_populates="scores")
     puzzle = db.relationship("Puzzle", foreign_keys=[puzzleID], back_populates="scores")
-    score = db.Column(db.Integer)
+    score = db.Column(db.Integer, nullable=False)
     dateSubmitted = db.Column(db.DateTime)
 
     def __repr__(self):
