@@ -7,9 +7,6 @@
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
             <link rel="stylesheet" type="text/css" href="../static/css/wordGame.css">
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-            <!--
-            <link rel="stylesheet" type="text/css" href="../static/css/submitpuzzle.css">
-            -->
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
             <script src="../static/js/submitpuzzle.js"></script>
         </head>
@@ -34,6 +31,15 @@
                 Example: inputting 'asdkflkasc' as a puzzle. Users can then submit answers based on this string, e.g. 'flask'. 
                 String length is limited too **DECIDED BETWEEN GROUP LATER [SEE submitpuzzle.js]** and cannot contain special characters * . , - etc.
             </p>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} MatrixTextRed" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             {% endblock %}
         </body>
   

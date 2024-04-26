@@ -2,7 +2,7 @@ from flask import Blueprint, request, render_template, jsonify, json, url_for, r
 from .models import db
 from flask_login import login_required, current_user
 
-from ..utils import game_utils, puzzle_utils, route_utils as route
+from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
 
 game = Blueprint('game', __name__)
@@ -31,9 +31,12 @@ def submitpuzzle():
     if request.method == 'POST':
         fget = request.form.get
         puzzlename, content = fget('puzzlename'), fget('puzzle')
-        puzzle_utils.add_puzzle(puzzlename, current_user, content)
-        
-        print("Added:" + puzzlename)
-        return redirect(url_for(route.index))
+        content = content.lower()
+        if auth_utils.validate_puzzle_submit(content):
+            puzzle_utils.add_puzzle(puzzlename, current_user, content)
+            print("Added:" + puzzlename)
+            return redirect(url_for(route.index))
+        else:
+            return render_template('submitpuzzle.html')
     else:
         return render_template('submitpuzzle.html')
