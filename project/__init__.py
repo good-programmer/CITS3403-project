@@ -1,23 +1,30 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_migrate import Migrate
+
 from .config import Config
 
-from .blueprints.main import main
-from .blueprints.auth import auth
-from .blueprints.game import game
-
 from .utils import route_utils as route
+
+db = SQLAlchemy()
+migrate = Migrate(directory=Config.MIGRATION_DIR)
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-
-    from .blueprints.models import db
+    
     db.init_app(app)
+    migrate.init_app(app, db)
+
+    from .blueprints import models
 
     with app.app_context():
         db.create_all()
+    
+    from .blueprints.main import main
+    from .blueprints.auth import auth
+    from .blueprints.game import game
     
     app.register_blueprint(main)
     app.register_blueprint(auth)

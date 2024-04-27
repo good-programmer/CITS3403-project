@@ -30,3 +30,5 @@ The search page features:
 
 To run tests, execute `run_tests.py` from CLI in the `RequestProject` directory, i.e. `cd RequestProject; python3 run_tests.py`
 Alternatively, you can execute the command `python3 -m unittest discover project/tests` from the same directory.
+
+To migrate a database when `models.py` is updated (i.e. when the schema is changed), run `flask db migrate`, then `flask db upgrade`.
