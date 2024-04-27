@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, User
 from flask_login import login_user, login_required, logout_user, current_user
@@ -62,7 +62,7 @@ def logout():
     return redirect(url_for(route.index))
 
 @auth.route('/user/current')
-def getuser():
+def currentuser():
     if current_user.is_authenticated:
         return {
             "id": current_user.id,
@@ -70,3 +70,17 @@ def getuser():
         }
     else:
         return {"id": -1, "username": ""}
+
+@auth.route('/user/<userid>')
+def getuser(userid):
+    user = user_utils.get_user(id=userid)
+    if user:
+        return {
+            "id": user.id,
+            "username": user.name,
+            "followers": [{"id": u.followerID, "name": u.follower.name} for u in user.followers],
+            "following": [{"id": u.userID, "name": u.user.name} for u in user.following],
+            "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in user.scores],
+            "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": r.dateRated.ctime()} for r in user.ratings]
+        }
+    abort(404)

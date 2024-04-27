@@ -12,5 +12,5 @@ def get_puzzle(title=None, id=None):
     if title:
         puzzle = Puzzle.query.filter_by(title=title).first()
     if id:
-        puzzle = Puzzle.query.get(id).first()
+        puzzle = Puzzle.query.filter_by(id=id).first()
     return puzzle

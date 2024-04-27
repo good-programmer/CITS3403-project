@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect
+from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort
 from .models import db
 from flask_login import login_required, current_user
 
@@ -28,6 +28,8 @@ def solve():
 
 @game.route('/puzzle/create', methods=['GET','POST'])
 def submitpuzzle():
+    if not current_user.is_authenticated:
+        abort(401)
     if request.method == 'POST':
         fget = request.form.get
         puzzlename, content = fget('puzzlename'), fget('puzzle')
@@ -40,3 +42,27 @@ def submitpuzzle():
             return render_template('submitpuzzle.html')
     else:
         return render_template('submitpuzzle.html')
+    
+@game.route('/puzzle/<puzzleid>', methods=['GET'])
+def getpuzzle(puzzleid):
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    if puzzle:
+        data = {
+            "id": puzzle.id,
+            "title": puzzle.title,
+            "content": puzzle.content,
+            "creatorID": puzzle.creatorID,
+            "dateCreated": puzzle.dateCreated.ctime(),
+            "scores": [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in puzzle.scores],
+            "average_score": puzzle.average_score,
+            "average_rating": puzzle.average_rating
+        }
+        if current_user.is_authenticated:
+            if puzzle.has_rating(current_user):
+                r = puzzle.get_rating(current_user)
+                data['rated'] = {"rating": r.rating, "dateRated": r.dateRated.ctime()}
+            if puzzle.has_record(current_user):
+                s = puzzle.get_record(current_user)
+                data['score'] = {"score": s.score, "dateSubmitted": s.dateSubmitted.ctime()}
+        return data
+    abort(404)

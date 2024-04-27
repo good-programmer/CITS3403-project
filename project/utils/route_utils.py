@@ -5,12 +5,17 @@ class Group:
 index = 'main.index'
 login = 'auth.login'
 logout = 'auth.logout'
-getuser = 'auth.getuser'
 register = 'auth.register'
 profile = 'main.profile'
 wordGame = 'game.wordGame'
 solve = 'game.solve'
 
 puzzle = Group(
-    create='game.create'
+    create='game.submitpuzzle',
+    get='game.getpuzzle'
+)
+
+user = Group(
+    current = 'auth.currentuser',
+    get = 'auth.getuser',
 )

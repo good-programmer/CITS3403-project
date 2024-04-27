@@ -34,7 +34,7 @@ class GetRequestCase(unittest.TestCase):
             route.logout: 302,
             route.wordGame: 200,
             route.solve: 405,
-            route.getuser: 200
+            route.user.current: 200
         }
         for path, code in expected.items():
             response = self.client.get(url_for(path))
@@ -45,24 +45,94 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url_for(route.profile))
         self.assertEqual(response.status_code, 200)
-        response = self.client.get(url_for(route.getuser))
+        response = self.client.get(url_for(route.user.current))
         data = json.loads(response.data)
         self.assertIsNotNone(data)
         self.assertEqual(data['id'], user.id)
         self.assertEqual(data['username'], user.name)
         response = self.client.get(url_for(route.logout))
         self.assertEqual(response.status_code, 302)
-        response = self.client.get(url_for(route.getuser))
+        response = self.client.get(url_for(route.user.current))
         self.assertEqual(json.loads(response.data)['id'], -1)
     
     def test_get_puzzle(self):
-        pass
+        user = user_utils.add_user("GET_USER", "123")
+        puzzle = puzzle_utils.add_puzzle(title="ENDPOINT_TEST_PUZZLE", creator=user, content="ABCDEFGHI")
+        response = self.client.get(url_for(route.puzzle.get, puzzleid=puzzle.id))
+        data = json.loads(response.data)
+        self.assertIsNotNone(data)
+        self.assertEqual(data['id'], puzzle.id)
+        self.assertEqual(data['title'], puzzle.title)
+        self.assertEqual(data['content'], puzzle.content)
+        self.assertEqual(data['dateCreated'], puzzle.dateCreated.ctime())
+        self.assertEqual(data['creatorID'], puzzle.creatorID)
+        self.assertEqual(data['average_rating'], puzzle.average_rating)
+        self.assertEqual(data['average_score'], puzzle.average_score)
+        response = self.client.get(url_for(route.puzzle.get, puzzleid=-1))
+        self.assertEqual(response.status_code, 404)
 
     def test_search_puzzles(self):
         pass
 
     def test_get_user_info(self):
-        pass
+        user = user_utils.add_user("GET_USER", "123")
+        response = self.client.get(url_for(route.user.get, userid=user.id))
+        data = json.loads(response.data)
+        self.assertIsNotNone(data)
+        self.assertEqual(data['id'], user.id)
+        self.assertEqual(data['username'], user.name)
+    
+    def test_get_user_follows(self):
+        user = user_utils.add_user("GET_USER", "123")
+        f1 = user_utils.add_user("GET_FOLLOWER1", "123")
+        f2 = user_utils.add_user("GET_FOLLOWER2", "123")
+        f3 = user_utils.add_user("GET_FOLLOWER3", "123")
+        f1.follow_user(user)
+        f2.follow_user(user)
+        f3.follow_user(user)
+        user.follow_user(f1)
+        user.follow_user(f2)
+        user.follow_user(f3)
+
+        response = self.client.get(url_for(route.user.get, userid=user.id))
+        data = json.loads(response.data)
+        self.assertIsNotNone(data)
+        self.assertListEqual(data['followers'], [{"id": u.followerID, "name": u.follower.name} for u in user.followers])
+        self.assertListEqual(data['following'], [{"id": u.userID, "name": u.user.name} for u in user.following])
+    
+    def test_get_user_scores(self):
+        user = user_utils.add_user("GET_USER1", "123")
+        puzzle1 = puzzle_utils.add_puzzle("GET_PUZZLE1", user, "ABCEFGHJI")
+        puzzle2 = puzzle_utils.add_puzzle("GET_PUZZLE2", user, "ABCEFGHJI")
+        puzzle1.add_record(user, 30)
+        puzzle2.add_record(user, 20)
+        response = self.client.get(url_for(route.user.get, userid=user.id))
+        data = json.loads(response.data)
+        self.assertIsNotNone(data)
+        self.assertListEqual(data['scores'], [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in user.scores])
+        self.t.login("GET_USER1", "123")
+        response = self.client.get(url_for(route.puzzle.get, puzzleid=puzzle1.id))
+        data = json.loads(response.data)
+        self.assertIsNotNone(data)
+        self.assertIsNotNone(data['score'])
+        self.assertEqual(data['score']['score'], 30)
+
+    def test_get_user_ratings(self):
+        user = user_utils.add_user("GET_USER1", "123")
+        puzzle1 = puzzle_utils.add_puzzle("GET_PUZZLE1", user, "ABCEFGHJI")
+        puzzle2 = puzzle_utils.add_puzzle("GET_PUZZLE2", user, "ABCEFGHJI")
+        puzzle1.add_rating(user, 3)
+        puzzle2.add_rating(user, 2)
+        response = self.client.get(url_for(route.user.get, userid=user.id))
+        data = json.loads(response.data)
+        self.assertIsNotNone(data)
+        self.assertListEqual(data['ratings'], [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": r.dateRated.ctime()} for r in user.ratings])
+        self.t.login("GET_USER1", "123")
+        response = self.client.get(url_for(route.puzzle.get, puzzleid=puzzle1.id))
+        data = json.loads(response.data)
+        self.assertIsNotNone(data)
+        self.assertIsNotNone(data['rated'])
+        self.assertEqual(data['rated']['rating'], 3)
 
 class PostRequestCase(unittest.TestCase):
     def setUp(self):
@@ -110,7 +180,17 @@ class PostRequestCase(unittest.TestCase):
         self.assertEqual(url_for(route.profile), response.request.path)
     
     def test_create_puzzle(self):
-        pass
+        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ABCDEFGHI"), follow_redirects=True)
+        self.assertEqual(response.status_code, 401)
+        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ALKJLKLKJLKLKJLKJBCDEFGHI"), follow_redirects=True)
+        self.assertEqual(url_for(route.puzzle.create), response.request.path)
+
+        self.t.register("POST_USER", "Valid123456")
+        response = self.t.login("POST_USER", "Valid123456")
+        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHI"), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(url_for(route.index), response.request.path)
+        self.assertIsNotNone(puzzle_utils.get_puzzle("ENDPOINT_TEST_PUZZLE"))
     
     def test_follow(self):
         pass

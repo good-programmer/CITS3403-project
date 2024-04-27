@@ -16,5 +16,5 @@ def get_user(name=None, id=None):
     if name:
         user = User.query.filter_by(name=name).first()
     if id:
-        user = User.query.get(id).first()
+        user = User.query.filter_by(id=id).first()
     return user
