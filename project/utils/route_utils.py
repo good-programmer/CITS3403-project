@@ -18,5 +18,6 @@ puzzle = Group(
 user = Group(
     current = 'auth.currentuser',
     get = 'auth.getuser',
-    follow = 'auth.followuser'
+    follow = 'auth.followuser',
+    unfollow = 'auth.unfollowuser'
 )

@@ -75,7 +75,7 @@ def currentuser():
 def getuser(userid):
     user = user_utils.get_user(id=userid)
     if user:
-        return {
+        data = {
             "id": user.id,
             "username": user.name,
             "followers": [{"id": u.followerID, "name": u.follower.name} for u in user.followers],
@@ -83,6 +83,9 @@ def getuser(userid):
             "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in user.scores],
             "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": r.dateRated.ctime()} for r in user.ratings]
         }
+        if current_user.is_authenticated:
+            data['is_following'] = current_user.is_following(user)
+        return data
     abort(404)
 
 @auth.route('/user/follow', methods=["POST"])
@@ -95,4 +98,16 @@ def followuser():
             abort(400)
         else:
             current_user.follow_user(user)
+            return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200
+
+@auth.route('/user/unfollow', methods=["POST"])
+def unfollowuser():
+    if not current_user.is_authenticated:
+        abort(401)
+    user = user_utils.get_user(id=request.values['id'])
+    if user:
+        if not current_user.is_following(user):
+            abort(400)
+        else:
+            current_user.unfollow_user(user)
             return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200
