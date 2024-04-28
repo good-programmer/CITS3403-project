@@ -61,7 +61,7 @@ def logout():
     logout_user()
     return redirect(url_for(route.index))
 
-@auth.route('/user/current')
+@auth.route('/user/current', methods=["GET"])
 def currentuser():
     if current_user.is_authenticated:
         return {
@@ -71,7 +71,7 @@ def currentuser():
     else:
         return {"id": -1, "username": ""}
 
-@auth.route('/user/<userid>')
+@auth.route('/user/<userid>', methods=["GET"])
 def getuser(userid):
     user = user_utils.get_user(id=userid)
     if user:
@@ -84,3 +84,15 @@ def getuser(userid):
             "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": r.dateRated.ctime()} for r in user.ratings]
         }
     abort(404)
+
+@auth.route('/user/follow', methods=["POST"])
+def followuser():
+    if not current_user.is_authenticated:
+        abort(401)
+    user = user_utils.get_user(id=request.values['id'])
+    if user:
+        if current_user.is_following(user):
+            abort(400)
+        else:
+            current_user.follow_user(user)
+            return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200

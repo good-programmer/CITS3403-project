@@ -144,6 +144,7 @@ class PostRequestCase(unittest.TestCase):
         db.create_all()
 
     def tearDown(self):
+        self.t.logout()
         db.session.remove()
         db.drop_all()
         self.app_context.pop()
@@ -193,7 +194,15 @@ class PostRequestCase(unittest.TestCase):
         self.assertIsNotNone(puzzle_utils.get_puzzle("ENDPOINT_TEST_PUZZLE"))
     
     def test_follow(self):
-        pass
+        user1 = user_utils.add_user("POST_USER1", "123")
+        user2 = user_utils.add_user("POST_USER2", "123")
+        response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
+        self.assertEqual(response.status_code, 401)
+        self.t.login("POST_USER1","123")
+        response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(user1.is_following(user2))
+        self.assertTrue(user1.id in [u.followerID for u in user2.followers])
 
     def test_rate(self):
         pass
