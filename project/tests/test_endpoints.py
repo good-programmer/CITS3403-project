@@ -176,17 +176,19 @@ class PostRequestCase(unittest.TestCase):
         \nTests that an invalid credentials or a taken username correctly redirects back to the registration page.
         \nTests that valid credentials and successful registration correctly redirects to login page.
         '''
+        #invalid password
         response = self.t.register("POST_USER", "123")
-        
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(user_utils.get_user("POST_USER"))
         self.assertEqual(url_for(route.register), response.request.path)
 
+        #successful register
         response = self.t.register("POST_USER", "Valid123456")
         self.assertEqual(response.status_code, 200)
         self.assertIsNotNone(user_utils.get_user("POST_USER"))
         self.assertEqual(url_for(route.login), response.request.path)
 
+        #taken username
         response = self.t.register("POST_USER", "AnotherValidPassword")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(url_for(route.register), response.request.path)
@@ -198,14 +200,17 @@ class PostRequestCase(unittest.TestCase):
         '''
         self.t.register("POST_USER", "Valid123456")
 
+        #invalid username
         response = self.t.login("INVALID_POST_USER", "Valid123456")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(url_for(route.login), response.request.path)
 
+        #invalid password
         response = self.t.login("POST_USER", "Invalid")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(url_for(route.login), response.request.path)
 
+        #correct credentials
         response = self.t.login("POST_USER", "Valid123456")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(url_for(route.profile), response.request.path)
@@ -216,11 +221,13 @@ class PostRequestCase(unittest.TestCase):
         \nTests that an unauthenticated user cannot create a puzzle.
         \nTests that an authenticated user can create a puzzle, that the status code is correct, and that they are redirected correctly.
         '''
+        #unauthenticated case
         response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ABCDEFGHI"), follow_redirects=True)
         self.assertEqual(response.status_code, 401)
         response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ALKJLKLKJLKLKJLKJBCDEFGHI"), follow_redirects=True)
         self.assertEqual(url_for(route.puzzle.create), response.request.path)
 
+        #authenticated case
         self.t.register("POST_USER", "Valid123456")
         response = self.t.login("POST_USER", "Valid123456")
         response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHI"), follow_redirects=True)
@@ -238,27 +245,57 @@ class PostRequestCase(unittest.TestCase):
         user1 = user_utils.add_user("POST_USER1", "123")
         user2 = user_utils.add_user("POST_USER2", "123")
         
+        #unauthenticated case
         response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
         self.assertEqual(response.status_code, 401)
         response = self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True)
         self.assertEqual(response.status_code, 401)
 
+        #valid cases
         self.t.login("POST_USER1","123")
         response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(user1.is_following(user2))
         self.assertTrue(user1.id in [u.followerID for u in user2.followers])
+        #error case (follow)
         response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
         self.assertEqual(response.status_code, 400)
         response = self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(user1.is_following(user2))
         self.assertFalse(user1.id in [u.followerID for u in user2.followers])
+        #error case (unfollow)
         response = self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True)
         self.assertEqual(response.status_code, 400)
 
     def test_rate(self):
-        pass
+        '''
+        Tests the /puzzle/<puzzleid>/rate endpoint.
+        \nTests a user's ability to rate a puzzle if they are logged in and have completed it (and errors if not).
+        \nTests that the returned average is equal to the new average rating.
+        '''
+        user = user_utils.add_user("POST_USER", "123")
+        __ = user_utils.add_user("__", "123")
+        puzzle = puzzle_utils.add_puzzle("POST_PUZZLE", __, "ABCEFGHJI")
+        puzzle.add_record(__, 30)
+        puzzle.add_rating(__, 5)
+
+        #unauthenticated case
+        response = self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True)
+        self.assertEqual(response.status_code, 401)
+        #uncompleted case
+        self.t.login("POST_USER", "123")
+        response = self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True)
+        self.assertEqual(response.status_code, 401)
+        #correct case
+        puzzle.add_record(user, 50)
+        response = self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        #test average
+        self.assertEqual(json.loads(response.data)['average_rating'], puzzle.average_rating)
+        #404 (invalid puzzle) case
+        response = self.client.post(url_for(route.puzzle.rate, puzzleid=-1), data=dict(rating=2), follow_redirects=True)
+        self.assertEqual(response.status_code, 404)
 
     def test_submit_score(self):
         pass
