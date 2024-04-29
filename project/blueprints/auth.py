@@ -58,11 +58,19 @@ def register_post():
 @auth.route('/logout')
 @login_required
 def logout():
+    '''
+    If logged in, logs out the current user.
+    '''
     logout_user()
     return redirect(url_for(route.index))
 
 @auth.route('/user/current', methods=["GET"])
 def currentuser():
+    '''
+    Retrieves the username and id of the current authenticated user.
+    \n-id
+    \n-username
+    '''
     if current_user.is_authenticated:
         return {
             "id": current_user.id,
@@ -73,6 +81,16 @@ def currentuser():
 
 @auth.route('/user/<userid>', methods=["GET"])
 def getuser(userid):
+    '''
+    Retrieves the public information of a given user by their id.
+    \n-id
+    \n-username
+    \n-followers
+    \n-following
+    \n-scores
+    \n-ratings
+    \nIf current user is authenticated, also retrieves their followage to this user.
+    '''
     user = user_utils.get_user(id=userid)
     if user:
         data = {
@@ -90,6 +108,10 @@ def getuser(userid):
 
 @auth.route('/user/follow', methods=["POST"])
 def followuser():
+    '''
+    Allows the current authenticated user to follow another user by id.
+    Requires a POST request to the endpoint containing key-pair [id=userID]
+    '''
     if not current_user.is_authenticated:
         abort(401)
     user = user_utils.get_user(id=request.values['id'])
@@ -102,6 +124,10 @@ def followuser():
 
 @auth.route('/user/unfollow', methods=["POST"])
 def unfollowuser():
+    '''
+    Allows the current authenticated user to unfollow another user by id.
+    Requires a POST request to the endpoint containing key-pair [id=userID]
+    '''
     if not current_user.is_authenticated:
         abort(401)
     user = user_utils.get_user(id=request.values['id'])

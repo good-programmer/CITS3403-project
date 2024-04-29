@@ -22,6 +22,12 @@ class UserModelCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_account(self):
+        '''
+        Tests user_utils.py functions
+        \nadd_user
+        \nverify_user
+        \nget_user
+        '''
         current_user = user_utils.add_user("MAIN_USER", "132131")
         self.assertIsNotNone(db.session.query(User).filter_by(id=current_user.id).first())
         self.assertIsNotNone(user_utils.verify_user("MAIN_USER"))
@@ -32,6 +38,10 @@ class UserModelCase(unittest.TestCase):
         self.assertRaises(exc.IntegrityError, user_utils.add_user, "MAIN_USER", "789")
 
     def test_follow_integrity(self):
+        '''
+        Tests the integrity of the database (in particular, the unique constraint).
+        \nTests that the follow and unfollow methods of User work as expected.
+        '''
         current_user = user_utils.add_user("MAIN_USER", "132131")
         u2 = user_utils.add_user("TEST2", "123")
         u2.follow_user(current_user)
@@ -42,6 +52,10 @@ class UserModelCase(unittest.TestCase):
         self.assertFalse(u2.unfollow_user(current_user))
 
     def test_follow(self):
+        '''
+        Tests that the relationship between User and Follow ORMs is correct and appends followers correctly.
+        \nTests the is_following method of User
+        '''
         current_user = user_utils.add_user("MAIN_USER", "132131")
         
         for i in range(20):
@@ -72,10 +86,6 @@ class PuzzleModelCase(unittest.TestCase):
         db.create_all()
         t = TestObject(app, db)
         self.t = t
-        t.generate_users()
-        t.generate_puzzles()
-        t.generate_scores()
-        t.generate_ratings()
 
     def tearDown(self):
         db.session.remove()
@@ -83,6 +93,9 @@ class PuzzleModelCase(unittest.TestCase):
         self.app_context.pop()
     
     def test_puzzle(self):
+        '''
+        Tests puzzle_utils functions for correctness.
+        '''
         user = user_utils.add_user("MAIN_USER", "132131")
         puzzle = puzzle_utils.add_puzzle("MAIN_PUZZLE", user, "AHSDFADSF")
         self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())
@@ -90,6 +103,11 @@ class PuzzleModelCase(unittest.TestCase):
         self.assertIsNotNone(puzzle_utils.get_puzzle("MAIN_PUZZLE"))
     
     def test_create(self):
+        '''
+        Tests the relationship between User and Puzzle in the ORM.
+        \nTests that when a puzzle is created, its details are accurate.
+        '''
+        self.t.generate_users()
         user = self.t.get_random_user()
         current_time = datetime.now()
         puzzle = puzzle_utils.add_puzzle(title = "TEST_PUZZLE", creator=user, content="QWOISAD")
@@ -102,12 +120,15 @@ class PuzzleModelCase(unittest.TestCase):
         self.assertIn(puzzle, user.puzzles)
     
     def test_score(self):
+        '''
+        Tests *_record methods of User for correctness and integrity.
+        '''
+        self.t.generate_users()
+        self.t.generate_puzzles()
+        self.t.generate_scores()
         puzzle = self.t.get_random_puzzle()
         user = user_utils.add_user("MAIN_USER", "132131")
         before = puzzle.scores.copy()
-
-        #print(puzzle.title + ": " + str(puzzle.scores))
-        #print(user.name + ": " + str(user.scores))
 
         self.assertFalse(puzzle.has_record(user))
         puzzle.add_record(user, 10)
@@ -129,6 +150,12 @@ class PuzzleModelCase(unittest.TestCase):
         self.assertListEqual(before, puzzle.scores)
     
     def test_rating(self):
+        '''
+        Tests *_rating methods of User for correctness and integrity.
+        '''
+        self.t.generate_users()
+        self.t.generate_puzzles()
+        self.t.generate_ratings()
         puzzle = self.t.get_random_puzzle()
         user = user_utils.add_user("MAIN_USER", "132131")
         before = puzzle.ratings.copy()
@@ -153,6 +180,16 @@ class PuzzleModelCase(unittest.TestCase):
         self.assertListEqual(before, puzzle.ratings)
     
     def test_averages(self):
+        '''
+        Tests the average properties of Puzzle.
+        \nTests that average_score is equivalent to the sum of scores divided by the number.
+        \nTests that average_rating is equivalent to the sum of ratings divided by the number.
+        \nTests that updating with new data is correctly reflected in a change in average.
+        '''
+        self.t.generate_users()
+        self.t.generate_puzzles()
+        self.t.generate_scores()
+        self.t.generate_ratings()
         puzzle = self.t.get_random_puzzle()
         while len(puzzle.scores) == 0 or len(puzzle.ratings) == 0:
             puzzle = self.t.get_random_puzzle()
