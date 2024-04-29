@@ -1,10 +1,13 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from ..blueprints.models import db, User, Puzzle
 
+from project.config import Config
+
 def add_puzzle(title, creator, content):
     puzzle = Puzzle(title=title, creator=creator, content=content)
     db.session.add(puzzle)
-    db.session.commit()
+    if not Config.TESTING:
+        db.session.commit()
     return puzzle
 
 def get_puzzle(title=None, id=None):

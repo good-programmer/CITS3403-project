@@ -60,7 +60,6 @@ class UserModelCase(unittest.TestCase):
         
         for i in range(20):
             user_utils.add_user("TEST_FOLLOWER" + str(i), "123").follow_user(current_user)
-        db.session.commit()
 
         f1 = db.session.query(Follow).filter_by(userID=current_user.id).all()
         f2 = db.session.query(User).filter_by(id=current_user.id).first().followers

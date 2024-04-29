@@ -4,6 +4,12 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
 from project import db
+
+from project.config import Config
+
+def commit():
+    if not Config.TESTING:
+        db.session.commit()
 class User(UserMixin, db.Model):
     __tablename__ = 'Users'
     id = db.Column(db.Integer, primary_key=True)
@@ -19,7 +25,7 @@ class User(UserMixin, db.Model):
     def follow_user(self, user):
         follow = Follow(userID=user.id, followerID=self.id)
         db.session.add(follow)
-        db.session.commit()    
+        commit()    
     
     def is_following(self, user):
         return user.id in [u.userID for u in self.following]
@@ -27,7 +33,7 @@ class User(UserMixin, db.Model):
     def unfollow_user(self, user):
         if self.is_following(user):
                 db.session.query(Follow).filter( (Follow.followerID==self.id) & (Follow.userID==user.id) ).delete()
-                db.session.commit()
+                commit()
                 return True
         return False
     
@@ -73,7 +79,7 @@ class Puzzle(db.Model):
     def add_record(self, user, score):
         score = LeaderboardRecord(user, self, score)
         db.session.add(score)
-        db.session.commit()
+        commit()
 
     def has_record(self, user):
         return user.id in [u.userID for u in self.scores]
@@ -86,21 +92,21 @@ class Puzzle(db.Model):
     def update_record(self, user, score):
         if self.has_record(user):
             self.get_record(user).score = score 
-            db.session.commit()
+            commit()
             return True
         return False
     
     def remove_record(self, user):
         if self.has_record(user):
             db.session.query(LeaderboardRecord).filter( (LeaderboardRecord.userID==user.id) & (LeaderboardRecord.puzzleID==self.id) ).delete()
-            db.session.commit()
+            commit()
             return True
         return False
     
     def add_rating(self, user, rating):
         rating = Rating(user, self, rating)
         db.session.add(rating)
-        db.session.commit()
+        commit()
 
     def has_rating(self, user):
         return user.id in [u.userID for u in self.ratings]
@@ -113,14 +119,14 @@ class Puzzle(db.Model):
     def update_rating(self, user, rating):
         if self.has_rating(user):
             self.get_rating(user).rating = rating 
-            db.session.commit()
+            commit()
             return True
         return False
     
     def remove_rating(self, user):
         if self.has_rating(user):
             db.session.query(Rating).filter( (Rating.userID==user.id) & (Rating.puzzleID==self.id) ).delete()
-            db.session.commit()
+            commit()
             return True
         return False
 
