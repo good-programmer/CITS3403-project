@@ -21,21 +21,52 @@ class TestObject:
     numScores = 5
     numRatings = 3
 
+    identifier = '$'
+
     def __init__(self, app, db):
         self.app = app
         self.db = db
+        self.meta = sqlalchemy.MetaData()
+        self.meta.reflect(bind=db.engine)
+        self.numUsers = TestObject.numUsers
+        self.numPuzzles = TestObject.numPuzzles
+        self.numScores = TestObject.numScores
+        self.numRatings = TestObject.numRatings
+        self.identifier = TestObject.identifier
     
     def commit_db(self):
         if not Config.TESTING:
             self.db.session.commit()
-        #self.db.session.commit()
+    
+    def clear_db(self, all=False):
+        self.db.session.remove()
+        if all:
+            for table in reversed(self.meta.sorted_tables):
+                self.db.session.query(table).delete()
+            self.commit_db()
+            return
+        delete_users = [u.id for u in User.query.filter(~(User.name.contains(self.identifier))).all()]
+        delete_puzzles = [p.id for p in Puzzle.query.filter(~(Puzzle.title.contains(self.identifier))).all()]
+        for table in reversed(self.meta.sorted_tables):
+            attrs = [a.name for a in table._columns.values()]
+            if 'puzzleID' in attrs:
+                self.db.session.query(table).filter(table.c.puzzleID.in_(delete_puzzles)).delete()
+            if 'userID' in attrs:
+                self.db.session.query(table).filter(table.c.userID.in_(delete_users)).delete()
+            if 'followerID' in attrs:
+                self.db.session.query(table).filter(table.c.followerID.in_(delete_users)).delete()
+            if table.name == 'Users':
+                self.db.session.query(table).filter(table.c.id.in_(delete_users)).delete()
+            if table.name == 'Puzzles':
+                self.db.session.query(table).filter(table.c.id.in_(delete_puzzles)).delete()
+        self.commit_db()
     
     def add_test_client(self, client):
          self.client = client
 
     def generate_users(self):
         for i in range(TestObject.numUsers):
-                user_utils.add_user("GENERATED_USER_" + str(i), "123")
+                user_utils.add_user(self.identifier + "GENERATED_USER_" + str(i), "123")
 
     def get_random_user(self) -> User:
         return self.db.session.query(User).order_by(sqlalchemy.func.random()).first()
@@ -44,7 +75,7 @@ class TestObject:
          for i in range(TestObject.numPuzzles):
                 user = self.get_random_user()
                 content = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
-                puzzle = puzzle_utils.add_puzzle(title = "GENERATED_PUZZLE_" + str(i), creator=user, content=content)
+                puzzle = puzzle_utils.add_puzzle(title = self.identifier + "GENERATED_PUZZLE_" + str(i), creator=user, content=content)
                 puzzle.dateCreated = random_date(datetime.datetime(year=2000, month=1, day=1), datetime.datetime.now())
                 self.commit_db()
 

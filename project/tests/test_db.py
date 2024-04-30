@@ -18,15 +18,11 @@ class UserModelCase(unittest.TestCase):
         cls.app_context = app.app_context()
         cls.app_context.push()
         db.create_all()
-        cls.meta = MetaData()
-        cls.meta.reflect(bind=db.engine)
+        cls.t = TestObject(app, db)
         return super().setUpClass()
 
     def tearDown(self):
-        db.session.remove()
-        for table in reversed(self.meta.sorted_tables):
-            db.session.query(table).delete()
-        db.session.commit()
+        self.t.clear_db()
     
     @classmethod
     def tearDownClass(cls) -> None:
@@ -96,29 +92,36 @@ class PuzzleModelCase(unittest.TestCase):
         cls.app_context = app.app_context()
         cls.app_context.push()
         db.create_all()
-        cls.meta = MetaData()
-        cls.meta.reflect(bind=db.engine)
         cls.t = TestObject(app, db)
+        cls.t.identifier = '$PuzzleModelCase$'
+
+        #disable & reenable commit for batch commit
+        Config.TESTING = True
+        cls.t.generate_users()
+        cls.t.generate_puzzles()
+        cls.t.generate_scores()
+        cls.t.generate_ratings()
+        Config.TESTING = False
+        db.session.commit()
+
         return super().setUpClass()
     
     def setUp(self):
         #disable & reenable commit for batch commit
-        Config.TESTING = True
+        '''Config.TESTING = True
         self.t.generate_users()
         self.t.generate_puzzles()
         self.t.generate_scores()
         self.t.generate_ratings()
         Config.TESTING = False
-        db.session.commit()
+        db.session.commit()'''
 
     def tearDown(self):
-        db.session.remove()
-        for table in reversed(self.meta.sorted_tables):
-            db.session.query(table).delete()
-        db.session.commit()
+        self.t.clear_db()
     
     @classmethod
     def tearDownClass(cls) -> None:
+        cls.t.clear_db(True)
         cls.app_context.pop()
         return super().tearDownClass()
     

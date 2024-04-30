@@ -19,8 +19,6 @@ class GetRequestCase(unittest.TestCase):
         cls.app_context = app.test_request_context()
         cls.app_context.push()
         db.create_all()
-        cls.meta = MetaData()
-        cls.meta.reflect(bind=db.engine)
         cls.client = app.test_client()
         cls.t = TestObject(app, db)
         cls.t.add_test_client(cls.client)
@@ -28,13 +26,11 @@ class GetRequestCase(unittest.TestCase):
 
     def tearDown(self):
         self.t.logout()
-        db.session.remove()
-        for table in reversed(self.meta.sorted_tables):
-            db.session.query(table).delete()
-        db.session.commit()
+        self.t.clear_db()
     
     @classmethod
     def tearDownClass(cls) -> None:
+        cls.t.clear_db(True)
         cls.app_context.pop()
         return super().tearDownClass()
     
@@ -90,13 +86,12 @@ class GetRequestCase(unittest.TestCase):
         response = self.client.get(url_for(route.puzzle.get, puzzleid=-1))
         self.assertEqual(response.status_code, 404)
 
-    def test_search_puzzles(self):
+    def test_puzzle_trends(self):
         '''
-        Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts.
+        Tests that a list of puzzles (and their information) can be retrieved by some common trends.
         \npuzzles/recent
         \npuzzles/hot (most popular within X period of time)
         \npuzzles/popular (most popular overall)
-        \npuzzles/search 
         '''
         #from database
         recent = Puzzle.query.order_by(db.desc(Puzzle.dateCreated)).limit(10).all()
@@ -147,6 +142,10 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertListEqual(data, popular)
+    
+    def test_puzzle_search(self):
+        '''Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts'''
+        pass
 
     def test_get_user_info(self):
         '''
@@ -226,8 +225,6 @@ class PostRequestCase(unittest.TestCase):
         cls.app_context = app.test_request_context()
         cls.app_context.push()
         db.create_all()
-        cls.meta = MetaData()
-        cls.meta.reflect(bind=db.engine)
         cls.client = app.test_client()
         cls.t = TestObject(app, db)
         cls.t.add_test_client(cls.client)
@@ -235,10 +232,7 @@ class PostRequestCase(unittest.TestCase):
 
     def tearDown(self):
         self.t.logout()
-        db.session.remove()
-        for table in reversed(self.meta.sorted_tables):
-            db.session.query(table).delete()
-        db.session.commit()
+        self.t.clear_db()
     
     @classmethod
     def tearDownClass(cls) -> None:
