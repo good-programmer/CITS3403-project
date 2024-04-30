@@ -4,16 +4,12 @@ import re
 
 from . import route_utils as route
 
-def validate_user_information(name, password):
-    
+def validate_user_information(name, password) -> tuple[bool, str]:
+    '''Checks that username is >3 chars and password is >4 chars'''
     if len(name) < 3:
-        #flash('Username must be 3 characters or longer')
-        #return redirect(url_for(route.register))
         return False, 'Username must be 3 characters or longer'
     
     if len(password) < 4:
-        #flash('Password must be 4 characters or longer')
-        #return redirect(url_for(route.register))
         return False, 'Password must be 4 characters or longer'
     
     return True, ''

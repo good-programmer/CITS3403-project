@@ -28,7 +28,7 @@ class TestObject:
         for i in range(TestObject.numUsers):
                 user_utils.add_user("GENERATED_USER_" + str(i), "123")
 
-    def get_random_user(self):
+    def get_random_user(self) -> User:
         return self.db.session.query(User).order_by(sqlalchemy.func.random()).first()
     
     def generate_puzzles(self):
