@@ -1,6 +1,6 @@
 import unittest, json
 
-from sqlalchemy import exc
+from sqlalchemy import exc, MetaData
 
 from flask import url_for
 
@@ -14,18 +14,29 @@ from project.utils import user_utils, puzzle_utils, route_utils as route
 import datetime
 
 class GetRequestCase(unittest.TestCase):
-    def setUp(self):
-        self.app_context = app.test_request_context()
-        self.app_context.push()
-        self.client = app.test_client()
-        self.t = TestObject(app, db)
-        self.t.add_test_client(self.client)
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.app_context = app.test_request_context()
+        cls.app_context.push()
         db.create_all()
+        cls.meta = MetaData()
+        cls.meta.reflect(bind=db.engine)
+        cls.client = app.test_client()
+        cls.t = TestObject(app, db)
+        cls.t.add_test_client(cls.client)
+        return super().setUpClass()
 
     def tearDown(self):
+        self.t.logout()
         db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
+        for table in reversed(self.meta.sorted_tables):
+            db.session.query(table).delete()
+        db.session.commit()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.app_context.pop()
+        return super().tearDownClass()
     
     def test_pages_load(self):
         '''
@@ -210,19 +221,29 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(data['rated']['rating'], 3)
 
 class PostRequestCase(unittest.TestCase):
-    def setUp(self):
-        self.app_context = app.test_request_context()
-        self.app_context.push()
-        self.client = app.test_client()
-        self.t = TestObject(app, db)
-        self.t.add_test_client(self.client)
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.app_context = app.test_request_context()
+        cls.app_context.push()
         db.create_all()
+        cls.meta = MetaData()
+        cls.meta.reflect(bind=db.engine)
+        cls.client = app.test_client()
+        cls.t = TestObject(app, db)
+        cls.t.add_test_client(cls.client)
+        return super().setUpClass()
 
     def tearDown(self):
         self.t.logout()
         db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
+        for table in reversed(self.meta.sorted_tables):
+            db.session.query(table).delete()
+        db.session.commit()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.app_context.pop()
+        return super().tearDownClass()
 
     def test_create_account(self):
         '''

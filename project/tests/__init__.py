@@ -25,6 +25,11 @@ class TestObject:
         self.app = app
         self.db = db
     
+    def commit_db(self):
+        if not Config.TESTING:
+            self.db.session.commit()
+        #self.db.session.commit()
+    
     def add_test_client(self, client):
          self.client = client
 
@@ -41,7 +46,7 @@ class TestObject:
                 content = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
                 puzzle = puzzle_utils.add_puzzle(title = "GENERATED_PUZZLE_" + str(i), creator=user, content=content)
                 puzzle.dateCreated = random_date(datetime.datetime(year=2000, month=1, day=1), datetime.datetime.now())
-                self.db.session.commit()
+                self.commit_db()
 
     def get_random_puzzle(self) -> Puzzle:
          return self.db.session.query(Puzzle).order_by(sqlalchemy.func.random()).first()
@@ -54,7 +59,7 @@ class TestObject:
                 if not puzzle.has_record(user):
                     puzzle.add_record(user, random.randrange(1, 1000))
                     puzzle.get_record(user).dateSubmitted = random_date(puzzle.dateCreated, datetime.datetime(year=2500, month=12, day=31))
-                    self.db.session.commit()
+                    self.commit_db()
 
     def generate_ratings(self):
          for i in range(TestObject.numPuzzles):
@@ -65,8 +70,12 @@ class TestObject:
                     user = self.get_random_user()
                 if not puzzle.has_rating(user):
                     puzzle.add_rating(user, random.randrange(0, 10) / 2)
+                    if puzzle.get_record(user) is None:
+                        print(user.id, user.name)
+                        print(puzzle.has_record(user))
+                        print(puzzle.get_record(user))
                     puzzle.get_rating(user).dateRated = random_date(puzzle.get_record(user).dateSubmitted, datetime.datetime(year=3000, month=12, day=31))
-                    self.db.session.commit()
+                    self.commit_db()
 
     def register(self, username, password, confirmpassword=None):
         if not confirmpassword: confirmpassword=password

@@ -95,13 +95,13 @@ class Puzzle(db.Model):
         self.play_count += 1
         commit()
 
-    def has_record(self, user) -> LeaderboardRecord:
-        return user.id in [u.userID for u in self.scores]
+    def has_record(self, user) -> bool:
+        #return user.id in [u.userID for u in self.scores]
+        #print(LeaderboardRecord.query.filter_by(userID=user.id).first())
+        return LeaderboardRecord.query.filter_by(userID=user.id).first() is not None
     
     def get_record(self, user) -> LeaderboardRecord:
-        for s in self.scores:
-            if s.userID == user.id:
-                return s
+        return LeaderboardRecord.query.filter_by(userID=user.id).first()
     
     def update_record(self, user, score) -> bool:
         '''Updates a user's score. Returns True if successful, False otherwise.'''
@@ -125,13 +125,11 @@ class Puzzle(db.Model):
         db.session.add(rating)
         commit()
 
-    def has_rating(self, user) -> Rating:
-        return user.id in [u.userID for u in self.ratings]
+    def has_rating(self, user) -> bool:
+        return Rating.query.filter_by(userID=user.id).first() is not None
     
     def get_rating(self, user) -> Rating:
-        for s in self.ratings:
-            if s.userID == user.id:
-                return s
+        return Rating.query.filter_by(userID=user.id).first()
     
     def update_rating(self, user, rating) -> bool:
         '''Updates a user's rating. Returns True if successful, False otherwise.'''
@@ -167,7 +165,7 @@ class User(UserMixin, db.Model):
         commit()    
     
     def is_following(self, user) -> bool:
-        return user.id in [u.userID for u in self.following]
+        return Follow.query.filter_by(userID=user.id, followerID=self.id).first() is not None
 
     def unfollow_user(self, user) -> bool:
         '''Returns true if successful, false otherwise.'''
