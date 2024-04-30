@@ -16,10 +16,10 @@ def random_date(start, end):
 
 class TestObject:
 
-    numUsers = 5
-    numPuzzles = 10
-    numScores = 5
-    numRatings = 3
+    numUsers = 50
+    numPuzzles = 100
+    numScores = 50
+    numRatings = 30
 
     identifier = '$'
 

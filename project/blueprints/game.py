@@ -1,9 +1,10 @@
 from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort
-from .models import db
+from .models import db, Puzzle
 from flask_login import login_required, current_user
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
+import datetime
 
 game = Blueprint('game', __name__)
 
@@ -89,3 +90,36 @@ def ratepuzzle(puzzleid):
             return {"average_rating": puzzle.average_rating}
         abort(401)
     abort(404)
+
+@game.route('/puzzle/search', methods=['GET'])
+@game.route('/puzzle/search/<trend>', methods=['GET'])
+def searchpuzzle(trend=None):
+    def f(p):
+        return {
+            "id": p.id,
+            "title": p.title,
+            "creatorID": p.creatorID,
+            "creator": p.creator.name,
+            "play_count": p.play_count,
+            "average_rating": p.average_rating
+        }
+    page_size = 10
+    
+    page = request.args.get('page', 1)
+    page = int(page) - 1 if page.isdigit() else 0
+
+    data = None
+
+    if trend:
+        match trend:
+            case 'recent':
+                data = Puzzle.query.order_by(db.desc(Puzzle.dateCreated))
+            case 'hot':
+                t = datetime.datetime.now() - datetime.timedelta(weeks=1)
+                data = Puzzle.query.where(Puzzle.dateCreated > t).order_by(db.desc(Puzzle.play_count))
+            case 'popular':
+                data = Puzzle.query.order_by(db.desc(Puzzle.play_count))
+
+        data = [f(p) for p in data.limit(page_size).offset(page*page_size).all()]
+
+    return data

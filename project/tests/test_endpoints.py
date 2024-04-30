@@ -93,52 +93,42 @@ class GetRequestCase(unittest.TestCase):
         \npuzzles/hot (most popular within X period of time)
         \npuzzles/popular (most popular overall)
         '''
+
+        #helper function to format puzzle data for comparison
+        def f(p):
+            return {
+                "id": p.id,
+                "title": p.title,
+                "creatorID": p.creatorID,
+                "creator": p.creator.name,
+                "play_count": p.play_count,
+                "average_rating": p.average_rating
+            }
         #from database
         recent = Puzzle.query.order_by(db.desc(Puzzle.dateCreated)).limit(10).all()
-        recent = [{
-            "id": p.id,
-            "title": p.title,
-            "creatorID": p.creatorID,
-            "creator": p.creator.name,
-            "play_count": p.play_count,
-            "average_rating": p.average_rating
-        } for p in recent]
+        recent = [f(p) for p in recent]
 
         t = datetime.datetime.now() - datetime.timedelta(weeks=1)
         hot = Puzzle.query.where(Puzzle.dateCreated > t).order_by(db.desc(Puzzle.play_count)).limit(10).all()
-        hot = [{
-            "id": p.id,
-            "title": p.title,
-            "creatorID": p.creatorID,
-            "creator": p.creator.name,
-            "play_count": p.play_count,
-            "average_rating": p.average_rating
-        } for p in hot]
+        hot = [f(p) for p in hot]
 
         popular = Puzzle.query.order_by(db.desc(Puzzle.play_count)).limit(10).all()
-        popular = [{
-            "id": p.id,
-            "title": p.title,
-            "creatorID": p.creatorID,
-            "creator": p.creator.name,
-            "play_count": p.play_count,
-            "average_rating": p.average_rating
-        } for p in popular]
+        popular = [f(p) for p in popular]
 
         #recent case
-        response = self.client.get(url_for(route.puzzle.recent, page=1))
+        response = self.client.get(url_for(route.puzzle.search, trend='recent', page=1))
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertListEqual(data, recent)
 
         #hot case
-        response = self.client.get(url_for(route.puzzle.hot, page=1))
+        response = self.client.get(url_for(route.puzzle.search, trend='hot', page=1))
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertListEqual(data, hot)
 
         #popular case
-        response = self.client.get(url_for(route.puzzle.popular, page=1))
+        response = self.client.get(url_for(route.puzzle.search, trend='popular', page=1))
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
         self.assertListEqual(data, popular)

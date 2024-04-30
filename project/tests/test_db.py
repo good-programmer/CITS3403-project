@@ -96,6 +96,7 @@ class PuzzleModelCase(unittest.TestCase):
         cls.t.identifier = '$PuzzleModelCase$'
 
         #disable & reenable commit for batch commit
+        print('Generating test database...')
         Config.TESTING = True
         cls.t.generate_users()
         cls.t.generate_puzzles()
@@ -103,6 +104,7 @@ class PuzzleModelCase(unittest.TestCase):
         cls.t.generate_ratings()
         Config.TESTING = False
         db.session.commit()
+        print('Done.')
 
         return super().setUpClass()
     
