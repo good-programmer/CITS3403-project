@@ -21,6 +21,8 @@ def upgrade():
     with op.batch_alter_table('Puzzles', schema=None) as batch_op:
         batch_op.add_column(sa.Column('play_count', sa.Integer(), nullable=True))
 
+    op.execute("UPDATE Puzzles SET play_count = (SELECT COUNT(*) FROM Leaderboard WHERE Puzzles.id=Leaderboard.puzzleID)")
+
     # ### end Alembic commands ###
 
 
