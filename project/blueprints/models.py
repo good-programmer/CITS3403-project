@@ -65,6 +65,7 @@ class Puzzle(db.Model):
     creator = db.relationship("User", foreign_keys=[creatorID], back_populates="puzzles")
     dateCreated = db.Column(db.DateTime)
     content = db.Column(db.Text)
+    play_count = db.Column(db.Integer, default=0)
 
     scores = db.relationship("LeaderboardRecord", back_populates="puzzle")
     ratings = db.relationship("Rating", back_populates="puzzle")
@@ -86,10 +87,12 @@ class Puzzle(db.Model):
         self.creatorID = creator.id
         self.dateCreated = datetime.now()
         self.content = content
+        self.play_count = 0
     
     def add_record(self, user, score):
         score = LeaderboardRecord(user, self, score)
         db.session.add(score)
+        self.play_count += 1
         commit()
 
     def has_record(self, user) -> LeaderboardRecord:
@@ -112,6 +115,7 @@ class Puzzle(db.Model):
         '''Removes a user's score. Returns True if successful, False otherwise.'''
         if self.has_record(user):
             db.session.query(LeaderboardRecord).filter( (LeaderboardRecord.userID==user.id) & (LeaderboardRecord.puzzleID==self.id) ).delete()
+            self.play_count -= 1
             commit()
             return True
         return False

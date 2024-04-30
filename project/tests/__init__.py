@@ -9,6 +9,10 @@ from project.config import Config
 
 import random
 import string
+import datetime
+
+def random_date(start, end):
+    return start + (end - start) * random.random()
 
 class TestObject:
 
@@ -35,7 +39,9 @@ class TestObject:
          for i in range(TestObject.numPuzzles):
                 user = self.get_random_user()
                 content = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
-                puzzle_utils.add_puzzle(title = "GENERATED_PUZZLE_" + str(i), creator=user, content=content)
+                puzzle = puzzle_utils.add_puzzle(title = "GENERATED_PUZZLE_" + str(i), creator=user, content=content)
+                puzzle.dateCreated = random_date(datetime.datetime(year=2000, month=1, day=1), datetime.datetime.now())
+                self.db.session.commit()
 
     def get_random_puzzle(self) -> Puzzle:
          return self.db.session.query(Puzzle).order_by(sqlalchemy.func.random()).first()
@@ -47,14 +53,20 @@ class TestObject:
                 user = self.get_random_user()
                 if not puzzle.has_record(user):
                     puzzle.add_record(user, random.randrange(1, 1000))
+                    puzzle.get_record(user).dateSubmitted = random_date(puzzle.dateCreated, datetime.datetime(year=2500, month=12, day=31))
+                    self.db.session.commit()
 
     def generate_ratings(self):
          for i in range(TestObject.numPuzzles):
             puzzle = self.get_random_puzzle()
-            for j in range(TestObject.numRatings):
+            for j in range(min(puzzle.play_count, TestObject.numRatings)):
                 user = self.get_random_user()
+                while not puzzle.has_record(user):
+                    user = self.get_random_user()
                 if not puzzle.has_rating(user):
                     puzzle.add_rating(user, random.randrange(0, 10) / 2)
+                    puzzle.get_rating(user).dateRated = random_date(puzzle.get_record(user).dateSubmitted, datetime.datetime(year=3000, month=12, day=31))
+                    self.db.session.commit()
 
     def register(self, username, password, confirmpassword=None):
         if not confirmpassword: confirmpassword=password

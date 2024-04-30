@@ -11,6 +11,8 @@ from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecor
 
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
+import datetime
+
 class GetRequestCase(unittest.TestCase):
     def setUp(self):
         self.app_context = app.test_request_context()
@@ -80,8 +82,60 @@ class GetRequestCase(unittest.TestCase):
     def test_search_puzzles(self):
         '''
         Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts.
+        \npuzzles/recent
+        \npuzzles/hot (most popular within X period of time)
+        \npuzzles/popular (most popular overall)
+        \npuzzles/search 
         '''
-        pass
+        #from database
+        recent = Puzzle.query.order_by(db.desc(Puzzle.dateCreated)).limit(10).all()
+        recent = [{
+            "id": p.id,
+            "title": p.title,
+            "creatorID": p.creatorID,
+            "creator": p.creator.name,
+            "play_count": p.play_count,
+            "average_rating": p.average_rating
+        } for p in recent]
+
+        t = datetime.datetime.now() - datetime.timedelta(weeks=1)
+        hot = Puzzle.query.where(Puzzle.dateCreated > t).order_by(db.desc(Puzzle.play_count)).limit(10).all()
+        hot = [{
+            "id": p.id,
+            "title": p.title,
+            "creatorID": p.creatorID,
+            "creator": p.creator.name,
+            "play_count": p.play_count,
+            "average_rating": p.average_rating
+        } for p in hot]
+
+        popular = Puzzle.query.order_by(db.desc(Puzzle.play_count)).limit(10).all()
+        popular = [{
+            "id": p.id,
+            "title": p.title,
+            "creatorID": p.creatorID,
+            "creator": p.creator.name,
+            "play_count": p.play_count,
+            "average_rating": p.average_rating
+        } for p in popular]
+
+        #recent case
+        response = self.client.get(url_for(route.puzzle.recent, page=1))
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertListEqual(data, recent)
+
+        #hot case
+        response = self.client.get(url_for(route.puzzle.hot, page=1))
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertListEqual(data, hot)
+
+        #popular case
+        response = self.client.get(url_for(route.puzzle.popular, page=1))
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(response.data)
+        self.assertListEqual(data, popular)
 
     def test_get_user_info(self):
         '''
