@@ -1,6 +1,6 @@
 import unittest, json
 
-from sqlalchemy import exc, MetaData
+from sqlalchemy import exc, MetaData, func
 
 from flask import url_for
 
@@ -12,6 +12,17 @@ from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecor
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
 import datetime
+
+#helper function to format puzzle data for comparison
+def f(p):
+    return {
+        "id": p.id,
+        "title": p.title,
+        "creatorID": p.creatorID,
+        "creator": p.creator.name,
+        "play_count": p.play_count,
+        "average_rating": p.average_rating
+    }
 
 class GetRequestCase(unittest.TestCase):
     @classmethod
@@ -94,16 +105,6 @@ class GetRequestCase(unittest.TestCase):
         \npuzzles/popular (most popular overall)
         '''
 
-        #helper function to format puzzle data for comparison
-        def f(p):
-            return {
-                "id": p.id,
-                "title": p.title,
-                "creatorID": p.creatorID,
-                "creator": p.creator.name,
-                "play_count": p.play_count,
-                "average_rating": p.average_rating
-            }
         #from database
         recent = Puzzle.query.order_by(db.desc(Puzzle.dateCreated)).limit(10).all()
         recent = [f(p) for p in recent]
@@ -134,8 +135,106 @@ class GetRequestCase(unittest.TestCase):
         self.assertListEqual(data, popular)
     
     def test_puzzle_search(self):
-        '''Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts'''
-        pass
+        '''Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts
+        \n-creator name
+        \n-rating
+        \n-date created interval
+        \n-completed/incomplete
+        \n-play count
+        \n-puzzle title
+        '''
+        #generate some users and puzzles
+        self.t.identifier = ""
+        self.t.numUsers = 25
+        self.t.numPuzzles = 50
+        self.t.numScores = 25
+        self.t.numRatings = 20
+        self.t.generate_users()
+        self.t.generate_puzzles()
+        self.t.generate_scores()
+        self.t.generate_ratings()
+
+        def standardize(s:str):
+            s = s.lower()
+            common = ['_', ' ']
+            for i in common:
+                s = s.replace(i, '.*')
+            return '(?i)' + s
+        
+        #search by puzzle title
+        
+        query = standardize('g PUZZLE 2$')
+        result = Puzzle.query.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query)).all()
+        result = [p.title for p in result]
+
+        expected = ['GENERATED_PUZZLE_2', 'GENERATED_PUZZLE_12', 'GENERATED_PUZZLE_22', 'GENERATED_PUZZLE_32', 'GENERATED_PUZZLE_42']
+        expected.sort()
+        result.sort()
+        self.assertEqual(expected, result)
+
+        #search by puzzle creator
+        query = standardize("gen use 5")
+        result = Puzzle.query.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query)).all()
+        result = [(p.title, p.creator.name) for p in result]
+
+        expected = [(p.title, p.creator.name) for p in user_utils.get_user(name="GENERATED_USER_5").puzzles]+[(p.title, p.creator.name) for p in user_utils.get_user(name="GENERATED_USER_15").puzzles]
+        expected.sort()
+        result.sort()
+        self.assertListEqual(expected, result)
+
+        #search by rating
+        lower, upper = 1, 2                                                                          
+        result = Puzzle.query.join(Rating, Puzzle.id==Rating.puzzleID).group_by(Puzzle.id).having(func.avg(Rating.rating).between(lower,upper)).all()
+        result = [(p.title, p.creator.name) for p in result]
+
+        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if lower<=p.average_rating<=upper]
+        expected.sort()
+        result.sort()
+        self.assertEqual(expected, result)
+        
+        #search by date created
+        lower, upper = '2000-01-01', '2002-01-01'                                                                     
+        result = Puzzle.query.filter(Puzzle.dateCreated.between(lower, upper))
+        result = [(p.title, p.creator.name) for p in result]
+
+        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if datetime.datetime.strptime(lower, '%Y-%m-%d')<=p.dateCreated<=datetime.datetime.strptime(upper, '%Y-%m-%d')]
+        expected.sort()
+        result.sort()
+        self.assertEqual(expected, result)
+        
+        #search by completeed
+        user = self.t.get_random_user()
+        result = Puzzle.query.join(LeaderboardRecord, LeaderboardRecord.puzzleID==Puzzle.id).filter(LeaderboardRecord.userID==user.id).all()
+        result = [(p.title, p.creator.name) for p in result]
+
+        expected = [(p.puzzle.title, p.puzzle.creator.name) for p in user.scores]
+        expected.sort()
+        result.sort()
+        self.assertEqual(expected, result)
+
+        #search by uncompleted
+        exclude = Puzzle.query.join(LeaderboardRecord, LeaderboardRecord.puzzleID==Puzzle.id).filter(LeaderboardRecord.userID==user.id).with_entities(Puzzle.id)
+        result = Puzzle.query.filter(Puzzle.id.not_in(exclude)).all()
+        result = [(p.title, p.creator.name) for p in result]
+
+        r = [l.puzzleID for l in user.scores]
+        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if p.id not in r]
+        expected.sort()
+        result.sort()
+        self.assertEqual(expected, result)
+
+        #search by play count
+        lower, upper = 5, 10                                                                     
+        result = Puzzle.query.filter(Puzzle.play_count.between(lower, upper))
+        result = [(p.title, p.creator.name) for p in result]
+
+        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if lower<=p.play_count<=upper]
+        expected.sort()
+        result.sort()
+        self.assertEqual(expected, result)
+
+        #reset
+        self.t.identifier = "$"
 
     def test_get_user_info(self):
         '''

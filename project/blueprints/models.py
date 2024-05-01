@@ -21,7 +21,7 @@ class Rating(db.Model):
     dateRated = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f'({self.user.name}, {self.rating})'
+        return f'({self.puzzle.title}, {self.user.name}, {self.rating})'
     
     def __init__(self, user, puzzle, rating):
         self.userID = user.id
@@ -39,7 +39,7 @@ class LeaderboardRecord(db.Model):
     dateSubmitted = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f'({self.user.name}, {self.score})'
+        return f'({self.puzzle.title}, {self.user.name}, {self.score})'
 
     def __init__(self, user, puzzle, score):
         self.userID = user.id
@@ -81,6 +81,9 @@ class Puzzle(db.Model):
         if self.ratings and len(self.ratings) > 0:
             return sum(r.rating for r in self.ratings) / len(self.ratings)
         return 0
+    
+    def __repr__(self):
+        return f'<{self.id} {self.title}>'
      
     def __init__(self, title, creator, content):
         self.title = title

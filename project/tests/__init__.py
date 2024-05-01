@@ -65,14 +65,14 @@ class TestObject:
          self.client = client
 
     def generate_users(self):
-        for i in range(TestObject.numUsers):
+        for i in range(self.numUsers):
                 user_utils.add_user(self.identifier + "GENERATED_USER_" + str(i), "123")
 
     def get_random_user(self) -> User:
         return self.db.session.query(User).order_by(sqlalchemy.func.random()).first()
     
     def generate_puzzles(self):
-         for i in range(TestObject.numPuzzles):
+         for i in range(self.numPuzzles):
                 user = self.get_random_user()
                 content = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
                 puzzle = puzzle_utils.add_puzzle(title = self.identifier + "GENERATED_PUZZLE_" + str(i), creator=user, content=content)
@@ -83,9 +83,9 @@ class TestObject:
          return self.db.session.query(Puzzle).order_by(sqlalchemy.func.random()).first()
     
     def generate_scores(self):
-         for i in range(TestObject.numPuzzles):
+         for i in range(self.numPuzzles):
             puzzle = self.get_random_puzzle()
-            for j in range(TestObject.numScores):
+            for j in range(self.numScores):
                 user = self.get_random_user()
                 if not puzzle.has_record(user):
                     puzzle.add_record(user, random.randrange(1, 1000))
@@ -93,9 +93,9 @@ class TestObject:
                     self.commit_db()
 
     def generate_ratings(self):
-         for i in range(TestObject.numPuzzles):
+         for i in range(self.numPuzzles):
             puzzle = self.get_random_puzzle()
-            for j in range(min(puzzle.play_count, TestObject.numRatings)):
+            for j in range(min(puzzle.play_count, self.numRatings)):
                 user = self.get_random_user()
                 while not puzzle.has_record(user):
                     user = self.get_random_user()
