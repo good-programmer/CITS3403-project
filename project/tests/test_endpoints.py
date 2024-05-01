@@ -4,7 +4,7 @@ from sqlalchemy import exc, MetaData, func
 
 from flask import url_for
 
-from project.tests import TestObject
+from project.tests import t
 
 from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
@@ -29,9 +29,8 @@ class GetRequestCase(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.app_context = app.test_request_context()
         cls.app_context.push()
-        db.create_all()
         cls.client = app.test_client()
-        cls.t = TestObject(app, db)
+        cls.t = t
         cls.t.add_test_client(cls.client)
         return super().setUpClass()
 
@@ -143,16 +142,6 @@ class GetRequestCase(unittest.TestCase):
         \n-play count
         \n-puzzle title
         '''
-        #generate some users and puzzles
-        self.t.identifier = ""
-        self.t.numUsers = 25
-        self.t.numPuzzles = 50
-        self.t.numScores = 25
-        self.t.numRatings = 20
-        self.t.generate_users()
-        self.t.generate_puzzles()
-        self.t.generate_scores()
-        self.t.generate_ratings()
 
         def standardize(s:str):
             s = s.lower()
@@ -162,22 +151,21 @@ class GetRequestCase(unittest.TestCase):
             return '(?i)' + s
         
         #search by puzzle title
-        
         query = standardize('g PUZZLE 2$')
         result = Puzzle.query.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query)).all()
         result = [p.title for p in result]
 
-        expected = ['GENERATED_PUZZLE_2', 'GENERATED_PUZZLE_12', 'GENERATED_PUZZLE_22', 'GENERATED_PUZZLE_32', 'GENERATED_PUZZLE_42']
+        expected = ['$GENERATED_PUZZLE_' + str(2 + i*10) for i in range(self.t.numPuzzles//10)]
         expected.sort()
         result.sort()
         self.assertEqual(expected, result)
 
         #search by puzzle creator
-        query = standardize("gen use 5")
+        query = standardize("gen use 5$")
         result = Puzzle.query.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query)).all()
         result = [(p.title, p.creator.name) for p in result]
 
-        expected = [(p.title, p.creator.name) for p in user_utils.get_user(name="GENERATED_USER_5").puzzles]+[(p.title, p.creator.name) for p in user_utils.get_user(name="GENERATED_USER_15").puzzles]
+        expected = [(p.title, p.creator.name) for x in range(self.t.numUsers//10) for p in user_utils.get_user(name=f'$GENERATED_USER_{5+x*10}').puzzles]
         expected.sort()
         result.sort()
         self.assertListEqual(expected, result)
@@ -313,9 +301,8 @@ class PostRequestCase(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.app_context = app.test_request_context()
         cls.app_context.push()
-        db.create_all()
         cls.client = app.test_client()
-        cls.t = TestObject(app, db)
+        cls.t = t
         cls.t.add_test_client(cls.client)
         return super().setUpClass()
 

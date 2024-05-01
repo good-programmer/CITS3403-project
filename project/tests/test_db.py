@@ -3,7 +3,7 @@ import unittest
 
 from sqlalchemy import exc, MetaData
 
-from project.tests import TestObject
+from project.tests import t
 
 from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
@@ -17,8 +17,7 @@ class UserModelCase(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.app_context = app.app_context()
         cls.app_context.push()
-        db.create_all()
-        cls.t = TestObject(app, db)
+        cls.t = t
         return super().setUpClass()
 
     def tearDown(self):
@@ -91,20 +90,7 @@ class PuzzleModelCase(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.app_context = app.app_context()
         cls.app_context.push()
-        db.create_all()
-        cls.t = TestObject(app, db)
-        cls.t.identifier = '$PuzzleModelCase$'
-
-        #disable & reenable commit for batch commit
-        print('Generating test database...')
-        Config.TESTING = True
-        cls.t.generate_users()
-        cls.t.generate_puzzles()
-        cls.t.generate_scores()
-        cls.t.generate_ratings()
-        Config.TESTING = False
-        db.session.commit()
-        print('Done.')
+        cls.t = t
 
         return super().setUpClass()
     
@@ -123,7 +109,6 @@ class PuzzleModelCase(unittest.TestCase):
     
     @classmethod
     def tearDownClass(cls) -> None:
-        cls.t.clear_db(True)
         cls.app_context.pop()
         return super().tearDownClass()
     

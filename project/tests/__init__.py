@@ -16,10 +16,10 @@ def random_date(start, end):
 
 class TestObject:
 
-    numUsers = 50
-    numPuzzles = 100
-    numScores = 50
-    numRatings = 30
+    numUsers = 100
+    numPuzzles = 300
+    numScores = 95
+    numRatings = 90
 
     identifier = '$'
 
@@ -69,7 +69,7 @@ class TestObject:
                 user_utils.add_user(self.identifier + "GENERATED_USER_" + str(i), "123")
 
     def get_random_user(self) -> User:
-        return self.db.session.query(User).order_by(sqlalchemy.func.random()).first()
+        return self.db.session.query(User).limit(1).offset(random.randint(0, self.numUsers - 1)).first()
     
     def generate_puzzles(self):
          for i in range(self.numPuzzles):
@@ -80,7 +80,7 @@ class TestObject:
                 self.commit_db()
 
     def get_random_puzzle(self) -> Puzzle:
-         return self.db.session.query(Puzzle).order_by(sqlalchemy.func.random()).first()
+         return self.db.session.query(Puzzle).limit(1).offset(random.randint(0, self.numPuzzles - 1)).first()
     
     def generate_scores(self):
          for i in range(self.numPuzzles):
@@ -119,3 +119,25 @@ class TestObject:
 
     def logout(self):
         return self.client.get(url_for(route.logout), follow_redirects=True)
+
+from project import app, db
+
+app_context = app.app_context()
+app_context.push()
+db.create_all()
+
+#disable & reenable commit for batch commit
+start = datetime.datetime.now()
+print('Generating standard test database...')
+Config.TESTING = True
+t = TestObject(app, db)
+t.generate_users()
+t.generate_puzzles()
+t.generate_scores()
+t.generate_ratings()
+Config.TESTING = False
+db.session.commit()
+print('Done.')
+app_context.pop()
+elapsed = str((datetime.datetime.now()-start).total_seconds())
+print(f'Time elapsed: {float(elapsed):.3f}s')
