@@ -57,18 +57,18 @@ def getpuzzle(puzzleid):
             "title": puzzle.title,
             "content": puzzle.content,
             "creatorID": puzzle.creatorID,
-            "dateCreated": puzzle.dateCreated.ctime(),
-            "scores": [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in puzzle.scores],
+            "dateCreated": str(puzzle.dateCreated),
+            "scores": [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in puzzle.scores],
             "average_score": puzzle.average_score,
             "average_rating": puzzle.average_rating
         }
         if current_user.is_authenticated:
             if puzzle.has_rating(current_user):
                 r = puzzle.get_rating(current_user)
-                data['rated'] = {"rating": r.rating, "dateRated": r.dateRated.ctime()}
+                data['rated'] = {"rating": r.rating, "dateRated": str(r.dateRated)}
             if puzzle.has_record(current_user):
                 s = puzzle.get_record(current_user)
-                data['score'] = {"score": s.score, "dateSubmitted": s.dateSubmitted.ctime()}
+                data['score'] = {"score": s.score, "dateSubmitted": str(s.dateSubmitted)}
         return data
     abort(404)
 
@@ -102,7 +102,7 @@ def searchpuzzle(trend=None):
             "creator": p.creator.name,
             "play_count": p.play_count,
             "average_rating": p.average_rating,
-            "dateCreated": p.dateCreated,
+            "dateCreated": str(p.dateCreated),
         }
     
     def standardize(s:str):
@@ -128,7 +128,7 @@ def searchpuzzle(trend=None):
     
     page_size = request.args.get('page_size', '10')
     page_size = int(page_size) if page_size.isdigit() else 10
-    page = request.args.get('page', 1)
+    page = request.args.get('page', '1')
     page = int(page) - 1 if page.isdigit() else 0
 
     data = None

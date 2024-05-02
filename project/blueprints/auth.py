@@ -98,8 +98,8 @@ def getuser(userid):
             "username": user.name,
             "followers": [{"id": u.followerID, "name": u.follower.name} for u in user.followers],
             "following": [{"id": u.userID, "name": u.user.name} for u in user.following],
-            "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in user.scores],
-            "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": r.dateRated.ctime()} for r in user.ratings]
+            "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores],
+            "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings]
         }
         if current_user.is_authenticated:
             data['is_following'] = current_user.is_following(user)
