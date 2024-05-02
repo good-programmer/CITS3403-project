@@ -48,4 +48,15 @@ a{
     margin-right: auto;
 }
 
-
+.searchbar{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.searchbar input[type = "search"]{
+    background-color: #002400;
+    border: 2px solid rgba(125,225,125,0.75);
+    color: rgba(125,225,125,0.75);
+    font-family: 'VT323', monospace;
+    border-radius: 10%;
+}
