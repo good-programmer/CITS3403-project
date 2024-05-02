@@ -121,6 +121,10 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         data = [i['title'] for i in json.loads(response.data)]
         self.assertListEqual(data, popular)
+
+        #404 case
+        response = self.client.get(url_for(route.puzzle.search, trend='notvalid', page=1))
+        self.assertEqual(response.status_code, 404)
     
     def test_puzzle_search(self):
         '''Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts

@@ -142,6 +142,8 @@ def searchpuzzle(trend=None):
                 data = Puzzle.query.where(Puzzle.dateCreated > t).order_by(db.desc(Puzzle.play_count))
             case 'popular':
                 data = Puzzle.query.order_by(db.desc(Puzzle.play_count))
+            case _:
+                abort(404)
     else:
         query = standardize(request.args.get('query', '.*'))
 
