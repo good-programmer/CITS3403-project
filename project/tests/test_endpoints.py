@@ -4,7 +4,7 @@ from sqlalchemy import exc, MetaData, func
 
 from flask import url_for
 
-from project.tests import t
+from project.tests import TestObject
 
 from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
@@ -13,24 +13,13 @@ from project.utils import user_utils, puzzle_utils, route_utils as route
 
 import datetime
 
-#helper function to format puzzle data for comparison
-def f(p):
-    return {
-        "id": p.id,
-        "title": p.title,
-        "creatorID": p.creatorID,
-        "creator": p.creator.name,
-        "play_count": p.play_count,
-        "average_rating": p.average_rating
-    }
-
 class GetRequestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.app_context = app.test_request_context()
         cls.app_context.push()
         cls.client = app.test_client()
-        cls.t = t
+        cls.t = TestObject(app, db)
         cls.t.add_test_client(cls.client)
         return super().setUpClass()
 
@@ -106,31 +95,31 @@ class GetRequestCase(unittest.TestCase):
 
         #from database
         recent = Puzzle.query.order_by(db.desc(Puzzle.dateCreated)).limit(10).all()
-        recent = [f(p) for p in recent]
+        recent = [p.title for p in recent]
 
         t = datetime.datetime.now() - datetime.timedelta(weeks=1)
         hot = Puzzle.query.where(Puzzle.dateCreated > t).order_by(db.desc(Puzzle.play_count)).limit(10).all()
-        hot = [f(p) for p in hot]
+        hot = [p.title for p in hot]
 
         popular = Puzzle.query.order_by(db.desc(Puzzle.play_count)).limit(10).all()
-        popular = [f(p) for p in popular]
+        popular = [p.title for p in popular]
 
         #recent case
         response = self.client.get(url_for(route.puzzle.search, trend='recent', page=1))
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
+        data = [i['title'] for i in json.loads(response.data)]
         self.assertListEqual(data, recent)
 
         #hot case
         response = self.client.get(url_for(route.puzzle.search, trend='hot', page=1))
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
+        data = [i['title'] for i in json.loads(response.data)]
         self.assertListEqual(data, hot)
 
         #popular case
         response = self.client.get(url_for(route.puzzle.search, trend='popular', page=1))
         self.assertEqual(response.status_code, 200)
-        data = json.loads(response.data)
+        data = [i['title'] for i in json.loads(response.data)]
         self.assertListEqual(data, popular)
     
     def test_puzzle_search(self):
@@ -151,9 +140,11 @@ class GetRequestCase(unittest.TestCase):
             return '(?i)' + s
         
         #search by puzzle title
-        query = standardize('g PUZZLE 2$')
-        result = Puzzle.query.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query)).all()
-        result = [p.title for p in result]
+        query = 'g PUZZLE 2$'
+        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, query=query))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        result = [i['title'] for i in result]
 
         expected = ['$GENERATED_PUZZLE_' + str(2 + i*10) for i in range(self.t.numPuzzles//10)]
         expected.sort()
@@ -161,68 +152,77 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(expected, result)
 
         #search by puzzle creator
-        query = standardize("gen use 5$")
-        result = Puzzle.query.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query)).all()
-        result = [(p.title, p.creator.name) for p in result]
+        query = "gen use 5$"
+        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, query=query))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        result = [i['title'] for i in result]
 
-        expected = [(p.title, p.creator.name) for x in range(self.t.numUsers//10) for p in user_utils.get_user(name=f'$GENERATED_USER_{5+x*10}').puzzles]
+        expected = [p.title for x in range(self.t.numUsers//10) for p in user_utils.get_user(name=f'$GENERATED_USER_{5+x*10}').puzzles]
         expected.sort()
         result.sort()
         self.assertListEqual(expected, result)
 
         #search by rating
         lower, upper = 1, 2                                                                          
-        result = Puzzle.query.join(Rating, Puzzle.id==Rating.puzzleID).group_by(Puzzle.id).having(func.avg(Rating.rating).between(lower,upper)).all()
-        result = [(p.title, p.creator.name) for p in result]
+        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, rating=f'{lower}-{upper}'))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        result = [i['title'] for i in result]
 
-        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if lower<=p.average_rating<=upper]
+        expected = [p.title for p in Puzzle.query.all() if lower<=p.average_rating<=upper]
         expected.sort()
         result.sort()
         self.assertEqual(expected, result)
         
         #search by date created
         lower, upper = '2000-01-01', '2002-01-01'                                                                     
-        result = Puzzle.query.filter(Puzzle.dateCreated.between(lower, upper))
-        result = [(p.title, p.creator.name) for p in result]
+        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, after=lower, to=upper))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        result = [i['title'] for i in result]
 
-        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if datetime.datetime.strptime(lower, '%Y-%m-%d')<=p.dateCreated<=datetime.datetime.strptime(upper, '%Y-%m-%d')]
+        expected = [p.title for p in Puzzle.query.all() if datetime.datetime.strptime(lower, '%Y-%m-%d')<=p.dateCreated<=datetime.datetime.strptime(upper, '%Y-%m-%d')]
         expected.sort()
         result.sort()
         self.assertEqual(expected, result)
         
         #search by completeed
         user = self.t.get_random_user()
-        result = Puzzle.query.join(LeaderboardRecord, LeaderboardRecord.puzzleID==Puzzle.id).filter(LeaderboardRecord.userID==user.id).all()
-        result = [(p.title, p.creator.name) for p in result]
+        self.t.login(user.name, "123")
+        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, completed=True))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        result = [i['title'] for i in result]
 
-        expected = [(p.puzzle.title, p.puzzle.creator.name) for p in user.scores]
+        expected = [p.puzzle.title for p in user.scores]
         expected.sort()
         result.sort()
         self.assertEqual(expected, result)
 
         #search by uncompleted
-        exclude = Puzzle.query.join(LeaderboardRecord, LeaderboardRecord.puzzleID==Puzzle.id).filter(LeaderboardRecord.userID==user.id).with_entities(Puzzle.id)
-        result = Puzzle.query.filter(Puzzle.id.not_in(exclude)).all()
-        result = [(p.title, p.creator.name) for p in result]
+        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, completed=False))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        result = [i['title'] for i in result]
 
         r = [l.puzzleID for l in user.scores]
-        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if p.id not in r]
+        expected = [p.title for p in Puzzle.query.all() if p.id not in r]
         expected.sort()
         result.sort()
         self.assertEqual(expected, result)
 
         #search by play count
         lower, upper = 5, 10                                                                     
-        result = Puzzle.query.filter(Puzzle.play_count.between(lower, upper))
-        result = [(p.title, p.creator.name) for p in result]
+        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, play_count=f'{lower}-{upper}'))
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        result = [i['title'] for i in result]
 
-        expected = [(p.title, p.creator.name) for p in Puzzle.query.all() if lower<=p.play_count<=upper]
+        expected = [p.title for p in Puzzle.query.all() if lower<=p.play_count<=upper]
         expected.sort()
         result.sort()
         self.assertEqual(expected, result)
-
-        #reset
-        self.t.identifier = "$"
 
     def test_get_user_info(self):
         '''
@@ -302,7 +302,7 @@ class PostRequestCase(unittest.TestCase):
         cls.app_context = app.test_request_context()
         cls.app_context.push()
         cls.client = app.test_client()
-        cls.t = t
+        cls.t = TestObject(app, db)
         cls.t.add_test_client(cls.client)
         return super().setUpClass()
 

@@ -13,6 +13,9 @@ def clean():
     if os.path.isfile(os.path.abspath(os.environ['FLASK_DATABASE_URI'] + '-journal')):
         os.remove(os.path.abspath(os.environ['FLASK_DATABASE_URI'] + '-journal'))
 try:
+    from project import tests
+    tests.create_test_db()
+    
     loader = unittest.TestLoader()
     start_dir = 'project/tests'
     suite = loader.discover(start_dir)

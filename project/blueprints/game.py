@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
-import datetime
+import datetime, re
 
 game = Blueprint('game', __name__)
 
@@ -101,10 +101,33 @@ def searchpuzzle(trend=None):
             "creatorID": p.creatorID,
             "creator": p.creator.name,
             "play_count": p.play_count,
-            "average_rating": p.average_rating
+            "average_rating": p.average_rating,
+            "dateCreated": p.dateCreated,
         }
-    page_size = 10
     
+    def standardize(s:str):
+        '''Turn a search query into a regex for database search'''
+        s = s.lower()
+        common = ['_', ' ']
+        for i in common:
+            s = s.replace(i, '.*')
+        return '(?i)' + s
+    
+    def setdefaults(lst, into):
+        for i in range(len(lst)):
+            if lst[i]:
+                into[i] = lst[i]
+        return into
+
+    #regex for validating search params
+    def isfloat(s):
+        return re.match(r'^-?\d+(\.\d+)?$', s) is not None
+    
+    def isdate(s):
+        return re.match(r'^\d{4}-\d{2}-\d{2}$', s) is not None
+    
+    page_size = request.args.get('page_size', '10')
+    page_size = int(page_size) if page_size.isdigit() else 10
     page = request.args.get('page', 1)
     page = int(page) - 1 if page.isdigit() else 0
 
@@ -119,7 +142,25 @@ def searchpuzzle(trend=None):
                 data = Puzzle.query.where(Puzzle.dateCreated > t).order_by(db.desc(Puzzle.play_count))
             case 'popular':
                 data = Puzzle.query.order_by(db.desc(Puzzle.play_count))
+    else:
+        query = standardize(request.args.get('query', '.*'))
 
-        data = [f(p) for p in data.limit(page_size).offset(page*page_size).all()]
+        rating = setdefaults(request.args.get('rating', '0-5').split('-'), ['0', '5'])
+        rating = [(float(i) if isfloat(i) else 0) for i in rating]
 
+        date = request.args.get('after', '0000-01-01'), request.args.get('to', '9999-01-01')
+        date = [(i if isdate(i) else '0000-01-01') for i in date]
+
+        completed = request.args.get('completed', None)
+        if completed and current_user.is_authenticated:
+            completed = (current_user, True if completed.lower() == 'true' else False)
+        else:
+            completed = None
+
+        play_count = setdefaults(request.args.get('play_count', '0').split('-'), ['0', '999999'])
+        play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
+
+        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count)
+
+    data = [f(p) for p in data.limit(page_size).offset(page*page_size).all()]
     return data

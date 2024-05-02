@@ -3,7 +3,7 @@ import unittest
 
 from sqlalchemy import exc, MetaData
 
-from project.tests import t
+from project.tests import TestObject
 
 from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
@@ -17,7 +17,7 @@ class UserModelCase(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.app_context = app.app_context()
         cls.app_context.push()
-        cls.t = t
+        cls.t = TestObject(app, db)
         return super().setUpClass()
 
     def tearDown(self):
@@ -90,7 +90,7 @@ class PuzzleModelCase(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.app_context = app.app_context()
         cls.app_context.push()
-        cls.t = t
+        cls.t = TestObject(app, db)
 
         return super().setUpClass()
     

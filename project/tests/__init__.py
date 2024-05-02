@@ -120,24 +120,25 @@ class TestObject:
     def logout(self):
         return self.client.get(url_for(route.logout), follow_redirects=True)
 
-from project import app, db
+def create_test_db():
+    from project import app, db
 
-app_context = app.app_context()
-app_context.push()
-db.create_all()
+    app_context = app.app_context()
+    app_context.push()
+    db.create_all()
 
-#disable & reenable commit for batch commit
-start = datetime.datetime.now()
-print('Generating standard test database...')
-Config.TESTING = True
-t = TestObject(app, db)
-t.generate_users()
-t.generate_puzzles()
-t.generate_scores()
-t.generate_ratings()
-Config.TESTING = False
-db.session.commit()
-print('Done.')
-app_context.pop()
-elapsed = str((datetime.datetime.now()-start).total_seconds())
-print(f'Time elapsed: {float(elapsed):.3f}s')
+    #disable & reenable commit for batch commit
+    start = datetime.datetime.now()
+    print('Generating standard test database...')
+    Config.TESTING = True
+    t = TestObject(app, db)
+    t.generate_users()
+    t.generate_puzzles()
+    t.generate_scores()
+    t.generate_ratings()
+    Config.TESTING = False
+    db.session.commit()
+    print('Done.')
+    app_context.pop()
+    elapsed = str((datetime.datetime.now()-start).total_seconds())
+    print(f'Time elapsed: {float(elapsed):.3f}s')
