@@ -9,7 +9,7 @@ from project.tests import TestObject
 from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
 
-from project.utils import user_utils, puzzle_utils, route_utils as route
+from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as route
 
 import datetime
 
@@ -45,7 +45,8 @@ class GetRequestCase(unittest.TestCase):
             route.logout: 302,
             route.wordGame: 200,
             route.solve: 405,
-            route.user.current: 200
+            route.user.current: 200,
+            route.puzzle.create: 401
         }
         for path, code in expected.items():
             response = self.client.get(url_for(path))
@@ -53,6 +54,8 @@ class GetRequestCase(unittest.TestCase):
 
         user = user_utils.add_user("GET_USER", "123")
         response = self.t.login("GET_USER", "123")
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(url_for(route.puzzle.create))
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url_for(route.profile))
         self.assertEqual(response.status_code, 200)
@@ -227,6 +230,38 @@ class GetRequestCase(unittest.TestCase):
         expected.sort()
         result.sort()
         self.assertEqual(expected, result)
+        pass
+    
+    def test_validate_puzzle_submit(self):
+        # Test for invalid characters
+        test1 = auth_utils.validate_puzzle_submit('!@#$%6&*9)')
+        # Test for number string
+        test2 = auth_utils.validate_puzzle_submit('990123')
+        # Test for too long string
+        test3 = auth_utils.validate_puzzle_submit('asdjkasnckdasnjckjsan')
+        # Test for too short string
+        test4 = auth_utils.validate_puzzle_submit('ab')
+        # Test for correct string
+        test5 = auth_utils.validate_puzzle_submit('asdjfknca')
+        # Test for correct string
+        test6 = auth_utils.validate_puzzle_submit('kvmmkxk')
+        # Test for correct string
+        test7 = auth_utils.validate_puzzle_submit('xxxxx')
+        # Test for correct string
+        test8 = auth_utils.validate_puzzle_submit('SSAAMCDDKL')
+        # Test for incorrect mix string
+        test9 = auth_utils.validate_puzzle_submit('sodc9kz!')
+        
+        self.assertEqual(test1,False)
+        self.assertEqual(test2,False)
+        self.assertEqual(test3,False)
+        self.assertEqual(test4,False)
+        self.assertEqual(test5,False)
+        self.assertEqual(test6,False)
+        self.assertEqual(test7,False)
+        self.assertEqual(test8,True)
+        self.assertEqual(test9,False)
+        
 
     def test_get_user_info(self):
         '''
@@ -379,7 +414,7 @@ class PostRequestCase(unittest.TestCase):
         #authenticated case
         self.t.register("POST_USER", "Valid123456")
         response = self.t.login("POST_USER", "Valid123456")
-        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHI"), follow_redirects=True)
+        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHIJ"), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(url_for(route.index), response.request.path)
         self.assertIsNotNone(puzzle_utils.get_puzzle("ENDPOINT_TEST_PUZZLE"))
