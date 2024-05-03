@@ -77,6 +77,12 @@ class Puzzle(db.Model):
         return 0
     
     @property
+    def highest_score(self) -> float:
+        if len(self.scores) > 0:
+            return max(s.score for s in self.scores)
+        return 0
+    
+    @property
     def average_rating(self) -> float:
         if self.ratings and len(self.ratings) > 0:
             return sum(r.rating for r in self.ratings) / len(self.ratings)

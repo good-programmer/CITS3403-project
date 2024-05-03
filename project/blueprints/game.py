@@ -103,6 +103,7 @@ def searchpuzzle(trend=None):
             "play_count": p.play_count,
             "average_rating": p.average_rating,
             "dateCreated": str(p.dateCreated),
+            "highscore": p.highest_score
         }
     
     def standardize(s:str):
@@ -129,7 +130,7 @@ def searchpuzzle(trend=None):
     page_size = request.args.get('page_size', '10')
     page_size = int(page_size) if page_size.isdigit() else 10
     page = request.args.get('page', '1')
-    page = int(page) - 1 if page.isdigit() else 0
+    page = int(page) if page.isdigit() else 1
 
     data = None
 
@@ -162,7 +163,17 @@ def searchpuzzle(trend=None):
         play_count = setdefaults(request.args.get('play_count', '0').split('-'), ['0', '999999'])
         play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
 
-        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count)
+        sort_by = request.args.get('sort_by', 'date').lower()
+        if sort_by not in ['date', 'play_count', 'highscore', 'rating', 'a-z']:
+            sort_by = 'date'
+        
+        order = request.args.get('order', 'desc')
+        if order not in ['desc', 'asc']:
+            order = 'desc'
 
-    data = [f(p) for p in data.limit(page_size).offset(page*page_size).all()]
-    return data
+        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, sort_by=sort_by, order=order)
+    
+    page = data.paginate(page=page, per_page=page_size, error_out=True)
+    data = [f(p) for p in page.items]
+    
+    return {"puzzles": data, "pages": page.pages, "count": page.total}
