@@ -110,19 +110,19 @@ class GetRequestCase(unittest.TestCase):
         #recent case
         response = self.client.get(url_for(route.puzzle.search, trend='recent', page=1))
         self.assertEqual(response.status_code, 200)
-        data = [i['title'] for i in json.loads(response.data)]
+        data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, recent)
 
         #hot case
         response = self.client.get(url_for(route.puzzle.search, trend='hot', page=1))
         self.assertEqual(response.status_code, 200)
-        data = [i['title'] for i in json.loads(response.data)]
+        data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, hot)
 
         #popular case
         response = self.client.get(url_for(route.puzzle.search, trend='popular', page=1))
         self.assertEqual(response.status_code, 200)
-        data = [i['title'] for i in json.loads(response.data)]
+        data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, popular)
 
         #404 case
@@ -146,91 +146,74 @@ class GetRequestCase(unittest.TestCase):
                 s = s.replace(i, '.*')
             return '(?i)' + s
         
+        def puzzle_get(**kwargs): #auxiliary function to make a GET request to /puzzle/search with parameters
+            return self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, **kwargs))
+        
+        def parse_puzzle_search_response(response): #auxiliary function to parse the GET requests
+            self.assertEqual(response.status_code, 200)
+            result = json.loads(response.data)
+            result = [i['title'] for i in result['puzzles']]
+            return result
+        
+        def test_search_sort(sort_by, key): #auxiliary function to test sort options
+            response = puzzle_get(sort_by=sort_by, order='desc')
+            expected = sorted([p for p in Puzzle.query.all()],key=key, reverse=True)
+            expected = [p.title for p in expected]
+            self.assertEqual(expected, parse_puzzle_search_response(response))
+        
         #search by puzzle title
         query = 'g PUZZLE 2$'
-        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, query=query))
-        self.assertEqual(response.status_code, 200)
-        result = json.loads(response.data)
-        result = [i['title'] for i in result]
-
+        response = puzzle_get(query=query)
         expected = ['$GENERATED_PUZZLE_' + str(2 + i*10) for i in range(self.t.numPuzzles//10)]
-        expected.sort()
-        result.sort()
-        self.assertEqual(expected, result)
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
 
         #search by puzzle creator
         query = "gen use 5$"
-        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, query=query))
-        self.assertEqual(response.status_code, 200)
-        result = json.loads(response.data)
-        result = [i['title'] for i in result]
-
+        response = puzzle_get(query=query)
         expected = [p.title for x in range(self.t.numUsers//10) for p in user_utils.get_user(name=f'$GENERATED_USER_{5+x*10}').puzzles]
-        expected.sort()
-        result.sort()
-        self.assertListEqual(expected, result)
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
 
         #search by rating
         lower, upper = 1, 2                                                                          
-        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, rating=f'{lower}-{upper}'))
-        self.assertEqual(response.status_code, 200)
-        result = json.loads(response.data)
-        result = [i['title'] for i in result]
-
+        response = puzzle_get(rating=f'{lower}-{upper}')
         expected = [p.title for p in Puzzle.query.all() if lower<=p.average_rating<=upper]
-        expected.sort()
-        result.sort()
-        self.assertEqual(expected, result)
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
         
         #search by date created
         lower, upper = '2000-01-01', '2002-01-01'                                                                     
-        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, after=lower, to=upper))
-        self.assertEqual(response.status_code, 200)
-        result = json.loads(response.data)
-        result = [i['title'] for i in result]
-
+        response = puzzle_get(after=lower, to=upper)
         expected = [p.title for p in Puzzle.query.all() if datetime.datetime.strptime(lower, '%Y-%m-%d')<=p.dateCreated<=datetime.datetime.strptime(upper, '%Y-%m-%d')]
-        expected.sort()
-        result.sort()
-        self.assertEqual(expected, result)
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
         
         #search by completeed
         user = self.t.get_random_user()
         self.t.login(user.name, "123")
-        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, completed=True))
-        self.assertEqual(response.status_code, 200)
-        result = json.loads(response.data)
-        result = [i['title'] for i in result]
-
+        response = puzzle_get(completed=True)
         expected = [p.puzzle.title for p in user.scores]
-        expected.sort()
-        result.sort()
-        self.assertEqual(expected, result)
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
 
         #search by uncompleted
-        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, completed=False))
-        self.assertEqual(response.status_code, 200)
-        result = json.loads(response.data)
-        result = [i['title'] for i in result]
-
+        response = puzzle_get(completed=False)
         r = [l.puzzleID for l in user.scores]
         expected = [p.title for p in Puzzle.query.all() if p.id not in r]
-        expected.sort()
-        result.sort()
-        self.assertEqual(expected, result)
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
 
         #search by play count
         lower, upper = 5, 10                                                                     
-        response = self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, play_count=f'{lower}-{upper}'))
-        self.assertEqual(response.status_code, 200)
-        result = json.loads(response.data)
-        result = [i['title'] for i in result]
-
+        response = puzzle_get(play_count=f'{lower}-{upper}')
         expected = [p.title for p in Puzzle.query.all() if lower<=p.play_count<=upper]
-        expected.sort()
-        result.sort()
-        self.assertEqual(expected, result)
-        pass
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+        
+        #sort by play count
+        test_search_sort('play_count', lambda x: x.play_count)
+        #sort by date
+        test_search_sort('date', lambda x: x.dateCreated.timestamp())
+        #sort by play count
+        test_search_sort('rating', lambda x: x.average_rating)
+        #sort by a-z
+        test_search_sort('a-z', lambda x: x.title)
+        #sort by highest score
+        test_search_sort('highscore', lambda x: max([0] + [s.score for s in x.scores]))
     
     def test_validate_puzzle_submit(self):
         # Test for invalid characters
