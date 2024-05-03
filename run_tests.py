@@ -1,7 +1,7 @@
 import os
 import unittest
 
-os.environ['FLASK_DATABASE_URI'] = "project/db/unittest.db"
+os.environ['FLASK_DATABASE_URI'] = "project/db/:memory:"
 
 loader = unittest.TestLoader()
 start_dir = 'project/tests'

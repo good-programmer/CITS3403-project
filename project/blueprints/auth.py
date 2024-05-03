@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import db, User
 from flask_login import login_user, login_required, logout_user, current_user
@@ -58,11 +58,19 @@ def register_post():
 @auth.route('/logout')
 @login_required
 def logout():
+    '''
+    If logged in, logs out the current user.
+    '''
     logout_user()
     return redirect(url_for(route.index))
 
-@auth.route('/user/current')
-def getuser():
+@auth.route('/user/current', methods=["GET"])
+def currentuser():
+    '''
+    Retrieves the username and id of the current authenticated user.
+    \n-id
+    \n-username
+    '''
     if current_user.is_authenticated:
         return {
             "id": current_user.id,
@@ -70,3 +78,62 @@ def getuser():
         }
     else:
         return {"id": -1, "username": ""}
+
+@auth.route('/user/<userid>', methods=["GET"])
+def getuser(userid):
+    '''
+    Retrieves the public information of a given user by their id.
+    \n-id
+    \n-username
+    \n-followers
+    \n-following
+    \n-scores
+    \n-ratings
+    \nIf current user is authenticated, also retrieves their followage to this user.
+    '''
+    user = user_utils.get_user(id=userid)
+    if user:
+        data = {
+            "id": user.id,
+            "username": user.name,
+            "followers": [{"id": u.followerID, "name": u.follower.name} for u in user.followers],
+            "following": [{"id": u.userID, "name": u.user.name} for u in user.following],
+            "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in user.scores],
+            "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": r.dateRated.ctime()} for r in user.ratings]
+        }
+        if current_user.is_authenticated:
+            data['is_following'] = current_user.is_following(user)
+        return data
+    abort(404)
+
+@auth.route('/user/follow', methods=["POST"])
+def followuser():
+    '''
+    Allows the current authenticated user to follow another user by id.
+    Requires a POST request to the endpoint containing key-pair [id=userID]
+    '''
+    if not current_user.is_authenticated:
+        abort(401)
+    user = user_utils.get_user(id=request.values['id'])
+    if user:
+        if current_user.is_following(user):
+            abort(400)
+        else:
+            current_user.follow_user(user)
+            return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200
+
+@auth.route('/user/unfollow', methods=["POST"])
+def unfollowuser():
+    '''
+    Allows the current authenticated user to unfollow another user by id.
+    Requires a POST request to the endpoint containing key-pair [id=userID]
+    '''
+    if not current_user.is_authenticated:
+        abort(401)
+    user = user_utils.get_user(id=request.values['id'])
+    if user:
+        if not current_user.is_following(user):
+            abort(400)
+        else:
+            current_user.unfollow_user(user)
+            return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200

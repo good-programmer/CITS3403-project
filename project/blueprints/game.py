@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect
+from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort
 from .models import db
 from flask_login import login_required, current_user
 
@@ -28,6 +28,8 @@ def solve():
 
 @game.route('/puzzle/create', methods=['GET','POST'])
 def submitpuzzle():
+    if not current_user.is_authenticated:
+        abort(401)
     if request.method == 'POST':
         fget = request.form.get
         puzzlename, content = fget('puzzlename'), fget('puzzle')
@@ -40,3 +42,50 @@ def submitpuzzle():
             return render_template('submitpuzzle.html')
     else:
         return render_template('submitpuzzle.html')
+    
+@game.route('/puzzle/<puzzleid>', methods=['GET'])
+def getpuzzle(puzzleid):
+    '''
+    Retrieves a puzzle's information by id. This includes title, content, creatorID, scores, and average score and rating.
+    \nIf the user is authenticated, also returns that user's score and rating for the puzzle (if any).
+    '''
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    if puzzle:
+        data = {
+            "id": puzzle.id,
+            "title": puzzle.title,
+            "content": puzzle.content,
+            "creatorID": puzzle.creatorID,
+            "dateCreated": puzzle.dateCreated.ctime(),
+            "scores": [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in puzzle.scores],
+            "average_score": puzzle.average_score,
+            "average_rating": puzzle.average_rating
+        }
+        if current_user.is_authenticated:
+            if puzzle.has_rating(current_user):
+                r = puzzle.get_rating(current_user)
+                data['rated'] = {"rating": r.rating, "dateRated": r.dateRated.ctime()}
+            if puzzle.has_record(current_user):
+                s = puzzle.get_record(current_user)
+                data['score'] = {"score": s.score, "dateSubmitted": s.dateSubmitted.ctime()}
+        return data
+    abort(404)
+
+@game.route('/puzzle/<puzzleid>/rate', methods=['POST'])
+def ratepuzzle(puzzleid):
+    '''
+    Allows an authenticated user to rate a puzzle given they have submitted a score.
+    \nReturns the puzzle's average rating (after adding the user's).
+    '''
+    if not current_user.is_authenticated:
+        abort(401)
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    if puzzle:
+        if puzzle.has_record(current_user):
+            if puzzle.has_rating(current_user):
+                puzzle.update_rating(current_user, request.values['rating'])
+            else:
+                puzzle.add_rating(current_user, request.values['rating'])
+            return {"average_rating": puzzle.average_rating}
+        abort(401)
+    abort(404)
