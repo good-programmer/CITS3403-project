@@ -26,8 +26,8 @@ def validate_puzzle_submit(input):
 
     # Check if input length is correct
     str_len = len(input)
-    if str_len > 10 or str_len < 3:
-        flash("String is incorrect length, string needs to be < 10 and > 2", 'error')
+    if str_len == 10:
+        flash("String is incorrect length, need to be length 10", 'error')
         return False
 
     # If input passes all checks, return True

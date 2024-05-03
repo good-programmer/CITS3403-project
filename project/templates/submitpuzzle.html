@@ -29,7 +29,7 @@
             <p class="MatrixTextYellow" id="instructions"> Create a <b>PUZZLE!</b> Insert a string of alphabetical characters only, 
                 that can be used to form potentially new words alongside a puzzle name. 
                 Example: inputting 'asdkflkasc' as a puzzle. Users can then submit answers based on this string, e.g. 'flask'. 
-                String length is limited too **DECIDED BETWEEN GROUP LATER [SEE submitpuzzle.js]** and cannot contain special characters * . , - etc.
+                String length is limited too 10 and cannot contain special characters * . , - etc.
             </p>
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
