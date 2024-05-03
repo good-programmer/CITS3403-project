@@ -9,7 +9,7 @@ from project.tests import TestObject
 from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
 
-from project.utils import user_utils, puzzle_utils, route_utils as route
+from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as route
 
 class GetRequestCase(unittest.TestCase):
     def setUp(self):
@@ -37,7 +37,8 @@ class GetRequestCase(unittest.TestCase):
             route.logout: 302,
             route.wordGame: 200,
             route.solve: 405,
-            route.user.current: 200
+            route.user.current: 200,
+            route.puzzle.create: 200
         }
         for path, code in expected.items():
             response = self.client.get(url_for(path))
@@ -82,6 +83,37 @@ class GetRequestCase(unittest.TestCase):
         Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts.
         '''
         pass
+    
+    def test_validate_puzzle_submit(self):
+        # Test for invalid characters
+        test1 = auth_utils.validate_puzzle_submit('!@#$%6&*9)')
+        # Test for number string
+        test2 = auth_utils.validate_puzzle_submit('990123')
+        # Test for too long string
+        test3 = auth_utils.validate_puzzle_submit('asdjkasnckdasnjckjsan')
+        # Test for too short string
+        test4 = auth_utils.validate_puzzle_submit('ab')
+        # Test for correct string
+        test5 = auth_utils.validate_puzzle_submit('asdjfknca')
+        # Test for correct string
+        test6 = auth_utils.validate_puzzle_submit('kvmmkxk')
+        # Test for correct string
+        test7 = auth_utils.validate_puzzle_submit('xxxxx')
+        # Test for correct string
+        test8 = auth_utils.validate_puzzle_submit('SSAAMCDD')
+        # Test for incorrect mix string
+        test9 = auth_utils.validate_puzzle_submit('sodc9kz!')
+        
+        self.assertEqual(test1,False)
+        self.assertEqual(test2,False)
+        self.assertEqual(test3,False)
+        self.assertEqual(test4,False)
+        self.assertEqual(test5,True)
+        self.assertEqual(test6,True)
+        self.assertEqual(test7,True)
+        self.assertEqual(test8,True)
+        self.assertEqual(test9,False)
+        
 
     def test_get_user_info(self):
         '''
