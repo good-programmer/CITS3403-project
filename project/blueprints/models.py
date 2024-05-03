@@ -101,10 +101,10 @@ class Puzzle(db.Model):
     def has_record(self, user) -> bool:
         #return user.id in [u.userID for u in self.scores]
         #print(LeaderboardRecord.query.filter_by(userID=user.id).first())
-        return LeaderboardRecord.query.filter_by(userID=user.id).first() is not None
+        return LeaderboardRecord.query.filter_by(userID=user.id, puzzleID=self.id).first() is not None
     
     def get_record(self, user) -> LeaderboardRecord:
-        return LeaderboardRecord.query.filter_by(userID=user.id).first()
+        return LeaderboardRecord.query.filter_by(userID=user.id, puzzleID=self.id).first()
     
     def update_record(self, user, score) -> bool:
         '''Updates a user's score. Returns True if successful, False otherwise.'''
@@ -129,10 +129,10 @@ class Puzzle(db.Model):
         commit()
 
     def has_rating(self, user) -> bool:
-        return Rating.query.filter_by(userID=user.id).first() is not None
+        return Rating.query.filter_by(userID=user.id, puzzleID=self.id).first() is not None
     
     def get_rating(self, user) -> Rating:
-        return Rating.query.filter_by(userID=user.id).first()
+        return Rating.query.filter_by(userID=user.id, puzzleID=self.id).first()
     
     def update_rating(self, user, rating) -> bool:
         '''Updates a user's rating. Returns True if successful, False otherwise.'''

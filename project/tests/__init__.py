@@ -5,8 +5,9 @@ from flask import url_for
 from project.blueprints.models import User, Follow, Puzzle
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
-from project.config import Config
+from project.config import Config, PATH
 
+import os
 import random
 import string
 import datetime
@@ -14,14 +15,36 @@ import datetime
 def random_date(start, end):
     return start + (end - start) * random.random()
 
+words = os.path.join(PATH, 'utils', 'words_dict')
+with open(words, 'r') as f:
+    valid_words = tuple(word.strip() for word in f)
+
+def random_word():
+    return random.choice(valid_words)
+
+def random_username(i):
+    return random_word().capitalize() + random_word().capitalize() + str(random.randint(1, 100))
+
+def random_puzzletitle(i):
+    return ' '.join([random_word().capitalize() for i in range(random.randint(3,6))])
+
+def ordered_username(i):
+    return "GENERATED_USER_" + str(i)
+
+def ordered_puzzletitle(i):
+    return "GENERATED_PUZZLE_" + str(i)
+
 class TestObject:
 
-    numUsers = 100
-    numPuzzles = 300
-    numScores = 95
-    numRatings = 90
+    numUsers = 500
+    numPuzzles = 800
+    numScores = 400
+    numRatings = 350
 
-    identifier = '$'
+    generate_username = random_username
+    generate_puzzletitle = random_puzzletitle
+
+    identifier = ''
 
     def __init__(self, app, db):
         self.app = app
@@ -33,6 +56,8 @@ class TestObject:
         self.numScores = TestObject.numScores
         self.numRatings = TestObject.numRatings
         self.identifier = TestObject.identifier
+        self.generate_username = TestObject.generate_username
+        self.generate_puzzletitle = TestObject.generate_puzzletitle
     
     def commit_db(self):
         if not Config.TESTING:
@@ -66,7 +91,7 @@ class TestObject:
 
     def generate_users(self):
         for i in range(self.numUsers):
-                user_utils.add_user(self.identifier + "GENERATED_USER_" + str(i), "123")
+                user_utils.add_user(self.identifier + self.generate_username(i), "123")
 
     def get_random_user(self) -> User:
         return self.db.session.query(User).limit(1).offset(random.randint(0, self.numUsers - 1)).first()
@@ -75,7 +100,7 @@ class TestObject:
          for i in range(self.numPuzzles):
                 user = self.get_random_user()
                 content = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
-                puzzle = puzzle_utils.add_puzzle(title = self.identifier + "GENERATED_PUZZLE_" + str(i), creator=user, content=content)
+                puzzle = puzzle_utils.add_puzzle(title = self.identifier + self.generate_puzzletitle(i), creator=user, content=content)
                 puzzle.dateCreated = random_date(datetime.datetime(year=2000, month=1, day=1), datetime.datetime.now())
                 self.commit_db()
 
@@ -83,30 +108,21 @@ class TestObject:
          return self.db.session.query(Puzzle).limit(1).offset(random.randint(0, self.numPuzzles - 1)).first()
     
     def generate_scores(self):
-         for i in range(self.numPuzzles):
-            puzzle = self.get_random_puzzle()
-            for j in range(self.numScores):
-                user = self.get_random_user()
-                if not puzzle.has_record(user):
-                    puzzle.add_record(user, random.randrange(1, 1000))
-                    puzzle.get_record(user).dateSubmitted = random_date(puzzle.dateCreated, datetime.datetime(year=2500, month=12, day=31))
-                    self.commit_db()
+         for puzzle in Puzzle.query.all():
+            for user in User.query.order_by(sqlalchemy.func.random()).limit(random.randint(0,self.numScores)):
+                puzzle.add_record(user, random.randrange(1, 1000))
+                puzzle.get_record(user).dateSubmitted = random_date(puzzle.dateCreated, datetime.datetime(year=2500, month=12, day=31))
+                self.commit_db()
 
     def generate_ratings(self):
-         for i in range(self.numPuzzles):
-            puzzle = self.get_random_puzzle()
-            for j in range(min(puzzle.play_count, self.numRatings)):
-                user = self.get_random_user()
-                while not puzzle.has_record(user):
-                    user = self.get_random_user()
-                if not puzzle.has_rating(user):
-                    puzzle.add_rating(user, random.randrange(0, 10) / 2)
-                    if puzzle.get_record(user) is None:
-                        print(user.id, user.name)
-                        print(puzzle.has_record(user))
-                        print(puzzle.get_record(user))
-                    puzzle.get_rating(user).dateRated = random_date(puzzle.get_record(user).dateSubmitted, datetime.datetime(year=3000, month=12, day=31))
-                    self.commit_db()
+         for puzzle in Puzzle.query.all():
+            for j in range(puzzle.play_count):
+                user = random.choice(puzzle.scores).user
+                if puzzle.has_rating(user):
+                    continue
+                puzzle.add_rating(user, random.randrange(0, 10) / 2)
+                puzzle.get_rating(user).dateRated = random_date(puzzle.get_record(user).dateSubmitted, datetime.datetime(year=3000, month=12, day=31))
+                self.commit_db()
 
     def register(self, username, password, confirmpassword=None):
         if not confirmpassword: confirmpassword=password
@@ -132,9 +148,13 @@ def create_test_db():
     print('Generating standard test database...')
     Config.TESTING = True
     t = TestObject(app, db)
+    print('Users...')
     t.generate_users()
+    print('Puzzles...')
     t.generate_puzzles()
+    print('Scores...')
     t.generate_scores()
+    print('Ratings...')
     t.generate_ratings()
     Config.TESTING = False
     db.session.commit()
