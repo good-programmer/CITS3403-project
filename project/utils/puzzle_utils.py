@@ -1,8 +1,26 @@
-from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import func, text, desc, asc
+from sqlalchemy import func, desc, asc
 from ..blueprints.models import db, User, Puzzle, Rating, LeaderboardRecord
 
 from project.config import Config
+
+def pack_puzzle(puzzle, detail=1):
+    '''Packs a puzzle's public information into a dictionary with variable detail level'''
+    data = {
+        "id": puzzle.id,
+        "title": puzzle.title,
+        "creatorID": puzzle.creatorID,
+        "creator": puzzle.creator.name,
+        "play_count": puzzle.play_count,
+        "average_rating": puzzle.average_rating,
+        "dateCreated": str(puzzle.dateCreated),
+        "highscore": puzzle.highest_score
+    }
+    if detail > 1:
+        data["content"] = puzzle.content
+        data["scores"] = [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in puzzle.scores]
+        data["average_score"] = puzzle.average_score
+    return data
+
 
 def add_puzzle(title, creator, content) -> Puzzle:
     '''Add a puzzle with a given title, creator and content.'''

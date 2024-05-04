@@ -52,16 +52,7 @@ def getpuzzle(puzzleid):
     '''
     puzzle = puzzle_utils.get_puzzle(id=puzzleid)
     if puzzle:
-        data = {
-            "id": puzzle.id,
-            "title": puzzle.title,
-            "content": puzzle.content,
-            "creatorID": puzzle.creatorID,
-            "dateCreated": str(puzzle.dateCreated),
-            "scores": [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in puzzle.scores],
-            "average_score": puzzle.average_score,
-            "average_rating": puzzle.average_rating
-        }
+        data = puzzle_utils.pack_puzzle(puzzle, detail=2)
         if current_user.is_authenticated:
             if puzzle.has_rating(current_user):
                 r = puzzle.get_rating(current_user)
@@ -94,18 +85,6 @@ def ratepuzzle(puzzleid):
 @game.route('/puzzle/search', methods=['GET'])
 @game.route('/puzzle/search/<trend>', methods=['GET'])
 def searchpuzzle(trend=None):
-    def f(p):
-        return {
-            "id": p.id,
-            "title": p.title,
-            "creatorID": p.creatorID,
-            "creator": p.creator.name,
-            "play_count": p.play_count,
-            "average_rating": p.average_rating,
-            "dateCreated": str(p.dateCreated),
-            "highscore": p.highest_score
-        }
-    
     def standardize(s:str):
         '''Turn a search query into a regex for database search'''
         s = s.lower()
@@ -174,6 +153,6 @@ def searchpuzzle(trend=None):
         data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, sort_by=sort_by, order=order)
     
     page = data.paginate(page=page, per_page=page_size, error_out=True)
-    data = [f(p) for p in page.items]
+    data = [puzzle_utils.pack_puzzle(p) for p in page.items]
     
     return {"puzzles": data, "pages": page.pages, "count": page.total}

@@ -72,10 +72,7 @@ def currentuser():
     \n-username
     '''
     if current_user.is_authenticated:
-        return {
-            "id": current_user.id,
-            "username": current_user.name
-        }
+        return auth_utils.pack_user(current_user)
     else:
         return {"id": -1, "username": ""}
 
@@ -93,14 +90,7 @@ def getuser(userid):
     '''
     user = user_utils.get_user(id=userid)
     if user:
-        data = {
-            "id": user.id,
-            "username": user.name,
-            "followers": [{"id": u.followerID, "name": u.follower.name} for u in user.followers],
-            "following": [{"id": u.userID, "name": u.user.name} for u in user.following],
-            "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores],
-            "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings]
-        }
+        data = auth_utils.pack_user(user)
         if current_user.is_authenticated:
             data['is_following'] = current_user.is_following(user)
         return data
