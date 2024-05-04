@@ -13,7 +13,8 @@ solve = 'game.solve'
 puzzle = Group(
     create='game.submitpuzzle',
     get='game.getpuzzle',
-    rate='game.ratepuzzle'
+    rate='game.ratepuzzle',
+    search = 'game.searchpuzzle'
 )
 
 user = Group(

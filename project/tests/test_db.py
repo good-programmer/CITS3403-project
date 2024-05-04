@@ -1,7 +1,7 @@
 from datetime import datetime, timezone, timedelta
 import unittest
 
-from sqlalchemy import exc
+from sqlalchemy import exc, MetaData
 
 from project.tests import TestObject
 
@@ -10,16 +10,23 @@ from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecor
 
 from project.utils import user_utils, puzzle_utils
 
+from project.config import Config
+
 class UserModelCase(unittest.TestCase):
-    def setUp(self):
-        self.app_context = app.app_context()
-        self.app_context.push()
-        db.create_all()
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.app_context = app.app_context()
+        cls.app_context.push()
+        cls.t = TestObject(app, db)
+        return super().setUpClass()
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
+        self.t.clear_db()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.app_context.pop()
+        return super().tearDownClass()
 
     def test_account(self):
         '''
@@ -79,17 +86,31 @@ class UserModelCase(unittest.TestCase):
         self.assertIsNone(db.session.query(Follow).filter_by(userID=current_user.id, followerID=u2.id).first())
 
 class PuzzleModelCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.app_context = app.app_context()
+        cls.app_context.push()
+        cls.t = TestObject(app, db)
+
+        return super().setUpClass()
+    
     def setUp(self):
-        self.app_context = app.app_context()
-        self.app_context.push()
-        db.create_all()
-        t = TestObject(app, db)
-        self.t = t
+        #disable & reenable commit for batch commit
+        '''Config.TESTING = True
+        self.t.generate_users()
+        self.t.generate_puzzles()
+        self.t.generate_scores()
+        self.t.generate_ratings()
+        Config.TESTING = False
+        db.session.commit()'''
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
+        self.t.clear_db()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.app_context.pop()
+        return super().tearDownClass()
     
     def test_puzzle(self):
         '''
@@ -106,7 +127,6 @@ class PuzzleModelCase(unittest.TestCase):
         Tests the relationship between User and Puzzle in the ORM.
         \nTests that when a puzzle is created, its details are accurate.
         '''
-        self.t.generate_users()
         user = self.t.get_random_user()
         current_time = datetime.now()
         puzzle = puzzle_utils.add_puzzle(title = "TEST_PUZZLE", creator=user, content="QWOISAD")
@@ -122,9 +142,6 @@ class PuzzleModelCase(unittest.TestCase):
         '''
         Tests *_record methods of User for correctness and integrity.
         '''
-        self.t.generate_users()
-        self.t.generate_puzzles()
-        self.t.generate_scores()
         puzzle = self.t.get_random_puzzle()
         user = user_utils.add_user("MAIN_USER", "132131")
         before = puzzle.scores.copy()
@@ -152,9 +169,6 @@ class PuzzleModelCase(unittest.TestCase):
         '''
         Tests *_rating methods of User for correctness and integrity.
         '''
-        self.t.generate_users()
-        self.t.generate_puzzles()
-        self.t.generate_ratings()
         puzzle = self.t.get_random_puzzle()
         user = user_utils.add_user("MAIN_USER", "132131")
         before = puzzle.ratings.copy()
@@ -185,10 +199,6 @@ class PuzzleModelCase(unittest.TestCase):
         \nTests that average_rating is equivalent to the sum of ratings divided by the number.
         \nTests that updating with new data is correctly reflected in a change in average.
         '''
-        self.t.generate_users()
-        self.t.generate_puzzles()
-        self.t.generate_scores()
-        self.t.generate_ratings()
         puzzle = self.t.get_random_puzzle()
         while len(puzzle.scores) == 0 or len(puzzle.ratings) == 0:
             puzzle = self.t.get_random_puzzle()

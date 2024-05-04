@@ -21,7 +21,7 @@ class Rating(db.Model):
     dateRated = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f'({self.user.name}, {self.rating})'
+        return f'({self.puzzle.title}, {self.user.name}, {self.rating})'
     
     def __init__(self, user, puzzle, rating):
         self.userID = user.id
@@ -39,7 +39,7 @@ class LeaderboardRecord(db.Model):
     dateSubmitted = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f'({self.user.name}, {self.score})'
+        return f'({self.puzzle.title}, {self.user.name}, {self.score})'
 
     def __init__(self, user, puzzle, score):
         self.userID = user.id
@@ -65,6 +65,7 @@ class Puzzle(db.Model):
     creator = db.relationship("User", foreign_keys=[creatorID], back_populates="puzzles")
     dateCreated = db.Column(db.DateTime)
     content = db.Column(db.Text)
+    play_count = db.Column(db.Integer, default=0)
 
     scores = db.relationship("LeaderboardRecord", back_populates="puzzle")
     ratings = db.relationship("Rating", back_populates="puzzle")
@@ -76,29 +77,40 @@ class Puzzle(db.Model):
         return 0
     
     @property
+    def highest_score(self) -> float:
+        if len(self.scores) > 0:
+            return max(s.score for s in self.scores)
+        return 0
+    
+    @property
     def average_rating(self) -> float:
         if self.ratings and len(self.ratings) > 0:
             return sum(r.rating for r in self.ratings) / len(self.ratings)
         return 0
+    
+    def __repr__(self):
+        return f'<{self.id} {self.title}>'
      
     def __init__(self, title, creator, content):
         self.title = title
         self.creatorID = creator.id
         self.dateCreated = datetime.now()
         self.content = content
+        self.play_count = 0
     
     def add_record(self, user, score):
         score = LeaderboardRecord(user, self, score)
         db.session.add(score)
+        self.play_count += 1
         commit()
 
-    def has_record(self, user) -> LeaderboardRecord:
-        return user.id in [u.userID for u in self.scores]
+    def has_record(self, user) -> bool:
+        #return user.id in [u.userID for u in self.scores]
+        #print(LeaderboardRecord.query.filter_by(userID=user.id).first())
+        return LeaderboardRecord.query.filter_by(userID=user.id, puzzleID=self.id).first() is not None
     
     def get_record(self, user) -> LeaderboardRecord:
-        for s in self.scores:
-            if s.userID == user.id:
-                return s
+        return LeaderboardRecord.query.filter_by(userID=user.id, puzzleID=self.id).first()
     
     def update_record(self, user, score) -> bool:
         '''Updates a user's score. Returns True if successful, False otherwise.'''
@@ -112,6 +124,7 @@ class Puzzle(db.Model):
         '''Removes a user's score. Returns True if successful, False otherwise.'''
         if self.has_record(user):
             db.session.query(LeaderboardRecord).filter( (LeaderboardRecord.userID==user.id) & (LeaderboardRecord.puzzleID==self.id) ).delete()
+            self.play_count -= 1
             commit()
             return True
         return False
@@ -121,13 +134,11 @@ class Puzzle(db.Model):
         db.session.add(rating)
         commit()
 
-    def has_rating(self, user) -> Rating:
-        return user.id in [u.userID for u in self.ratings]
+    def has_rating(self, user) -> bool:
+        return Rating.query.filter_by(userID=user.id, puzzleID=self.id).first() is not None
     
     def get_rating(self, user) -> Rating:
-        for s in self.ratings:
-            if s.userID == user.id:
-                return s
+        return Rating.query.filter_by(userID=user.id, puzzleID=self.id).first()
     
     def update_rating(self, user, rating) -> bool:
         '''Updates a user's rating. Returns True if successful, False otherwise.'''
@@ -163,7 +174,7 @@ class User(UserMixin, db.Model):
         commit()    
     
     def is_following(self, user) -> bool:
-        return user.id in [u.userID for u in self.following]
+        return Follow.query.filter_by(userID=user.id, followerID=self.id).first() is not None
 
     def unfollow_user(self, user) -> bool:
         '''Returns true if successful, false otherwise.'''

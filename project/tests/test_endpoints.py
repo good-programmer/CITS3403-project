@@ -1,6 +1,6 @@
 import unittest, json
 
-from sqlalchemy import exc
+from sqlalchemy import exc, MetaData, func
 
 from flask import url_for
 
@@ -11,19 +11,27 @@ from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecor
 
 from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as route
 
+import datetime
+
 class GetRequestCase(unittest.TestCase):
-    def setUp(self):
-        self.app_context = app.test_request_context()
-        self.app_context.push()
-        self.client = app.test_client()
-        self.t = TestObject(app, db)
-        self.t.add_test_client(self.client)
-        db.create_all()
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.app_context = app.test_request_context()
+        cls.app_context.push()
+        cls.client = app.test_client()
+        cls.t = TestObject(app, db)
+        cls.t.add_test_client(cls.client)
+        return super().setUpClass()
 
     def tearDown(self):
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
+        self.t.logout()
+        self.t.clear_db()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.t.clear_db(True)
+        cls.app_context.pop()
+        return super().tearDownClass()
     
     def test_pages_load(self):
         '''
@@ -38,7 +46,7 @@ class GetRequestCase(unittest.TestCase):
             route.wordGame: 200,
             route.solve: 405,
             route.user.current: 200,
-            route.puzzle.create: 200
+            route.puzzle.create: 401
         }
         for path, code in expected.items():
             response = self.client.get(url_for(path))
@@ -46,6 +54,8 @@ class GetRequestCase(unittest.TestCase):
 
         user = user_utils.add_user("GET_USER", "123")
         response = self.t.login("GET_USER", "123")
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(url_for(route.puzzle.create))
         self.assertEqual(response.status_code, 200)
         response = self.client.get(url_for(route.profile))
         self.assertEqual(response.status_code, 200)
@@ -71,18 +81,139 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(data['id'], puzzle.id)
         self.assertEqual(data['title'], puzzle.title)
         self.assertEqual(data['content'], puzzle.content)
-        self.assertEqual(data['dateCreated'], puzzle.dateCreated.ctime())
+        self.assertEqual(data['dateCreated'], str(puzzle.dateCreated))
         self.assertEqual(data['creatorID'], puzzle.creatorID)
         self.assertEqual(data['average_rating'], puzzle.average_rating)
         self.assertEqual(data['average_score'], puzzle.average_score)
         response = self.client.get(url_for(route.puzzle.get, puzzleid=-1))
         self.assertEqual(response.status_code, 404)
 
-    def test_search_puzzles(self):
+    def test_puzzle_trends(self):
         '''
-        Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts.
+        Tests that a list of puzzles (and their information) can be retrieved by some common trends.
+        \npuzzles/recent
+        \npuzzles/hot (most popular within X period of time)
+        \npuzzles/popular (most popular overall)
         '''
-        pass
+
+        #from database
+        recent = Puzzle.query.order_by(db.desc(Puzzle.dateCreated)).limit(10).all()
+        recent = [p.title for p in recent]
+
+        t = datetime.datetime.now() - datetime.timedelta(weeks=1)
+        hot = Puzzle.query.where(Puzzle.dateCreated > t).order_by(db.desc(Puzzle.play_count)).limit(10).all()
+        hot = [p.title for p in hot]
+
+        popular = Puzzle.query.order_by(db.desc(Puzzle.play_count)).limit(10).all()
+        popular = [p.title for p in popular]
+
+        #recent case
+        response = self.client.get(url_for(route.puzzle.search, trend='recent', page=1))
+        self.assertEqual(response.status_code, 200)
+        data = [i['title'] for i in json.loads(response.data)['puzzles']]
+        self.assertListEqual(data, recent)
+
+        #hot case
+        response = self.client.get(url_for(route.puzzle.search, trend='hot', page=1))
+        self.assertEqual(response.status_code, 200)
+        data = [i['title'] for i in json.loads(response.data)['puzzles']]
+        self.assertListEqual(data, hot)
+
+        #popular case
+        response = self.client.get(url_for(route.puzzle.search, trend='popular', page=1))
+        self.assertEqual(response.status_code, 200)
+        data = [i['title'] for i in json.loads(response.data)['puzzles']]
+        self.assertListEqual(data, popular)
+
+        #404 case
+        response = self.client.get(url_for(route.puzzle.search, trend='notvalid', page=1))
+        self.assertEqual(response.status_code, 404)
+    
+    def test_puzzle_search(self):
+        '''Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts
+        \n-creator name
+        \n-rating
+        \n-date created interval
+        \n-completed/incomplete
+        \n-play count
+        \n-puzzle title
+        '''
+
+        def standardize(s:str):
+            s = s.lower()
+            common = ['_', ' ']
+            for i in common:
+                s = s.replace(i, '.*')
+            return '(?i)' + s
+        
+        def puzzle_get(**kwargs): #auxiliary function to make a GET request to /puzzle/search with parameters
+            return self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, **kwargs))
+        
+        def parse_puzzle_search_response(response): #auxiliary function to parse the GET requests
+            self.assertEqual(response.status_code, 200)
+            result = json.loads(response.data)
+            result = [i['title'] for i in result['puzzles']]
+            return result
+        
+        def test_search_sort(sort_by, key): #auxiliary function to test sort options
+            response = puzzle_get(sort_by=sort_by, order='desc')
+            expected = sorted([p for p in Puzzle.query.all()],key=key, reverse=True)
+            expected = [p.title for p in expected]
+            self.assertEqual(expected, parse_puzzle_search_response(response))
+        
+        #search by puzzle title
+        query = 'g PUZZLE 2$'
+        response = puzzle_get(query=query)
+        expected = ['$GENERATED_PUZZLE_' + str(2 + i*10) for i in range(self.t.numPuzzles//10)]
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+
+        #search by puzzle creator
+        query = "gen use 5$"
+        response = puzzle_get(query=query)
+        expected = [p.title for x in range(self.t.numUsers//10) for p in user_utils.get_user(name=f'$GENERATED_USER_{5+x*10}').puzzles]
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+
+        #search by rating
+        lower, upper = 1, 2                                                                          
+        response = puzzle_get(rating=f'{lower}-{upper}')
+        expected = [p.title for p in Puzzle.query.all() if lower<=p.average_rating<=upper]
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+        
+        #search by date created
+        lower, upper = '2000-01-01', '2002-01-01'                                                                     
+        response = puzzle_get(after=lower, to=upper)
+        expected = [p.title for p in Puzzle.query.all() if datetime.datetime.strptime(lower, '%Y-%m-%d')<=p.dateCreated<=datetime.datetime.strptime(upper, '%Y-%m-%d')]
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+        
+        #search by completeed
+        user = self.t.get_random_user()
+        self.t.login(user.name, "123")
+        response = puzzle_get(completed=True)
+        expected = [p.puzzle.title for p in user.scores]
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+
+        #search by uncompleted
+        response = puzzle_get(completed=False)
+        r = [l.puzzleID for l in user.scores]
+        expected = [p.title for p in Puzzle.query.all() if p.id not in r]
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+
+        #search by play count
+        lower, upper = 5, 10                                                                     
+        response = puzzle_get(play_count=f'{lower}-{upper}')
+        expected = [p.title for p in Puzzle.query.all() if lower<=p.play_count<=upper]
+        self.assertCountEqual(expected, parse_puzzle_search_response(response))
+        
+        #sort by play count
+        test_search_sort('play_count', lambda x: x.play_count)
+        #sort by date
+        test_search_sort('date', lambda x: x.dateCreated.timestamp())
+        #sort by play count
+        test_search_sort('rating', lambda x: x.average_rating)
+        #sort by a-z
+        test_search_sort('a-z', lambda x: x.title)
+        #sort by highest score
+        test_search_sort('highscore', lambda x: max([0] + [s.score for s in x.scores]))
     
     def test_validate_puzzle_submit(self):
         # Test for invalid characters
@@ -100,7 +231,7 @@ class GetRequestCase(unittest.TestCase):
         # Test for correct string
         test7 = auth_utils.validate_puzzle_submit('xxxxx')
         # Test for correct string
-        test8 = auth_utils.validate_puzzle_submit('SSAAMCDD')
+        test8 = auth_utils.validate_puzzle_submit('SSAAMCDDKL')
         # Test for incorrect mix string
         test9 = auth_utils.validate_puzzle_submit('sodc9kz!')
         
@@ -108,9 +239,9 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(test2,False)
         self.assertEqual(test3,False)
         self.assertEqual(test4,False)
-        self.assertEqual(test5,True)
-        self.assertEqual(test6,True)
-        self.assertEqual(test7,True)
+        self.assertEqual(test5,False)
+        self.assertEqual(test6,False)
+        self.assertEqual(test7,False)
         self.assertEqual(test8,True)
         self.assertEqual(test9,False)
         
@@ -159,7 +290,7 @@ class GetRequestCase(unittest.TestCase):
         response = self.client.get(url_for(route.user.get, userid=user.id))
         data = json.loads(response.data)
         self.assertIsNotNone(data)
-        self.assertListEqual(data['scores'], [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": s.dateSubmitted.ctime()} for s in user.scores])
+        self.assertListEqual(data['scores'], [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores])
         self.t.login("GET_USER1", "123")
         response = self.client.get(url_for(route.puzzle.get, puzzleid=puzzle1.id))
         data = json.loads(response.data)
@@ -179,7 +310,7 @@ class GetRequestCase(unittest.TestCase):
         response = self.client.get(url_for(route.user.get, userid=user.id))
         data = json.loads(response.data)
         self.assertIsNotNone(data)
-        self.assertListEqual(data['ratings'], [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": r.dateRated.ctime()} for r in user.ratings])
+        self.assertListEqual(data['ratings'], [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings])
         self.t.login("GET_USER1", "123")
         response = self.client.get(url_for(route.puzzle.get, puzzleid=puzzle1.id))
         data = json.loads(response.data)
@@ -188,19 +319,23 @@ class GetRequestCase(unittest.TestCase):
         self.assertEqual(data['rated']['rating'], 3)
 
 class PostRequestCase(unittest.TestCase):
-    def setUp(self):
-        self.app_context = app.test_request_context()
-        self.app_context.push()
-        self.client = app.test_client()
-        self.t = TestObject(app, db)
-        self.t.add_test_client(self.client)
-        db.create_all()
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.app_context = app.test_request_context()
+        cls.app_context.push()
+        cls.client = app.test_client()
+        cls.t = TestObject(app, db)
+        cls.t.add_test_client(cls.client)
+        return super().setUpClass()
 
     def tearDown(self):
         self.t.logout()
-        db.session.remove()
-        db.drop_all()
-        self.app_context.pop()
+        self.t.clear_db()
+    
+    @classmethod
+    def tearDownClass(cls) -> None:
+        cls.app_context.pop()
+        return super().tearDownClass()
 
     def test_create_account(self):
         '''
@@ -262,7 +397,7 @@ class PostRequestCase(unittest.TestCase):
         #authenticated case
         self.t.register("POST_USER", "Valid123456")
         response = self.t.login("POST_USER", "Valid123456")
-        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHI"), follow_redirects=True)
+        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHIJ"), follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(url_for(route.index), response.request.path)
         self.assertIsNotNone(puzzle_utils.get_puzzle("ENDPOINT_TEST_PUZZLE"))
