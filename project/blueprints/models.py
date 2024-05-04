@@ -168,6 +168,9 @@ class User(UserMixin, db.Model):
     scores = db.relationship("LeaderboardRecord", back_populates="user")
     ratings = db.relationship("Rating", back_populates="user")
 
+    def __repr__(self):
+        return f'<{self.id} {self.name}>'
+
     def follow_user(self, user):
         follow = Follow(userID=user.id, followerID=self.id)
         db.session.add(follow)

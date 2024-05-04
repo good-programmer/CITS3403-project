@@ -136,7 +136,7 @@ class TestObject:
     def logout(self):
         return self.client.get(url_for(route.logout), follow_redirects=True)
 
-def create_test_db():
+def create_test_db(msg='Generating standard test database...'):
     from project import app, db
 
     app_context = app.app_context()
@@ -145,7 +145,7 @@ def create_test_db():
 
     #disable & reenable commit for batch commit
     start = datetime.datetime.now()
-    print('Generating standard test database...')
+    print(msg)
     Config.TESTING = True
     t = TestObject(app, db)
     print('Users...')
