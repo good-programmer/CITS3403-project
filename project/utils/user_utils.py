@@ -1,4 +1,3 @@
-from werkzeug.security import generate_password_hash, check_password_hash
 from ..blueprints.models import db, User
 
 from project.config import Config
@@ -6,11 +5,17 @@ from project.config import Config
 def verify_user(name, password=None) -> User:
     '''Verify a user exists by name (and if password is specified, that the user's password matches).'''
     user = User.query.filter_by(name=name).first()
-    return user if user and (not password or check_password_hash(user.password, password)) else None
+    if not user:
+        return
+    if password is not None: 
+        if user.check_password(password):
+            return user
+    else:    
+        return user
 
 def add_user(name, password) -> User:
     '''Add a user with given name and password to the database.'''
-    new_user = User(name=name, password=generate_password_hash(password))
+    new_user = User(name=name, password=password)
     db.session.add(new_user)
     if not Config.TESTING:
         db.session.commit()

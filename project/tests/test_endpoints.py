@@ -367,15 +367,19 @@ class PostRequestCase(unittest.TestCase):
         '''
         self.t.register("POST_USER", "Valid123456")
 
+        def assertInvalidLogin(username, password):
+            response = self.t.login(username, password)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(url_for(route.login), response.request.path)
         #invalid username
-        response = self.t.login("INVALID_POST_USER", "Valid123456")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(url_for(route.login), response.request.path)
-
+        assertInvalidLogin("INVALID_POST_USER", "Valid123456")
+        assertInvalidLogin("", "Valid123456")
         #invalid password
-        response = self.t.login("POST_USER", "Invalid")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(url_for(route.login), response.request.path)
+        assertInvalidLogin("POST_USER", "Invalid")
+        assertInvalidLogin("POST_USER", "")
+        #invalid both
+        assertInvalidLogin("INVALID_POST_USER", "Invalid")
+        assertInvalidLogin("", "")
 
         #correct credentials
         response = self.t.login("POST_USER", "Valid123456")

@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
@@ -170,6 +170,18 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<{self.id} {self.name}>'
+    
+    def __init__(self, name, password=''):
+        self.name = name
+        self.set_password(password, False)
+
+    def set_password(self, password, selfcommit=True):
+        self.password = generate_password_hash(password)
+        if selfcommit:
+            commit()
+    
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
     def follow_user(self, user):
         follow = Follow(userID=user.id, followerID=self.id)
