@@ -27,6 +27,13 @@ The search page features:
 - puzzle title (?)
 - tags (?)
 
+To start the app:
+
+- `cd` into the repository directory (i.e. the directory of this README)
+- `export FLASK_APP=project` to set the target app
+- `export FLASK_SECRET_KEY=<your-key>` to set the private key for security purposes
+- `export FLASK_DATABASE_URI=project/db/<your-database>` to set the database the app will connect to (see Database section for more information)
+- `flask run` to start the app (default 127.0.0.1:5000)
 
 To run tests, execute `run_tests.py` from CLI in the `RequestProject` directory, i.e. `cd RequestProject; python3 run_tests.py`
 Alternatively, you can execute the command `python3 -m unittest discover project/tests` from the same directory. *If you do this, make sure to `export FLASK_DATABASE_URI=:memory:` so your real database is not cleared!
