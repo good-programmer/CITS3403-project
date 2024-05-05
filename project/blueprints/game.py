@@ -8,9 +8,9 @@ import datetime, re
 
 game = Blueprint('game', __name__)
 
-@game.route('/puzzle/play', methods=['GET', 'POST'])
+@game.route('/puzzle/<int:puzzleid>/play', methods=['GET', 'POST'])
 @login_required
-def page_play_puzzle():
+def page_play_puzzle(puzzleid):
     if request.method == 'POST':
         user_input = request.form['userInput']
         is_valid = game_utils.validate_input(user_input)
@@ -19,8 +19,8 @@ def page_play_puzzle():
     else:
         return render_template('wordGame.html', route=route)
     
-@game.route('/puzzle/solve', methods=['POST'])
-def api_solve_puzzle():
+@game.route('/puzzle/<int:puzzleid>/solve', methods=['POST'])
+def api_solve_puzzle(puzzleid):
     data = json.loads(request.data)
     submittedWords = data['submittedWords']
     score = game_utils.verify_score(submittedWords)
