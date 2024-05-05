@@ -46,13 +46,12 @@ class GetRequestCase(unittest.TestCase):
             route.register: 200,
             route.profile: 302,
             route.logout: 302,
-            route.puzzle.play: 200,
-            route.puzzle.solve: 405,
             route.user.current: 200,
-            route.puzzle.create: 401
+            route.puzzle.create: 302
         }
         for path, code in expected.items():
             self.assertCode(self.client.get(url_for(path)), code)
+        self.assertCode(self.client.get(url_for(route.puzzle.play, puzzleid=1), follow_redirects=False), 302)
 
         user = user_utils.add_user("GET_USER", "123")
         self.assertCode(self.t.login("GET_USER", "123"),200)
@@ -385,9 +384,9 @@ class PostRequestCase(unittest.TestCase):
         \nTests that an authenticated user can create a puzzle, that the status code is correct, and that they are redirected correctly.
         '''
         #unauthenticated case
-        self.assertCode(self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ABCDEFGHI"), follow_redirects=True), 401)
+        self.assertCode(self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ABCDEFGHI"), follow_redirects=False), 302)
         response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ALKJLKLKJLKLKJLKJBCDEFGHI"), follow_redirects=True)
-        self.assertEqual(url_for(route.puzzle.create), response.request.path)
+        self.assertEqual(url_for(route.login), response.request.path)
 
         #authenticated case
         self.t.register("POST_USER", "Valid123456")

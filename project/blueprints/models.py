@@ -38,7 +38,7 @@ class LeaderboardRecord(db.Model):
     dateSubmitted = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f'({self.puzzle.title}, {self.user.name}, {self.score})'
+        return f'<{self.puzzle.title} | {self.user.name}, {self.score}>'
 
     def __init__(self, user, puzzle, score):
         self.userID = user.id
@@ -54,7 +54,7 @@ class Follow(db.Model):
      user = db.relationship("User", back_populates="followers", foreign_keys=[userID])
 
      def __repr__(self):
-        return f'({self.user.name}, {self.follower.name})'
+        return f'<{self.follower.name} -> {self.user.name}>'
      
 class Puzzle(db.Model):
     __tablename__ = 'Puzzles'
