@@ -1,13 +1,11 @@
 import unittest, json
 
-from sqlalchemy import exc, MetaData, func
-
 from flask import url_for
 
 from project.tests import TestObject
 
 from project import app
-from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
+from project.blueprints.models import db, Puzzle
 
 from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as route
 

@@ -2,7 +2,7 @@ import sqlalchemy
 
 from flask import url_for
 
-from project.blueprints.models import User, Follow, Puzzle
+from project.blueprints.models import User, Puzzle
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
 from project.config import Config, PATH

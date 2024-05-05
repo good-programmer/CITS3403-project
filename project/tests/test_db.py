@@ -1,7 +1,7 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 import unittest
 
-from sqlalchemy import exc, MetaData
+from sqlalchemy import exc
 
 from project.tests import TestObject
 
@@ -9,8 +9,6 @@ from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
 
 from project.utils import user_utils, puzzle_utils
-
-from project.config import Config
 
 class UserModelCase(unittest.TestCase):
     @classmethod

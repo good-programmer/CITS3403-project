@@ -37,7 +37,6 @@ def page_create_puzzle():
         content = content.lower()
         if auth_utils.validate_puzzle_submit(content):
             puzzle_utils.add_puzzle(puzzlename, current_user, content)
-            print("Added:" + puzzlename)
             return redirect(url_for(route.index))
         else:
             return render_template('submitpuzzle.html', route=route)
