@@ -9,6 +9,7 @@ import datetime, re
 game = Blueprint('game', __name__)
 
 @game.route('/puzzle/play', methods=['GET', 'POST'])
+@login_required
 def page_play_puzzle():
     if request.method == 'POST':
         user_input = request.form['userInput']
@@ -28,6 +29,7 @@ def api_solve_puzzle():
     return data
 
 @game.route('/puzzle/create', methods=['GET','POST'])
+@login_required
 def page_create_puzzle():
     if not current_user.is_authenticated:
         abort(401)
