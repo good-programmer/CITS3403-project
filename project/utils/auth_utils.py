@@ -4,17 +4,6 @@ import re
 
 from . import route_utils as route
 
-def pack_user(user) -> dict:
-    '''Packs a user's public information into a dictionary'''
-    return {
-            "id": user.id,
-            "username": user.name,
-            "followers": [{"id": u.followerID, "name": u.follower.name} for u in user.followers],
-            "following": [{"id": u.userID, "name": u.user.name} for u in user.following],
-            "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores],
-            "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings]
-        }
-
 def validate_user_information(name, password) -> tuple[bool, str]:
     '''Checks that username is >3 chars and password is >4 chars'''
     if len(name) < 3:

@@ -47,12 +47,12 @@ def page_create_puzzle():
 @game.route('/puzzle/<int:puzzleid>', methods=['GET'])
 def api_get_puzzle(puzzleid):
     '''
-    Retrieves a puzzle's information by id. This includes title, content, creatorID, scores, and average score and rating.
+    Retrieves a puzzle's information by id. This includes title, creatorID, scores, and average score and rating.
     \nIf the user is authenticated, also returns that user's score and rating for the puzzle (if any).
     '''
     puzzle = puzzle_utils.get_puzzle(id=puzzleid)
     if puzzle:
-        data = puzzle_utils.pack_puzzle(puzzle, detail=3)
+        data = puzzle_utils.pack_puzzle(puzzle, detail=2)
         if current_user.is_authenticated:
             if puzzle.has_rating(current_user):
                 r = puzzle.get_rating(current_user)
@@ -85,27 +85,7 @@ def api_rate_puzzle(puzzleid):
 @game.route('/puzzle/search', methods=['GET'])
 @game.route('/puzzle/search/<string:trend>', methods=['GET'])
 def api_search_puzzle(trend=None):
-    def standardize(s:str):
-        '''Turn a search query into a regex for database search'''
-        s = s.lower()
-        common = ['_', ' ']
-        for i in common:
-            s = s.replace(i, '.*')
-        return '(?i)' + s
-    
-    def setdefaults(lst, into):
-        for i in range(len(lst)):
-            if lst[i]:
-                into[i] = lst[i]
-        return into
-
-    #regex for validating search params
-    def isfloat(s):
-        return re.match(r'^-?\d+(\.\d+)?$', s) is not None
-    
-    def isdate(s):
-        return re.match(r'^\d{4}-\d{2}-\d{2}$', s) is not None
-    
+    '''Endpoint for puzzle search API (either by trend or by specific parameters)'''
     page_size = request.args.get('page_size', '10')
     page_size = int(page_size) if page_size.isdigit() else 10
     page = request.args.get('page', '1')
@@ -114,7 +94,20 @@ def api_search_puzzle(trend=None):
     data = None
 
     if trend:
-        match trend:
+        data = get_trend_data(trend)
+        if not data:
+            abort(404)
+    else:
+        query, rating, date, completed, play_count, sort_by, order = parse_search_parameters(request)
+        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, sort_by=sort_by, order=order)
+    
+    page = data.paginate(page=page, per_page=page_size, error_out=True)
+    data = [puzzle_utils.pack_puzzle(p) for p in page.items]
+    
+    return {"puzzles": data, "pages": page.pages, "count": page.total}
+
+def get_trend_data(trend):
+    match trend:
             case 'recent':
                 data = Puzzle.query.order_by(db.desc(Puzzle.dateCreated))
             case 'hot':
@@ -123,36 +116,54 @@ def api_search_puzzle(trend=None):
             case 'popular':
                 data = Puzzle.query.order_by(db.desc(Puzzle.play_count))
             case _:
-                abort(404)
+                return False
+    return data
+
+def parse_search_parameters(request):
+    query = standardize(request.args.get('query', '.*'))
+
+    rating = setdefaults(request.args.get('rating', '0-5').split('-'), ['0', '5'])
+    rating = [(float(i) if isfloat(i) else 0) for i in rating]
+
+    date = request.args.get('after', '0000-01-01'), request.args.get('to', '9999-01-01')
+    date = [(i if isdate(i) else '0000-01-01') for i in date]
+
+    completed = request.args.get('completed', None)
+    if completed and current_user.is_authenticated:
+        completed = (current_user, True if completed.lower() == 'true' else False)
     else:
-        query = standardize(request.args.get('query', '.*'))
+        completed = None
 
-        rating = setdefaults(request.args.get('rating', '0-5').split('-'), ['0', '5'])
-        rating = [(float(i) if isfloat(i) else 0) for i in rating]
+    play_count = setdefaults(request.args.get('play_count', '0').split('-'), ['0', '999999'])
+    play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
 
-        date = request.args.get('after', '0000-01-01'), request.args.get('to', '9999-01-01')
-        date = [(i if isdate(i) else '0000-01-01') for i in date]
-
-        completed = request.args.get('completed', None)
-        if completed and current_user.is_authenticated:
-            completed = (current_user, True if completed.lower() == 'true' else False)
-        else:
-            completed = None
-
-        play_count = setdefaults(request.args.get('play_count', '0').split('-'), ['0', '999999'])
-        play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
-
-        sort_by = request.args.get('sort_by', 'date').lower()
-        if sort_by not in ['date', 'play_count', 'highscore', 'rating', 'a-z']:
-            sort_by = 'date'
-        
-        order = request.args.get('order', 'desc')
-        if order not in ['desc', 'asc']:
-            order = 'desc'
-
-        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, sort_by=sort_by, order=order)
+    sort_by = request.args.get('sort_by', 'date').lower()
+    if sort_by not in ['date', 'play_count', 'highscore', 'rating', 'a-z']:
+        sort_by = 'date'
     
-    page = data.paginate(page=page, per_page=page_size, error_out=True)
-    data = [puzzle_utils.pack_puzzle(p) for p in page.items]
+    order = request.args.get('order', 'desc')
+    if order not in ['desc', 'asc']:
+        order = 'desc'
     
-    return {"puzzles": data, "pages": page.pages, "count": page.total}
+    return query, rating, date, completed, play_count, sort_by, order
+
+def standardize(s:str):
+    '''Turn a search query into a regex for database search'''
+    s = s.lower()
+    common = ['_', ' ']
+    for i in common:
+        s = s.replace(i, '.*')
+    return '(?i)' + s
+
+def setdefaults(lst, into):
+    for i in range(len(lst)):
+        if lst[i]:
+            into[i] = lst[i]
+    return into
+
+#regex for validating search params
+def isfloat(s):
+    return re.match(r'^-?\d+(\.\d+)?$', s) is not None
+
+def isdate(s):
+    return re.match(r'^\d{4}-\d{2}-\d{2}$', s) is not None

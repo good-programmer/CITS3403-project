@@ -72,7 +72,7 @@ def api_current_user():
     \n-username
     '''
     if current_user.is_authenticated:
-        return auth_utils.pack_user(current_user)
+        return user_utils.pack_user(current_user)
     else:
         return {"id": -1, "username": ""}
 
@@ -90,7 +90,7 @@ def api_get_user(userid):
     '''
     user = user_utils.get_user(id=userid)
     if user:
-        data = auth_utils.pack_user(user)
+        data = user_utils.pack_user(user)
         if current_user.is_authenticated:
             data['is_following'] = current_user.is_following(user)
         return data

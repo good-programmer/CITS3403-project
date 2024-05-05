@@ -1,3 +1,4 @@
+import re
 from sqlalchemy import func, desc, asc
 from ..blueprints.models import db, User, Puzzle, Rating, LeaderboardRecord
 

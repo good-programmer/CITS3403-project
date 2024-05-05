@@ -80,7 +80,6 @@ class GetRequestCase(unittest.TestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data['id'], puzzle.id)
         self.assertEqual(data['title'], puzzle.title)
-        self.assertEqual(data['content'], puzzle.content)
         self.assertEqual(data['dateCreated'], str(puzzle.dateCreated))
         self.assertEqual(data['creatorID'], puzzle.creatorID)
         self.assertEqual(data['average_rating'], puzzle.average_rating)
