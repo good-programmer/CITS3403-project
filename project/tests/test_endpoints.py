@@ -227,15 +227,15 @@ class GetRequestCase(unittest.TestCase):
         # Test for incorrect mix string
         test9 = auth_utils.validate_puzzle_submit('sodc9kz!')
         
-        self.assertEqual(test1,False)
-        self.assertEqual(test2,False)
-        self.assertEqual(test3,False)
-        self.assertEqual(test4,False)
-        self.assertEqual(test5,False)
-        self.assertEqual(test6,False)
-        self.assertEqual(test7,False)
-        self.assertEqual(test8,True)
-        self.assertEqual(test9,False)
+        self.assertEqual(test1[0],False)
+        self.assertEqual(test2[0],False)
+        self.assertEqual(test3[0],False)
+        self.assertEqual(test4[0],False)
+        self.assertEqual(test5[0],False)
+        self.assertEqual(test6[0],False)
+        self.assertEqual(test7[0],False)
+        self.assertEqual(test8[0],True)
+        self.assertEqual(test9[0],False)
         
 
     def test_get_user_info(self):

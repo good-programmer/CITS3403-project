@@ -8,7 +8,7 @@
   <body>
     <div class="header">
       <a href="{{ url_for(route.index) }}">Home</a>
-      <a href="{{ url_for(route.puzzle.play)}}">Word Game</a>
+      <a href="{{ url_for(route.puzzle.play, puzzleid=1)}}">Word Game</a>
       {% if current_user.is_anonymous %}
       <a href="{{ url_for(route.login) }}">Login</a>
       <a href="{{ url_for(route.register) }}">Register</a>

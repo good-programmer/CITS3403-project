@@ -37,7 +37,7 @@ def page_create_puzzle():
         fget = request.form.get
         puzzlename, content = fget('puzzlename'), fget('puzzle')
         content = content.lower()
-        if auth_utils.validate_puzzle_submit(content):
+        if auth_utils.validate_puzzle_submit(content)[0]:
             puzzle_utils.add_puzzle(puzzlename, current_user, content)
             return redirect(url_for(route.index))
         else:
