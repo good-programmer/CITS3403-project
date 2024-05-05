@@ -89,7 +89,7 @@ let Game = {
     // remove chars from displayString as the user types their word
     updateString: function() {
         let userInput = document.getElementById('userInput').value;
-        let tempString = Game.puzzleString;
+        let tempString = Game.puzzleString.toLowerCase();
         for (let i = 0; i < userInput.length; i++) {
             let lowerCaseChar = userInput[i].toLowerCase();
             if (tempString.includes(lowerCaseChar)) {
