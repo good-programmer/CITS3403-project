@@ -16,9 +16,10 @@ def pack_puzzle(puzzle, detail=1):
         "highscore": puzzle.highest_score
     }
     if detail > 1:
-        data["content"] = puzzle.content
         data["scores"] = [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in puzzle.scores]
         data["average_score"] = puzzle.average_score
+    if detail > 2:
+        data["content"] = puzzle.content
     return data
 
 

@@ -7,19 +7,19 @@ login = 'auth.login'
 logout = 'auth.logout'
 register = 'auth.register'
 profile = 'main.profile'
-wordGame = 'game.wordGame'
-solve = 'game.solve'
 
 puzzle = Group(
-    create='game.submitpuzzle',
-    get='game.getpuzzle',
-    rate='game.ratepuzzle',
-    search = 'game.searchpuzzle'
+    play = 'game.page_play_puzzle',
+    create='game.page_create_puzzle',
+    get='game.api_get_puzzle',
+    rate='game.api_rate_puzzle',
+    search = 'game.api_search_puzzle',
+    solve = 'game.api_solve_puzzle'
 )
 
 user = Group(
-    current = 'auth.currentuser',
-    get = 'auth.getuser',
-    follow = 'auth.followuser',
-    unfollow = 'auth.unfollowuser'
+    current = 'auth.api_current_user',
+    get = 'auth.api_get_user',
+    follow = 'auth.api_follow_user',
+    unfollow = 'auth.api_unfollow_user'
 )

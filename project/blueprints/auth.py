@@ -65,7 +65,7 @@ def logout():
     return redirect(url_for(route.index))
 
 @auth.route('/user/current', methods=["GET"])
-def currentuser():
+def api_current_user():
     '''
     Retrieves the username and id of the current authenticated user.
     \n-id
@@ -76,8 +76,8 @@ def currentuser():
     else:
         return {"id": -1, "username": ""}
 
-@auth.route('/user/<userid>', methods=["GET"])
-def getuser(userid):
+@auth.route('/user/<int:userid>', methods=["GET"])
+def api_get_user(userid):
     '''
     Retrieves the public information of a given user by their id.
     \n-id
@@ -97,7 +97,7 @@ def getuser(userid):
     abort(404)
 
 @auth.route('/user/follow', methods=["POST"])
-def followuser():
+def api_follow_user():
     '''
     Allows the current authenticated user to follow another user by id.
     Requires a POST request to the endpoint containing key-pair [id=userID]
@@ -113,7 +113,7 @@ def followuser():
             return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200
 
 @auth.route('/user/unfollow', methods=["POST"])
-def unfollowuser():
+def api_unfollow_user():
     '''
     Allows the current authenticated user to unfollow another user by id.
     Requires a POST request to the endpoint containing key-pair [id=userID]

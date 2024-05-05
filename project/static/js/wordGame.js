@@ -134,7 +134,7 @@ let Game = {
 
         let jsonData = JSON.stringify(solveData);
 
-        fetch('/wordGame/solve', {
+        fetch('/puzzle/solve', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ let Game = {
                     }
 
                     // send user input to the server
-                    fetch('/wordGame', {
+                    fetch('/puzzle/play', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',

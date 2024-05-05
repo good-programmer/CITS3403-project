@@ -8,18 +8,18 @@ import datetime, re
 
 game = Blueprint('game', __name__)
 
-@game.route('/wordGame', methods=['GET', 'POST'])
-def wordGame():
+@game.route('/puzzle/play', methods=['GET', 'POST'])
+def page_play_puzzle():
     if request.method == 'POST':
         user_input = request.form['userInput']
         is_valid = game_utils.validate_input(user_input)
         print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
-        return render_template('wordGame.html')
+        return render_template('wordGame.html', route=route)
     
-@game.route('/wordGame/solve', methods=['POST'])
-def solve():
+@game.route('/puzzle/solve', methods=['POST'])
+def api_solve_puzzle():
     data = json.loads(request.data)
     submittedWords = data['submittedWords']
     score = game_utils.verify_score(submittedWords)
@@ -28,7 +28,7 @@ def solve():
     return data
 
 @game.route('/puzzle/create', methods=['GET','POST'])
-def submitpuzzle():
+def page_create_puzzle():
     if not current_user.is_authenticated:
         abort(401)
     if request.method == 'POST':
@@ -40,19 +40,19 @@ def submitpuzzle():
             print("Added:" + puzzlename)
             return redirect(url_for(route.index))
         else:
-            return render_template('submitpuzzle.html')
+            return render_template('submitpuzzle.html', route=route)
     else:
-        return render_template('submitpuzzle.html')
+        return render_template('submitpuzzle.html', route=route)
     
-@game.route('/puzzle/<puzzleid>', methods=['GET'])
-def getpuzzle(puzzleid):
+@game.route('/puzzle/<int:puzzleid>', methods=['GET'])
+def api_get_puzzle(puzzleid):
     '''
     Retrieves a puzzle's information by id. This includes title, content, creatorID, scores, and average score and rating.
     \nIf the user is authenticated, also returns that user's score and rating for the puzzle (if any).
     '''
     puzzle = puzzle_utils.get_puzzle(id=puzzleid)
     if puzzle:
-        data = puzzle_utils.pack_puzzle(puzzle, detail=2)
+        data = puzzle_utils.pack_puzzle(puzzle, detail=3)
         if current_user.is_authenticated:
             if puzzle.has_rating(current_user):
                 r = puzzle.get_rating(current_user)
@@ -63,8 +63,8 @@ def getpuzzle(puzzleid):
         return data
     abort(404)
 
-@game.route('/puzzle/<puzzleid>/rate', methods=['POST'])
-def ratepuzzle(puzzleid):
+@game.route('/puzzle/<int:puzzleid>/rate', methods=['POST'])
+def api_rate_puzzle(puzzleid):
     '''
     Allows an authenticated user to rate a puzzle given they have submitted a score.
     \nReturns the puzzle's average rating (after adding the user's).
@@ -83,8 +83,8 @@ def ratepuzzle(puzzleid):
     abort(404)
 
 @game.route('/puzzle/search', methods=['GET'])
-@game.route('/puzzle/search/<trend>', methods=['GET'])
-def searchpuzzle(trend=None):
+@game.route('/puzzle/search/<string:trend>', methods=['GET'])
+def api_search_puzzle(trend=None):
     def standardize(s:str):
         '''Turn a search query into a regex for database search'''
         s = s.lower()
