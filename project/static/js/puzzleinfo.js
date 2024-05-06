@@ -32,6 +32,28 @@ window.onload = async function() {
     }
     rateSlider.addEventListener('mouseleave', resetRating);
 
+    let debounce = false;
+    rateSlider.addEventListener('click', async function(){
+        if (debounce) return;
+        debounce = true;
+        let rating = currentRating;
+        let action = '/puzzle/' + puzzleid + '/rate';
+        const response = await fetch(action, {
+            method: "POST",
+            mode: "same-origin",
+            cache: "no-cache",
+            credentials: "same-origin",
+            headers: {"Content-Type": "application/json"},
+            redirect: "error",
+            body: JSON.stringify({"rating": parseFloat(rating)}),
+            });
+        if (response.status === 200) {
+            storedRating = rating;
+            resetRating();
+        }
+        debounce=false;
+    });
+
     let response = await fetch("/puzzle/" + puzzleid);
     let puzzleInfo = await response.json();
     storedRating = 'rated' in puzzleInfo ? puzzleInfo['rated']['rating'] : 0

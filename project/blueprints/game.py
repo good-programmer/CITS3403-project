@@ -91,9 +91,9 @@ def api_rate_puzzle(puzzleid):
     if puzzle:
         if puzzle.has_record(current_user):
             if puzzle.has_rating(current_user):
-                puzzle.update_rating(current_user, request.values['rating'])
+                puzzle.update_rating(current_user, request.get_json()['rating'])
             else:
-                puzzle.add_rating(current_user, request.values['rating'])
+                puzzle.add_rating(current_user, request.get_json()['rating'])
             return {"average_rating": puzzle.average_rating}
         abort(401)
     abort(404)
