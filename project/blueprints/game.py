@@ -64,6 +64,21 @@ def api_get_puzzle(puzzleid):
         return data
     abort(404)
 
+@game.route('/puzzle/<int:puzzleid>/info')
+def page_puzzle_info(puzzleid):
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    if not puzzle:
+        abort(404)
+    data = puzzle_utils.pack_puzzle(puzzle, detail=2)
+    if current_user.is_authenticated:
+        if puzzle.has_rating(current_user):
+            r = puzzle.get_rating(current_user)
+            data['rated'] = {"rating": r.rating, "dateRated": str(r.dateRated)}
+        if puzzle.has_record(current_user):
+            s = puzzle.get_record(current_user)
+            data['score'] = {"score": s.score, "dateSubmitted": str(s.dateSubmitted)}
+    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data)
+
 @game.route('/puzzle/<int:puzzleid>/rate', methods=['POST'])
 def api_rate_puzzle(puzzleid):
     '''

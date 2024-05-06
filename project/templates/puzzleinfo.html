@@ -6,11 +6,20 @@
 <h2>{{puzzle['creator']}}</h2>
 <p>Plays: {{puzzle['play_count']}}</p>
 <p>Highest score: {{puzzle['highscore']}}</p>
-<p>Date created: {{puzzle['dateCreated']}}</p>
-<p>Average rating: {{puzzle['average_rating']}} ({{puzzle['rating_count']}})</p>
+<p>Date created: {{puzzle['dateCreated'][:10]}}</p>
+<p>Average rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
+
+<a href="/puzzle/{{puzzle['id']}}/play"><button id="play-button" {% if puzzle['score'] %}disabled{% endif %}>Play</button></a>
+<button id="rate-button" {% if not puzzle['score'] %}disabled{% endif %}>Rate this puzzle</button>
 
 <div class="leaderboard post-list">
-  <div class="post-body"></div>>
+  {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
+    <div class="post-body">
+      <b>{{loop.index}}</b><br>
+      <a href="/user/{{score['id']}}/profile">{{score['name']}}</a>  |  {{score['score']}}<br>
+      {{score['dateSubmitted'][:10]}}
+    </div>
+  {% endfor %}
 </div>
 <script src="{{url_for('static', filename='js/profile.js')}}"></script>
 {% endblock %}
