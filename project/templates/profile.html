@@ -9,8 +9,17 @@
 <p>Total created puzzles: {{user['puzzles']|length}}</p>
 <p>Followers: {{user['followers']|length}}</p>
 <p>Following: {{user['following']|length}}</p>
-<button class="follow-button" {% if following or current_user.id == user['id'] %}disabled{% endif %}>{% if current_user.is_authenticated and following and current_user.id != user['id'] %}Already following{% else %}Follow{% endif %}</button>
-
+{% if current_user.is_authenticated %}
+  {% if current_user.id != user['id'] %}
+    {% if not following %}
+      <button id="follow-button" data-targetaction="follow" data-targetuser="{{user['id']}}">Follow</button>
+    {% else %}
+      <button id="follow-button" data-targetaction="unfollow" data-targetuser="{{user['id']}}">Unfollow</button>
+    {% endif %}
+  {% endif %}
+{% else %}
+  <p><i>Log in to follow</i></p>
+{% endif %}
 
 <div class="profile-board">
   <div>
@@ -56,4 +65,5 @@
     </div>
   </div>
 </div>
+<script src="{{url_for('static', filename='js/profile.js')}}"></script>
 {% endblock %}

@@ -3,6 +3,8 @@ from flask_login import login_user, login_required, logout_user, current_user
 
 from ..utils import auth_utils, user_utils, route_utils as route
 
+import json
+
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=["GET"])
@@ -111,7 +113,7 @@ def api_follow_user():
     '''
     if not current_user.is_authenticated:
         abort(401)
-    user = user_utils.get_user(id=request.values['id'])
+    user = user_utils.get_user(id=request.get_json()['id'])
     if user:
         if current_user.is_following(user):
             abort(400)
@@ -127,7 +129,7 @@ def api_unfollow_user():
     '''
     if not current_user.is_authenticated:
         abort(401)
-    user = user_utils.get_user(id=request.values['id'])
+    user = user_utils.get_user(id=request.get_json()['id'])
     if user:
         if not current_user.is_following(user):
             abort(400)
