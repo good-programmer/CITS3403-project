@@ -1,16 +1,19 @@
 from ..blueprints.models import db, User
+from . import puzzle_utils
 
 from project.config import Config
 
-def pack_user(user) -> dict:
+def pack_user(user:User) -> dict:
     '''Packs a user's public information into a dictionary'''
     return {
             "id": user.id,
             "username": user.name,
             "followers": [{"id": u.followerID, "name": u.follower.name} for u in user.followers],
             "following": [{"id": u.userID, "name": u.user.name} for u in user.following],
-            "scores": [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores],
-            "ratings": [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings]
+            "scores": [{"id": s.puzzleID, "title": s.puzzle.title, "creator": s.puzzle.creator.name, "creatorID": s.puzzle.creatorID, "play_count": s.puzzle.play_count, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores],
+            "ratings": [{"id": r.puzzleID, "title": r.puzzle.title, "creator": r.puzzle.creator.name, "creatorID": r.puzzle.creatorID, "play_count": r.puzzle.play_count, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings],
+            "puzzles": [puzzle_utils.pack_puzzle(p) for p in user.puzzles],
+            "highscore": max(s.score for s in user.scores)
         }
 
 def verify_user(name, password=None) -> User:

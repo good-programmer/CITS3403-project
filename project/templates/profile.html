@@ -2,16 +2,58 @@
 {% block content %}
 <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
 
-<h1>Profile</h1>
+<h1>{{user['username']}}</h1>
+<p>Highest score: {{user['highscore']}}</p>
+<p>Total completed puzzles: {{user['scores']|length}}</p>
+<p>Total ratings: {{user['ratings']|length}}</p>
+<p>Total created puzzles: {{user['puzzles']|length}}</p>
+<p>Followers: {{user['followers']|length}}</p>
+<p>Following: {{user['following']|length}}</p>
+<button class="follow-button" {% if following or current_user.id == user['id'] %}disabled{% endif %}>{% if current_user.is_authenticated and following and current_user.id != user['id'] %}Already following{% else %}Follow{% endif %}</button>
 
-<div id="post-list">
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
+
+<div class="profile-board">
+  <div>
+    Created puzzles
+    <div class="post-list">
+      {% for puzzle in user['puzzles'] %}
+          <div class="post-body">
+              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
+              Total plays: {{ puzzle['play_count'] }}<br>
+              Average rating: {{ puzzle['average_rating']|round(2) }}<br>
+              Highest score: {{ puzzle['highscore'] }}
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div>
+    Completed puzzles
+    <div class="post-list">
+      {% for puzzle in user['scores'] %}
+          <div class="post-body">
+              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
+              Total plays: {{ puzzle['play_count'] }}<br>
+              Score: {{ puzzle['score'] }}<br>
+              Date completed: {{ puzzle['dateSubmitted'][:10] }}<br>
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div>
+    Rated puzzles
+    <div class="post-list">
+      {% for puzzle in user['ratings'] %}
+          <div class="post-body">
+              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
+              Total plays: {{ puzzle['play_count'] }}<br>
+              Rating: {{ puzzle['rating'] }}<br>
+              Date rated: {{ puzzle['dateRated'][:10] }}<br>
+          </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
 {% endblock %}

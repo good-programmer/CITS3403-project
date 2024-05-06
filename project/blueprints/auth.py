@@ -25,7 +25,7 @@ def login_post():
     user = user_utils.verify_user(name, password)
     if user:
         login_user(user, remember=remember)
-        return redirect(url_for(route.profile))
+        return redirect(url_for(route.puzzle.play))
     
     flash('Incorrect username or password', 'error')
     return redirect(url_for(route.login))
@@ -94,6 +94,14 @@ def api_get_user(userid):
             data['is_following'] = current_user.is_following(user)
         return data
     abort(404)
+
+@auth.route('/user/<int:userid>/profile', methods=["GET"])
+def page_user_profile(userid):
+
+    user = user_utils.get_user(id=userid)
+    if not user:
+        abort(404)
+    return render_template('profile.html', route=route, current_user=current_user, user=user_utils.pack_user(user), following=(current_user.is_following(user) if current_user.is_authenticated else True))
 
 @auth.route('/user/follow', methods=["POST"])
 def api_follow_user():
