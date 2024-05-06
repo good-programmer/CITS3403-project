@@ -148,3 +148,16 @@ input[type="checkbox"] {
     padding: 30px;
     margin-bottom: 20px;
 }
+
+#following-leaderboard {
+    display: none;
+}
+
+#switch-leaderboard-button {
+    top: calc(10% - 30px);
+    width: 80px;
+    height: 20px;
+    position:absolute;
+    margin-left: calc(40% - 80px);
+    left: 30%;
+}

@@ -77,7 +77,7 @@ def page_puzzle_info(puzzleid):
         if puzzle.has_record(current_user):
             s = puzzle.get_record(current_user)
             data['score'] = {"score": s.score, "dateSubmitted": str(s.dateSubmitted)}
-    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data)
+    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data, following=[f.userID for f in current_user.following])
 
 @game.route('/puzzle/<int:puzzleid>/rate', methods=['POST'])
 def api_rate_puzzle(puzzleid):
