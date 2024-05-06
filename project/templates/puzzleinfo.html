@@ -10,11 +10,15 @@
 <p>Average rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
 
 <a href="/puzzle/{{puzzle['id']}}/play"><button id="play-button" {% if puzzle['score'] %}disabled{% endif %}>Play</button></a><br>
-<p>Rate this puzzle</p>
-<div id="rate-slider">
-  <p id="rate-back">☆☆☆☆☆</p>
-  <p id="rate-current">★★★★★</p>
-</div>
+<br>
+<span>
+  Rate this puzzle
+  <div id="rate-slider">
+    <p id="rate-back">☆☆☆☆☆</p>
+    <p id="rate-current">★★★★★</p>
+  </div>
+</span>
+
 <div class="leaderboard-body">
   <button id="switch-leaderboard-button">All</button>
   <div id="main-leaderboard" class="leaderboard post-list">
