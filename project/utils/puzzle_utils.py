@@ -19,6 +19,7 @@ def pack_puzzle(puzzle, detail=1):
     if detail > 1:
         data["scores"] = [{"id": s.userID, "name": s.user.name, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in puzzle.scores]
         data["average_score"] = puzzle.average_score
+        data["rating_count"] = len(puzzle.ratings)
     if detail > 2:
         data["content"] = puzzle.content
     return data

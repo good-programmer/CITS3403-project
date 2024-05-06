@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+
+<h1>{{puzzle['title']}}</h1>
+<h2>{{puzzle['creator']}}</h2>
+<p>Plays: {{puzzle['play_count']}}</p>
+<p>Highest score: {{puzzle['highscore']}}</p>
+<p>Date created: {{puzzle['dateCreated']}}</p>
+<p>Average rating: {{puzzle['average_rating']}} ({{puzzle['rating_count']}})</p>
+
+<div class="leaderboard post-list">
+  <div class="post-body"></div>>
+</div>
+<script src="{{url_for('static', filename='js/profile.js')}}"></script>
+{% endblock %}
