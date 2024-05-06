@@ -161,3 +161,39 @@ input[type="checkbox"] {
     margin-left: calc(40% - 80px);
     left: 30%;
 }
+
+#rate-slider {
+    position: relative;
+    font-family: monospace;
+    font-size: 30px;
+    text-align: center;
+    user-select: none;
+    color: orange;
+    width: fit-content;
+    height: 50px;
+    margin: 0px;
+    padding: 0px;
+}
+
+#rate-slider:hover {
+    text-shadow: 0px 0px 0.5px orange, 0px 0px 0.5px orange, 0px 0px 0.5px orange;
+}
+
+#rate-back {
+    margin: 0px;
+    height: fit-content;
+    position: absolute;
+    width: auto;
+    text-overflow: hidden;
+    overflow: hidden;
+    top:0;
+}
+#rate-current {
+    margin: 0px;
+    position: absolute;
+    width: 0px;
+    text-overflow: hidden;
+    overflow: hidden;
+    top:0;
+    height: fit-content;
+}
