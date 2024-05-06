@@ -25,7 +25,7 @@ def login_post():
     user = user_utils.verify_user(name, password)
     if user:
         login_user(user, remember=remember)
-        return redirect(url_for(route.puzzle.play))
+        return redirect(url_for(route.user.profile, userid=user.id))
     
     flash('Incorrect username or password', 'error')
     return redirect(url_for(route.login))
