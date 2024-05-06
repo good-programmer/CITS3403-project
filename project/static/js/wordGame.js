@@ -1,4 +1,5 @@
 let Game = {
+    solved: false,
     score: 0,
     puzzleString: '',
     displayString: '',
@@ -127,27 +128,30 @@ let Game = {
     },
 
     solve: function() {
-        let solveData = {
-            submittedWords: this.submittedWords,
-            date: new Date()
-        };
-
-        let jsonData = JSON.stringify(solveData);
-
-        fetch('/wordGame/solve', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: jsonData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        if (!Game.solved) {
+            let solveData = {
+                submittedWords: this.submittedWords,
+                date: new Date()
+            };
+    
+            let jsonData = JSON.stringify(solveData);
+    
+            fetch('/wordGame/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: jsonData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+        Game.solved = true;
         displayLeaderboard();
     },
 
