@@ -11,13 +11,16 @@ game = Blueprint('game', __name__)
 @game.route('/puzzle/<int:puzzleid>/play', methods=['GET', 'POST'])
 @login_required
 def page_play_puzzle(puzzleid):
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    if not puzzle:
+        abort(404)
     if request.method == 'POST':
         user_input = request.form['userInput']
         is_valid = game_utils.validate_input(user_input)
         print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
-        return render_template('wordGame.html', route=route)
+        return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3))
     
 @game.route('/puzzle/<int:puzzleid>/solve', methods=['POST'])
 def api_solve_puzzle(puzzleid):

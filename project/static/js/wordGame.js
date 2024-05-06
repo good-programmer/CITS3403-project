@@ -1,4 +1,5 @@
 let Game = {
+    puzzleid: null,
     score: 0,
     puzzleString: '',
     displayString: '',
@@ -16,6 +17,10 @@ let Game = {
             result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
         return result;
+    },
+
+    getPuzzleString: function () {
+        return document.getElementById("puzzleStringContainer").dataset.puzzlestring
     },
 
     // animate puzzleString to appear letter by letter
@@ -134,7 +139,7 @@ let Game = {
 
         let jsonData = JSON.stringify(solveData);
 
-        fetch('/puzzle/solve', {
+        fetch('/puzzle/' + Game.puzzleid + '/solve', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -171,7 +176,7 @@ let Game = {
                     }
 
                     // send user input to the server
-                    fetch('/puzzle/play', {
+                    fetch('/puzzle/' + Game.puzzleid + '/play', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -209,10 +214,11 @@ let Game = {
     },
 
     // initialise game
-    init: function () {
+    init: async function () {
+        Game.puzzleid = window.location.pathname.split('/')[2];
         Game.animatePuzzleString();
         Game.setUserInputs();
-        Game.puzzleString = Game.generateRandomString(15);
+        Game.puzzleString = Game.getPuzzleString();
         Game.displayString = Game.puzzleString;
         Game.updateScore();
 

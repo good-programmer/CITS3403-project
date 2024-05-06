@@ -10,7 +10,7 @@
 {% block content %}
 <body id="body">
     <div class="col-sm-12" id="gameArea">
-        <div class="container" id="puzzleStringContainer">
+        <div class="container" id="puzzleStringContainer" data-puzzlestring="{{puzzle['content']}}">
             <p class="Screen MatrixTextGreen" id="puzzleString"></p>
             <div id="userButtons">
             <button class="Screen MatrixTextGreen Button" onclick="Game.shuffleString()" id="shuffleButton">
