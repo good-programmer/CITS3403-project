@@ -1,9 +1,12 @@
+let debounce = false;
+let follow;
+let data;
+let userid;
 window.onload = async function() {
-    let debounce = false;
-    let follow = document.getElementById("follow-button");
-    let data = await getUserData();
+    follow = document.getElementById("follow-button");
+    data = await getUserData();
     if (follow) {
-        let userid = follow.dataset.targetuser;
+        userid = follow.dataset.targetuser;
         follow.addEventListener('click', postFollow);
     }
     console.log(data);
