@@ -6,6 +6,9 @@
 <h2>{{puzzle['creator']}}</h2>
 <p>Plays: {{puzzle['play_count']}}</p>
 <p>Highest score: {{puzzle['highscore']}}</p>
+{% if 'score' in puzzle %}
+  <p>Your score: {{puzzle['score']['score']}} ({{puzzle['score']['dateSubmitted'][:10]}})</p>
+{% endif %}
 <p>Date created: {{puzzle['dateCreated'][:10]}}</p>
 <p>Average rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
 

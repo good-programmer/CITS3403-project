@@ -33,6 +33,7 @@ window.onload = async function() {
         rateSlider.addEventListener('mousemove',function(e) {
             let offset = (e.x - x) / w;
             offset = Math.round(offset * 10) / 10 * w
+            offset = Math.min(w, Math.max(0, offset));
             document.getElementById('rate-current').setAttribute('style','width:'+offset+'px');
             currentRating = Math.min(5, Math.max(0, offset / w * 5));
 
