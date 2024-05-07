@@ -14,14 +14,15 @@
             {% extends "base.html" %}
             {% block content %}
             <h1 class="MatrixTextGreen" style="text-align: center;"> Submit a Puzzle! </h1>
-        
+
             <div class="puzzleFormContainer">
                 <form method="POST">
+                    {{ form.csrf_token }}
                     <label class="MatrixTextYellow" for="puzzlename">Puzzle Name:</label><br>
-                    <input type="text" id="puzzlename" name="puzzlename" value="Puzzle1"> <br>
+                    {{ form.puzzlename(id="puzzlename") }}<br>
                     <label class="MatrixTextYellow" for="puzzle">Puzzle String:</label><br>
-                    <input type="text" id="puzzle" name="puzzle" value="e.g. ajgsmczl">
-                    <input type="submit" value="Submit">
+                    {{ form.puzzle(id="puzzle") }}
+                    <button type="submit">Submit</button>
                 </form>
             </div>
     
@@ -29,7 +30,7 @@
             <p class="MatrixTextYellow" id="instructions"> Create a <b>PUZZLE!</b> Insert a string of alphabetical characters only, 
                 that can be used to form potentially new words alongside a puzzle name. 
                 Example: inputting 'asdkflkasc' as a puzzle. Users can then submit answers based on this string, e.g. 'flask'. 
-                String length is limited too 10 and cannot contain special characters * . , - etc.
+                String length is limited to 10 and cannot contain special characters * . , - etc.
             </p>
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}

@@ -1,24 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
-<div id="login" >
-  <form class="primary" name="register-form" method="POST">
+<div id="login">
+  <form class="primary" name="register-form" method="POST" action="{{ url_for('auth.register') }}">
     <div id="login-inner">
       <h1 class="header">Register</h1>
-      <label for="username">Username </label>
-      <input type="text" name="username" id="username-input">
+      {{ form.hidden_tag() }}
+      <label for="username">Username</label>
+      {{ form.username(class="form-control", id="username-input") }}
 
-      <label for="password">Password </label>
-      <input type="password" name="password" id="password-input">
+      <label for="password">Password</label>
+      {{ form.password(class="form-control", id="password-input") }}
 
-      <label for="confirmpassword">Confirm password </label>
-      <input type="password" name="confirmpassword">
-      
+      <label for="confirm_password">Confirm Password</label>
+      {{ form.password2(class="form-control", id="confirm-password-input") }}
+
       <br>
       <input class="submit button" type="submit" id=submit value="Register">
       <br>
-      <p id="create-account" class="hint">Already have an account? <a href="{{url_for(route.login)}}">Login</a></p>
+      <p id="create-account" class="hint">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
     </div>
   </form>
   {% with messages = get_flashed_messages() %}
