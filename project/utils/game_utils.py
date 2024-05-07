@@ -21,9 +21,12 @@ def sanitise_input(user_input):
 # verify the score of a user's puzzle solution
 def verify_score(submittedWords):
     total_score = 0
-    for word in submittedWords:
-        if validate_input(word):
-            total_score += len(word)
+    if len(submittedWords) <= 5:
+        for word in submittedWords:
+            if validate_input(word):
+                total_score += len(word)
+    else:
+         total_score = None
     return total_score
 
     
