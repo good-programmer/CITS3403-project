@@ -44,7 +44,6 @@ class GetRequestCase(unittest.TestCase):
             route.index: 200,
             route.login: 200,
             route.register: 200,
-            route.profile: 302,
             route.logout: 302,
             route.user.current: 200,
             route.puzzle.create: 302
@@ -56,7 +55,7 @@ class GetRequestCase(unittest.TestCase):
         user = user_utils.add_user("GET_USER", "123")
         self.assertCode(self.t.login("GET_USER", "123"),200)
         self.assertCode(self.client.get(url_for(route.puzzle.create)), 200)
-        self.assertCode(self.client.get(url_for(route.profile)),200)
+        self.assertCode(self.client.get(url_for(route.user.profile, userid=user.id)),200)
         response = self.client.get(url_for(route.user.current))
         data = json.loads(response.data)
         self.assertIsNotNone(data)
@@ -281,7 +280,7 @@ class GetRequestCase(unittest.TestCase):
         response = self.client.get(url_for(route.user.get, userid=user.id))
         data = json.loads(response.data)
         self.assertIsNotNone(data)
-        self.assertListEqual(data['scores'], [{"puzzleID": s.puzzleID, "puzzle": s.puzzle.title, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores])
+        self.assertListEqual(data['scores'], [{"id": s.puzzleID, "title": s.puzzle.title, "creator": s.puzzle.creator.name, "creatorID": s.puzzle.creatorID, "play_count": s.puzzle.play_count, "score": s.score, "dateSubmitted": str(s.dateSubmitted)} for s in user.scores])
         self.t.login("GET_USER1", "123")
         response = self.client.get(url_for(route.puzzle.get, puzzleid=puzzle1.id))
         data = json.loads(response.data)
@@ -301,7 +300,7 @@ class GetRequestCase(unittest.TestCase):
         response = self.client.get(url_for(route.user.get, userid=user.id))
         data = json.loads(response.data)
         self.assertIsNotNone(data)
-        self.assertListEqual(data['ratings'], [{"puzzleID": r.puzzleID, "puzzle": r.puzzle.title, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings])
+        self.assertListEqual(data['ratings'], [{"id": r.puzzleID, "title": r.puzzle.title, "creator": r.puzzle.creator.name, "creatorID": r.puzzle.creatorID, "play_count": r.puzzle.play_count, "rating": r.rating, "dateRated": str(r.dateRated)} for r in user.ratings])
         self.t.login("GET_USER1", "123")
         response = self.client.get(url_for(route.puzzle.get, puzzleid=puzzle1.id))
         data = json.loads(response.data)
@@ -375,7 +374,7 @@ class PostRequestCase(unittest.TestCase):
 
         #correct credentials
         response = self.assertCode(self.t.login("POST_USER", "Valid123456"), 200)
-        self.assertEqual(url_for(route.profile), response.request.path)
+        self.assertEqual(url_for(route.user.profile, userid=user_utils.get_user(name="POST_USER").id), response.request.path)
     
     def test_create_puzzle(self):
         '''
@@ -404,22 +403,23 @@ class PostRequestCase(unittest.TestCase):
         '''
         user1 = user_utils.add_user("POST_USER1", "123")
         user2 = user_utils.add_user("POST_USER2", "123")
+        data = dict(id=user2.id)
         
         #unauthenticated case
-        self.assertCode(self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True), 401)
-        self.assertCode(self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True), 401)
+        self.assertCode(self.client.post(url_for(route.user.follow), json=data, follow_redirects=True), 401)
+        self.assertCode(self.client.post(url_for(route.user.unfollow), json=data, follow_redirects=True), 401)
         #valid cases
         self.t.login("POST_USER1","123")
-        self.assertCode(self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True), 200)
+        self.assertCode(self.client.post(url_for(route.user.follow), json=data, follow_redirects=True), 200)
         self.assertTrue(user1.is_following(user2))
         self.assertTrue(user1.id in [u.followerID for u in user2.followers])
         #error case (follow)
-        self.assertCode(self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True), 400)
-        self.assertCode(self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True), 200)
+        self.assertCode(self.client.post(url_for(route.user.follow), json=data, follow_redirects=True), 400)
+        self.assertCode(self.client.post(url_for(route.user.unfollow), json=data, follow_redirects=True), 200)
         self.assertFalse(user1.is_following(user2))
         self.assertFalse(user1.id in [u.followerID for u in user2.followers])
         #error case (unfollow)
-        self.assertCode(self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True), 400)
+        self.assertCode(self.client.post(url_for(route.user.unfollow), json=data, follow_redirects=True), 400)
 
     def test_rate(self):
         '''
