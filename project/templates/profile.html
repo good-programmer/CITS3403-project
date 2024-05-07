@@ -2,16 +2,68 @@
 {% block content %}
 <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
 
-<h1>Profile</h1>
+<h1>{{user['username']}}</h1>
+<p>Highest score: {{user['highscore']}}</p>
+<p>Total completed puzzles: {{user['scores']|length}}</p>
+<p>Total ratings: {{user['ratings']|length}}</p>
+<p>Total created puzzles: {{user['puzzles']|length}}</p>
+<p>Followers: {{user['followers']|length}}</p>
+<p>Following: {{user['following']|length}}</p>
+{% if current_user.is_authenticated %}
+  {% if current_user.id != user['id'] %}
+    {% if not following %}
+      <button id="follow-button" data-targetaction="follow" data-targetuser="{{user['id']}}">Follow</button>
+    {% else %}
+      <button id="follow-button" data-targetaction="unfollow" data-targetuser="{{user['id']}}">Unfollow</button>
+    {% endif %}
+  {% endif %}
+{% else %}
+  <p><i>Log in to follow</i></p>
+{% endif %}
 
-<div id="post-list">
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
-  <div class="post-body">hello</div>
+<div class="profile-board">
+  <div>
+    Created puzzles <select id="created-puzzles-sort"><option value="rating">Rating</option><option value="play_count">Plays</option></select>
+    <div id='created-list' class="post-list">
+      {% for puzzle in user['puzzles']|sort(attribute='average_rating', reverse=True) %}
+          <div class="post-body">
+              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
+              Total plays: {{ puzzle['play_count'] }}<br>
+              Average rating: {{ puzzle['average_rating']|round(2) }}<br>
+              Highest score: {{ puzzle['highscore'] }}
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div>
+    Completed puzzles <select id="completed-puzzles-sort"><option value="date">Date</option><option value="score">Score</option></select>
+    <div id='completed-list' class="post-list">
+      {% for puzzle in user['scores']|sort(attribute='dateSubmitted', reverse=True) %}
+          <div class="post-body">
+              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
+              Total plays: {{ puzzle['play_count'] }}<br>
+              Score: {{ puzzle['score'] }}<br>
+              Date completed: {{ puzzle['dateSubmitted'][:10] }}<br>
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div>
+    Rated puzzles <select id="rated-puzzles-sort"><option value="date">Date</option><option value="rating">Rating</option></select>
+    <div id='rated-list' class="post-list">
+      {% for puzzle in user['ratings']|sort(attribute='dateRated', reverse=True) %}
+          <div class="post-body">
+              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
+              Total plays: {{ puzzle['play_count'] }}<br>
+              Rating: {{ puzzle['rating'] }}<br>
+              Date rated: {{ puzzle['dateRated'][:10] }}<br>
+          </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
+<script src="{{url_for('static', filename='js/profile.js')}}"></script>
 {% endblock %}

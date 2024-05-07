@@ -21,5 +21,6 @@ user = Group(
     current = 'auth.api_current_user',
     get = 'auth.api_get_user',
     follow = 'auth.api_follow_user',
-    unfollow = 'auth.api_unfollow_user'
+    unfollow = 'auth.api_unfollow_user',
+    profile = 'auth.page_user_profile'
 )
