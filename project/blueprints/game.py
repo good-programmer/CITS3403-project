@@ -27,8 +27,11 @@ def api_solve_puzzle(puzzleid):
     data = json.loads(request.data)
     submittedWords = data['submittedWords']
     score = game_utils.verify_score(submittedWords)
-    print(data)
-    print(f"Score: {score}")
+
+    if score:
+        puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+        puzzle.add_record(current_user, score)
+        print(f"Score: {score}")
     return data
 
 @game.route('/puzzle/create', methods=['GET','POST'])
