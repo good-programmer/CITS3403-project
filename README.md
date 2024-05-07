@@ -27,28 +27,46 @@ The search page features:
 - puzzle title (?)
 - tags (?)
 
+To start the app:
 
-To run tests, execute `run_tests.py` from CLI in the `RequestProject` directory, i.e. `cd RequestProject; python3 run_tests.py`
-Alternatively, you can execute the command `python3 -m unittest discover project/tests` from the same directory. *If you do this, make sure to `export FLASK_DATABASE_URI=:memory:` so your real database is not cleared!
+- `cd` into the repository directory (i.e. the directory of this README)
+- `export FLASK_APP=project` to set the target app
+- `export FLASK_SECRET_KEY=<your-key>` to set the private key for security purposes
+- `export FLASK_DATABASE_URI=project/db/<your-database>` to set the database the app will connect to (see Databases section for more information)
+- `flask run` to start the app (default 127.0.0.1:5000)
+
+#Testing
+
+To run tests, execute `run_tests.py` from CLI in the repository directory, i.e. `cd project_repository; python3 run_tests.py`.
+This will create a transient in-memory database for testing purposes (which should take around 5sec on default settings), then run all tests.
+
+#Databases
+
+By default, the database used is `project/db/app.db`. It will be created if it does not exist when the app is started. To use or create a different database, see "Create a test database" below.
 
 To migrate a database when `models.py` is updated (i.e. when the schema is changed), run `flask db migrate`, then `flask db upgrade`.
 
-To update your current database, follow these steps:
+Update your current database (`app.db`):
 
 - Find the version of the database that correctly matches yours (this may be hard to do - if your database was created just prior to commit 820a997, it should be identical to a90c7a8f4860. If it was created earlier, you may have to delete that database)
 - Run `flask db stamp <your_version_here>`
 - Now run `flask db upgrade`
 - Repeat previous step until up-to-date (when the upgrade command no longer informs you of a version change)
 
-To create a new database with the most recent schema, follow these steps:
+Create a new database with the most recent schema:
 
 - Run `flask shell` or `flask run`
-- This will create the new database (should be named app.db at time of writing).
+- This will create the new database.
 - Close the shell / app
 - Run `flask db stamp head`. This will tell flask-migrate that the new database is up to date.
 
-To create a test database (with the most recent schema):
+Create a test database with the most recent schema:
 
-- Set the test db environment variable: export FLASK_DATABASE_URI=your/path/to/test.db
+- Set the test db environment variable: `export FLASK_DATABASE_URI=your/path/to/test.db`
 - Then run the commands to create a new database.
 - To revert to using app.db, run unset FLASK_DATABASE_URI to delete the environment variable.
+
+Generate test data:
+
+- Set the target database: `export FLASK_DATABASE_URI=your/path/to/test.db`. This should be a newly created, empty database with the most recent schema (upgrade if necessary).
+- Execute `generate_test_data.py` from CLI in the repository directory and follow the prompts.

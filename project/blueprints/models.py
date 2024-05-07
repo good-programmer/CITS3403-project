@@ -1,7 +1,6 @@
 from datetime import datetime
-
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy
 
 from project import db
 
@@ -39,7 +38,7 @@ class LeaderboardRecord(db.Model):
     dateSubmitted = db.Column(db.DateTime)
 
     def __repr__(self):
-        return f'({self.puzzle.title}, {self.user.name}, {self.score})'
+        return f'<{self.puzzle.title} | {self.user.name}, {self.score}>'
 
     def __init__(self, user, puzzle, score):
         self.userID = user.id
@@ -55,7 +54,7 @@ class Follow(db.Model):
      user = db.relationship("User", back_populates="followers", foreign_keys=[userID])
 
      def __repr__(self):
-        return f'({self.user.name}, {self.follower.name})'
+        return f'<{self.follower.name} -> {self.user.name}>'
      
 class Puzzle(db.Model):
     __tablename__ = 'Puzzles'
@@ -167,6 +166,21 @@ class User(UserMixin, db.Model):
     puzzles = db.relationship("Puzzle", back_populates="creator")
     scores = db.relationship("LeaderboardRecord", back_populates="user")
     ratings = db.relationship("Rating", back_populates="user")
+
+    def __repr__(self):
+        return f'<{self.id} {self.name}>'
+    
+    def __init__(self, name, password=''):
+        self.name = name
+        self.set_password(password, False)
+
+    def set_password(self, password, selfcommit=True):
+        self.password = generate_password_hash(password)
+        if selfcommit:
+            commit()
+    
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
 
     def follow_user(self, user):
         follow = Follow(userID=user.id, followerID=self.id)

@@ -1,13 +1,11 @@
 import unittest, json
 
-from sqlalchemy import exc, MetaData, func
-
 from flask import url_for
 
 from project.tests import TestObject
 
 from project import app
-from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
+from project.blueprints.models import db, Puzzle
 
 from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as route
 
@@ -33,6 +31,11 @@ class GetRequestCase(unittest.TestCase):
         cls.app_context.pop()
         return super().tearDownClass()
     
+    def assertCode(self, response, code):
+        '''Check HTTP request code is expected'''
+        assert response.status_code == code, f'Expected status code {code}, got {response.status_code} for {response.request.path}'
+        return response
+    
     def test_pages_load(self):
         '''
         Test that a user can visit the expected web pages. Includes cases for authenticated-only pages as well.
@@ -43,29 +46,23 @@ class GetRequestCase(unittest.TestCase):
             route.register: 200,
             route.profile: 302,
             route.logout: 302,
-            route.wordGame: 200,
-            route.solve: 405,
             route.user.current: 200,
-            route.puzzle.create: 401
+            route.puzzle.create: 302
         }
         for path, code in expected.items():
-            response = self.client.get(url_for(path))
-            self.assertEqual(response.status_code, code)
+            self.assertCode(self.client.get(url_for(path)), code)
+        self.assertCode(self.client.get(url_for(route.puzzle.play, puzzleid=1), follow_redirects=False), 302)
 
         user = user_utils.add_user("GET_USER", "123")
-        response = self.t.login("GET_USER", "123")
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get(url_for(route.puzzle.create))
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get(url_for(route.profile))
-        self.assertEqual(response.status_code, 200)
+        self.assertCode(self.t.login("GET_USER", "123"),200)
+        self.assertCode(self.client.get(url_for(route.puzzle.create)), 200)
+        self.assertCode(self.client.get(url_for(route.profile)),200)
         response = self.client.get(url_for(route.user.current))
         data = json.loads(response.data)
         self.assertIsNotNone(data)
         self.assertEqual(data['id'], user.id)
         self.assertEqual(data['username'], user.name)
-        response = self.client.get(url_for(route.logout))
-        self.assertEqual(response.status_code, 302)
+        self.assertCode(self.client.get(url_for(route.logout)),302)
         response = self.client.get(url_for(route.user.current))
         self.assertEqual(json.loads(response.data)['id'], -1)
     
@@ -80,13 +77,11 @@ class GetRequestCase(unittest.TestCase):
         self.assertIsNotNone(data)
         self.assertEqual(data['id'], puzzle.id)
         self.assertEqual(data['title'], puzzle.title)
-        self.assertEqual(data['content'], puzzle.content)
         self.assertEqual(data['dateCreated'], str(puzzle.dateCreated))
         self.assertEqual(data['creatorID'], puzzle.creatorID)
         self.assertEqual(data['average_rating'], puzzle.average_rating)
         self.assertEqual(data['average_score'], puzzle.average_score)
-        response = self.client.get(url_for(route.puzzle.get, puzzleid=-1))
-        self.assertEqual(response.status_code, 404)
+        self.assertCode(self.client.get(url_for(route.puzzle.get, puzzleid=-1)),404)
 
     def test_puzzle_trends(self):
         '''
@@ -108,26 +103,22 @@ class GetRequestCase(unittest.TestCase):
         popular = [p.title for p in popular]
 
         #recent case
-        response = self.client.get(url_for(route.puzzle.search, trend='recent', page=1))
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.client.get(url_for(route.puzzle.search, trend='recent', page=1)),200)
         data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, recent)
 
         #hot case
-        response = self.client.get(url_for(route.puzzle.search, trend='hot', page=1))
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.client.get(url_for(route.puzzle.search, trend='hot', page=1)),200)
         data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, hot)
 
         #popular case
-        response = self.client.get(url_for(route.puzzle.search, trend='popular', page=1))
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.client.get(url_for(route.puzzle.search, trend='popular', page=1)),200)
         data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, popular)
 
         #404 case
-        response = self.client.get(url_for(route.puzzle.search, trend='notvalid', page=1))
-        self.assertEqual(response.status_code, 404)
+        self.assertCode(self.client.get(url_for(route.puzzle.search, trend='notvalid', page=1)),404)
     
     def test_puzzle_search(self):
         '''Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts
@@ -235,15 +226,15 @@ class GetRequestCase(unittest.TestCase):
         # Test for incorrect mix string
         test9 = auth_utils.validate_puzzle_submit('sodc9kz!')
         
-        self.assertEqual(test1,False)
-        self.assertEqual(test2,False)
-        self.assertEqual(test3,False)
-        self.assertEqual(test4,False)
-        self.assertEqual(test5,False)
-        self.assertEqual(test6,False)
-        self.assertEqual(test7,False)
-        self.assertEqual(test8,True)
-        self.assertEqual(test9,False)
+        self.assertEqual(test1[0],False)
+        self.assertEqual(test2[0],False)
+        self.assertEqual(test3[0],False)
+        self.assertEqual(test4[0],False)
+        self.assertEqual(test5[0],False)
+        self.assertEqual(test6[0],False)
+        self.assertEqual(test7[0],False)
+        self.assertEqual(test8[0],True)
+        self.assertEqual(test9[0],False)
         
 
     def test_get_user_info(self):
@@ -336,6 +327,11 @@ class PostRequestCase(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.app_context.pop()
         return super().tearDownClass()
+    
+    def assertCode(self, request, code):
+        '''Check HTTP request code is expected'''
+        assert request.status_code == code, f'Expected status code {code}, got {request.status_code}'
+        return request
 
     def test_create_account(self):
         '''
@@ -344,20 +340,17 @@ class PostRequestCase(unittest.TestCase):
         \nTests that valid credentials and successful registration correctly redirects to login page.
         '''
         #invalid password
-        response = self.t.register("POST_USER", "123")
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.t.register("POST_USER", "123"), 200)
         self.assertIsNone(user_utils.get_user("POST_USER"))
         self.assertEqual(url_for(route.register), response.request.path)
 
         #successful register
-        response = self.t.register("POST_USER", "Valid123456")
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.t.register("POST_USER", "Valid123456"), 200)
         self.assertIsNotNone(user_utils.get_user("POST_USER"))
         self.assertEqual(url_for(route.login), response.request.path)
 
         #taken username
-        response = self.t.register("POST_USER", "AnotherValidPassword")
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.t.register("POST_USER", "AnotherValidPassword"), 200)
         self.assertEqual(url_for(route.register), response.request.path)
     
     def test_login_account(self):
@@ -367,19 +360,21 @@ class PostRequestCase(unittest.TestCase):
         '''
         self.t.register("POST_USER", "Valid123456")
 
+        def assertInvalidLogin(username, password):
+            response = self.assertCode(self.t.login(username, password), 200)
+            self.assertEqual(url_for(route.login), response.request.path)
         #invalid username
-        response = self.t.login("INVALID_POST_USER", "Valid123456")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(url_for(route.login), response.request.path)
-
+        assertInvalidLogin("INVALID_POST_USER", "Valid123456")
+        assertInvalidLogin("", "Valid123456")
         #invalid password
-        response = self.t.login("POST_USER", "Invalid")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(url_for(route.login), response.request.path)
+        assertInvalidLogin("POST_USER", "Invalid")
+        assertInvalidLogin("POST_USER", "")
+        #invalid both
+        assertInvalidLogin("INVALID_POST_USER", "Invalid")
+        assertInvalidLogin("", "")
 
         #correct credentials
-        response = self.t.login("POST_USER", "Valid123456")
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.t.login("POST_USER", "Valid123456"), 200)
         self.assertEqual(url_for(route.profile), response.request.path)
     
     def test_create_puzzle(self):
@@ -389,16 +384,14 @@ class PostRequestCase(unittest.TestCase):
         \nTests that an authenticated user can create a puzzle, that the status code is correct, and that they are redirected correctly.
         '''
         #unauthenticated case
-        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ABCDEFGHI"), follow_redirects=True)
-        self.assertEqual(response.status_code, 401)
+        self.assertCode(self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ABCDEFGHI"), follow_redirects=False), 302)
         response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE_ERROR", puzzle="ALKJLKLKJLKLKJLKJBCDEFGHI"), follow_redirects=True)
-        self.assertEqual(url_for(route.puzzle.create), response.request.path)
+        self.assertEqual(url_for(route.login), response.request.path)
 
         #authenticated case
         self.t.register("POST_USER", "Valid123456")
-        response = self.t.login("POST_USER", "Valid123456")
-        response = self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHIJ"), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
+        self.t.login("POST_USER", "Valid123456")
+        response = self.assertCode(self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHIJ"), follow_redirects=True), 200)
         self.assertEqual(url_for(route.index), response.request.path)
         self.assertIsNotNone(puzzle_utils.get_puzzle("ENDPOINT_TEST_PUZZLE"))
     
@@ -413,27 +406,20 @@ class PostRequestCase(unittest.TestCase):
         user2 = user_utils.add_user("POST_USER2", "123")
         
         #unauthenticated case
-        response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
-        self.assertEqual(response.status_code, 401)
-        response = self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True)
-        self.assertEqual(response.status_code, 401)
-
+        self.assertCode(self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True), 401)
+        self.assertCode(self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True), 401)
         #valid cases
         self.t.login("POST_USER1","123")
-        response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertCode(self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True), 200)
         self.assertTrue(user1.is_following(user2))
         self.assertTrue(user1.id in [u.followerID for u in user2.followers])
         #error case (follow)
-        response = self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True)
-        self.assertEqual(response.status_code, 400)
-        response = self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
+        self.assertCode(self.client.post(url_for(route.user.follow), data=dict(id=user2.id), follow_redirects=True), 400)
+        self.assertCode(self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True), 200)
         self.assertFalse(user1.is_following(user2))
         self.assertFalse(user1.id in [u.followerID for u in user2.followers])
         #error case (unfollow)
-        response = self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True)
-        self.assertEqual(response.status_code, 400)
+        self.assertCode(self.client.post(url_for(route.user.unfollow), data=dict(id=user2.id), follow_redirects=True), 400)
 
     def test_rate(self):
         '''
@@ -448,21 +434,17 @@ class PostRequestCase(unittest.TestCase):
         puzzle.add_rating(__, 5)
 
         #unauthenticated case
-        response = self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True)
-        self.assertEqual(response.status_code, 401)
+        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True), 401)
         #uncompleted case
         self.t.login("POST_USER", "123")
-        response = self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True)
-        self.assertEqual(response.status_code, 401)
+        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True), 401)
         #correct case
         puzzle.add_record(user, 50)
-        response = self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True)
-        self.assertEqual(response.status_code, 200)
+        response = self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True), 200)
         #test average
         self.assertEqual(json.loads(response.data)['average_rating'], puzzle.average_rating)
         #404 (invalid puzzle) case
-        response = self.client.post(url_for(route.puzzle.rate, puzzleid=-1), data=dict(rating=2), follow_redirects=True)
-        self.assertEqual(response.status_code, 404)
+        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=-1), data=dict(rating=2), follow_redirects=True), 404)
 
     def test_submit_score(self):
         pass

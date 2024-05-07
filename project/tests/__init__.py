@@ -2,7 +2,7 @@ import sqlalchemy
 
 from flask import url_for
 
-from project.blueprints.models import User, Follow, Puzzle
+from project.blueprints.models import User, Puzzle
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
 from project.config import Config, PATH
@@ -123,6 +123,14 @@ class TestObject:
                 puzzle.add_rating(user, random.randrange(0, 10) / 2)
                 puzzle.get_rating(user).dateRated = random_date(puzzle.get_record(user).dateSubmitted, datetime.datetime(year=3000, month=12, day=31))
                 self.commit_db()
+    
+    def generate_followers(self):
+        for user in User.query.all():
+            for i in range(random.randint(0, self.numUsers)):
+                follower = self.get_random_user()
+                if follower.id != user.id and not follower.is_following(user):
+                    follower.follow_user(user)
+        self.commit_db()
 
     def register(self, username, password, confirmpassword=None):
         if not confirmpassword: confirmpassword=password
@@ -136,7 +144,7 @@ class TestObject:
     def logout(self):
         return self.client.get(url_for(route.logout), follow_redirects=True)
 
-def create_test_db():
+def create_test_db(msg='Generating standard test database...'):
     from project import app, db
 
     app_context = app.app_context()
@@ -145,7 +153,7 @@ def create_test_db():
 
     #disable & reenable commit for batch commit
     start = datetime.datetime.now()
-    print('Generating standard test database...')
+    print(msg)
     Config.TESTING = True
     t = TestObject(app, db)
     print('Users...')
@@ -156,6 +164,8 @@ def create_test_db():
     t.generate_scores()
     print('Ratings...')
     t.generate_ratings()
+    print('Followers...')
+    t.generate_followers()
     Config.TESTING = False
     db.session.commit()
     print('Done.')
