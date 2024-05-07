@@ -5,4 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %} {% endblock %}</title>
   </head>
+  <body>
+    <div class="header">
+      <a href="{{ url_for(route.index) }}">Home</a>
+      <a href="{{ url_for(route.puzzle.play, puzzleid=1)}}">Word Game</a>
+      {% if current_user.is_anonymous %}
+      <a href="{{ url_for(route.login) }}">Login</a>
+      <a href="{{ url_for(route.register) }}">Register</a>
+      {% else %}
+      <a href="{{ url_for(route.puzzle.create) }}">Submit Puzzle</a>
+      <a href="{{ url_for(route.profile) }}">Profile</a>
+      <a href="{{ url_for(route.logout) }}">Logout</a>
+      {% endif %}
+    </div>
+    <hr>
+    {% block content %} {% endblock %}
+  </body>
 </html>

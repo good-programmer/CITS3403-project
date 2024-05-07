@@ -1,4 +1,5 @@
 let Game = {
+    puzzleid: null,
     solved: false,
     score: 0,
     puzzleString: '',
@@ -17,6 +18,10 @@ let Game = {
             result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
         return result;
+    },
+
+    getPuzzleString: function () {
+        return document.getElementById("puzzleStringContainer").dataset.puzzlestring
     },
 
     // animate puzzleString to appear letter by letter
@@ -90,7 +95,7 @@ let Game = {
     // remove chars from displayString as the user types their word
     updateString: function() {
         let userInput = document.getElementById('userInput').value;
-        let tempString = Game.puzzleString;
+        let tempString = Game.puzzleString.toLowerCase();
         for (let i = 0; i < userInput.length; i++) {
             let lowerCaseChar = userInput[i].toLowerCase();
             if (tempString.includes(lowerCaseChar)) {
@@ -133,10 +138,10 @@ let Game = {
                 submittedWords: this.submittedWords,
                 date: new Date()
             };
-    
+
             let jsonData = JSON.stringify(solveData);
-    
-            fetch('/wordGame/solve', {
+
+            fetch('/puzzle/' + Game.puzzleid + '/solve', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -176,7 +181,7 @@ let Game = {
                     }
 
                     // send user input to the server
-                    fetch('/wordGame', {
+                    fetch('/puzzle/' + Game.puzzleid + '/play', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -214,10 +219,11 @@ let Game = {
     },
 
     // initialise game
-    init: function () {
+    init: async function () {
+        Game.puzzleid = window.location.pathname.split('/')[2];
         Game.animatePuzzleString();
         Game.setUserInputs();
-        Game.puzzleString = Game.generateRandomString(15);
+        Game.puzzleString = Game.getPuzzleString();
         Game.displayString = Game.puzzleString;
         Game.updateScore();
 

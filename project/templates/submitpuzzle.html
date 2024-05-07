@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <title> Puzzle Submission </title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+            <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/wordGame.css')}}">
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+            <script src="{{url_for('static', filename='js/submitpuzzle.js')}}"></script>
+        </head>
+        <body id="body">
+            {% extends "base.html" %}
+            {% block content %}
+            <h1 class="MatrixTextGreen" style="text-align: center;"> Submit a Puzzle! </h1>
+        
+            <div class="puzzleFormContainer">
+                <form method="POST">
+                    <label class="MatrixTextYellow" for="puzzlename">Puzzle Name:</label><br>
+                    <input type="text" id="puzzlename" name="puzzlename" value="Puzzle1"> <br>
+                    <label class="MatrixTextYellow" for="puzzle">Puzzle String:</label><br>
+                    <input type="text" id="puzzle" name="puzzle" value="e.g. ajgsmczl">
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+    
+            <button id="showInstructions"> Show Instructions </button>
+            <p class="MatrixTextYellow" id="instructions"> Create a <b>PUZZLE!</b> Insert a string of alphabetical characters only, 
+                that can be used to form potentially new words alongside a puzzle name. 
+                Example: inputting 'asdkflkasc' as a puzzle. Users can then submit answers based on this string, e.g. 'flask'. 
+                String length is limited too 10 and cannot contain special characters * . , - etc.
+            </p>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} MatrixTextRed" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% endblock %}
+        </body>
+  
+</html>

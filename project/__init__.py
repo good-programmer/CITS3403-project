@@ -1,24 +1,30 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from .config import DEBUG, PORT, SECRETKEY
+from flask_migrate import Migrate
 
-from .blueprints.main import main
-from .blueprints.auth import auth
-from .blueprints.game import game
+from .config import Config
 
 from .utils import route_utils as route
 
+db = SQLAlchemy()
+migrate = Migrate(directory=Config.MIGRATION_DIR)
+
 def create_app():
     app = Flask(__name__)
-    app.secret_key = SECRETKEY
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.root_path}/db/users.db"
-
-    from .blueprints.models import db
+    app.config.from_object(Config)
+    
     db.init_app(app)
+    migrate.init_app(app, db)
+
+    from .blueprints import models
 
     with app.app_context():
         db.create_all()
+    
+    from .blueprints.main import main
+    from .blueprints.auth import auth
+    from .blueprints.game import game
     
     app.register_blueprint(main)
     app.register_blueprint(auth)

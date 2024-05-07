@@ -1,4 +1,6 @@
-<link rel="stylesheet" href="../static/css/style.css">
+{% extends "base.html" %}
+{% block content %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
 
 <div id="login" >
   <form class="primary" name="register-form" method="POST">
@@ -27,3 +29,4 @@
   {% endif %}
   {% endwith %}
 </div>
+{% endblock %}
