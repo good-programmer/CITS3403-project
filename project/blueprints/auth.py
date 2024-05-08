@@ -11,7 +11,7 @@ auth = Blueprint('auth', __name__)
 @auth.route('/login', methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for(route.profile))
+        return redirect(url_for(route.user.profile, userid=current_user.id))
     
     form = LoginForm()
     if form.validate_on_submit():
@@ -25,14 +25,14 @@ def login():
             return redirect(url_for(route.user.profile, userid=user.id))
 
         flash('Incorrect username or password', 'error')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for(route.login))
 
     return render_template('login.html', form=form, route=route)
 
 @auth.route('/register', methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for(route.profile))
+        return redirect(url_for(route.user.profile, userid=current_user.id))
     
     form = RegistrationForm()
     if form.validate_on_submit():

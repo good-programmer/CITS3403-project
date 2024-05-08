@@ -3,7 +3,8 @@
 <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
 
 <div id="login">
-  <form class="primary" name="login-form" method="POST" action="{{ url_for('auth.login') }}">
+  <form class="primary" name="login-form" method="POST" action="{{ url_for(route.login) }}">
+    {{ form.csrf_token }}
     <div id="login-inner">
       <h1 class="header">Login</h1>
       {{ form.hidden_tag() }}
@@ -21,7 +22,7 @@
       <br>
       <input class="submit button" type="submit" id=submit value="Login">
       <br>
-      <p id="create-account" class="hint"><a href="{{url_for('auth.register')}}">Create account</a></p>
+      <p id="create-account" class="hint"><a href="{{url_for(route.register)}}">Create account</a></p>
     </div>
   </form>
   {% with messages = get_flashed_messages() %}
