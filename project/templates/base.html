@@ -14,7 +14,7 @@
       <a href="{{ url_for(route.register) }}">Register</a>
       {% else %}
       <a href="{{ url_for(route.puzzle.create) }}">Submit Puzzle</a>
-      <a href="{{ url_for(route.profile) }}">Profile</a>
+      <a href="{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a>
       <a href="{{ url_for(route.logout) }}">Logout</a>
       {% endif %}
     </div>

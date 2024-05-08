@@ -1,8 +1,9 @@
-from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort
+from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort, flash
 from .models import db, Puzzle, LeaderboardRecord, User
 from flask_login import login_required, current_user
 from sqlalchemy import func, desc
 from sqlalchemy.sql import text
+from project.forms import PuzzleSubmissionForm
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
@@ -73,17 +74,20 @@ def get_leaderboard(puzzleid):
 def page_create_puzzle():
     if not current_user.is_authenticated:
         abort(401)
+    
+    form = PuzzleSubmissionForm()
     if request.method == 'POST':
-        fget = request.form.get
-        puzzlename, content = fget('puzzlename'), fget('puzzle')
-        content = content.lower()
-        if auth_utils.validate_puzzle_submit(content)[0]:
-            puzzle_utils.add_puzzle(puzzlename, current_user, content)
-            return redirect(url_for(route.index))
-        else:
-            return render_template('submitpuzzle.html', route=route)
+        if form.validate_on_submit():
+            puzzlename = form.puzzlename.data
+            content = form.puzzle.data.lower()
+
+            if auth_utils.validate_puzzle_submit(content)[0]:
+                puzzle_utils.add_puzzle(puzzlename, current_user, content)
+                return redirect(url_for(route.index))
+
+        return render_template('submitpuzzle.html', route=route, form=form)
     else:
-        return render_template('submitpuzzle.html', route=route)
+        return render_template('submitpuzzle.html', route=route, form=form)
     
 @game.route('/puzzle/<int:puzzleid>', methods=['GET'])
 def api_get_puzzle(puzzleid):

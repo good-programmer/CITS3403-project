@@ -135,7 +135,7 @@ class TestObject:
     def register(self, username, password, confirmpassword=None):
         if not confirmpassword: confirmpassword=password
         return self.client.post(url_for(route.register), 
-                                data=dict(username=username,password=password,confirmpassword=confirmpassword), follow_redirects=True)
+                                data=dict(username=username,password=password,password2=confirmpassword), follow_redirects=True)
     
     def login(self, username, password):
         return self.client.post(url_for(route.login), 
