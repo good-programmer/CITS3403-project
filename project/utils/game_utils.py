@@ -36,7 +36,6 @@ def verify_score(submittedWords, puzzleString):
         if all(validate_input(word) for word in sanitised_words):
             if words_in_puzzle_string(sanitised_words, puzzleString.lower()):
                 score = sum(len(word) for word in sanitised_words)
-                print(score)
                 return score
 
     return None
