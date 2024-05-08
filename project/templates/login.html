@@ -2,19 +2,21 @@
 {% block content %}
 <link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
 
-<div id="login" >
-  <form class="primary" name="login-form" method="POST">
+<div id="login">
+  <form class="primary" name="login-form" method="POST" action="{{ url_for(route.login) }}">
+    {{ form.csrf_token }}
     <div id="login-inner">
       <h1 class="header">Login</h1>
+      {{ form.hidden_tag() }}
       <label for="username">Username </label>
-      <input type="text" name="username" id="username-input">
+      {{ form.username(class="form-control", id="username-input") }}
 
       <label for="password">Password </label>
-      <input type="password" name="password" id="password-input">
+      {{ form.password(class="form-control", id="password-input") }}
 
       <div id="remember-me">
-        <label for="remember" class="hint">Remember me</label>
-        <input class="hint" type="checkbox" name="remember" id="remember">
+        {{ form.remember_me(class="form-check-input") }}
+        <label for="remember" class="form-check-label">Remember me</label>
       </div>
       
       <br>

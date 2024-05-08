@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
+from project.forms import LoginForm, RegistrationForm
 
 from ..utils import auth_utils, user_utils, route_utils as route
 
@@ -7,54 +8,56 @@ import json
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/login', methods=["GET"])
+@auth.route('/login', methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for(route.profile))
-    return render_template('login.html', route=route)
+        return redirect(url_for(route.user.profile, userid=current_user.id))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        name = form.username.data
+        password = form.password.data
+        remember = form.remember_me.data
 
-@auth.route('/register', methods=["GET"])             
+        user = user_utils.verify_user(name, password)
+        if user:
+            login_user(user, remember=remember)
+            return redirect(url_for(route.user.profile, userid=user.id))
+
+        flash('Incorrect username or password', 'error')
+        return redirect(url_for(route.login))
+
+    return render_template('login.html', form=form, route=route)
+
+@auth.route('/register', methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for(route.profile))
-    return render_template('register.html', route=route)
-
-@auth.route('/login', methods=["POST"])
-def login_post():
-    fget = request.form.get
-    name, password, remember = fget('username'), fget('password'), fget('remember')
-
-    user = user_utils.verify_user(name, password)
-    if user:
-        login_user(user, remember=remember)
-        return redirect(url_for(route.user.profile, userid=user.id))
+        return redirect(url_for(route.user.profile, userid=current_user.id))
     
-    flash('Incorrect username or password', 'error')
-    return redirect(url_for(route.login))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        name = form.username.data
+        password = form.password.data
+        confirm_password = form.password2.data
 
-@auth.route('/register', methods=["POST"])
-def register_post():
-    fget = request.form.get
-    name, password, confirm = fget('username'), fget('password'), fget('confirmpassword')
+        # Perform user registration
+        if user_utils.verify_user(name):
+            flash('Username already exists', 'error')
+            return redirect(url_for(route.register))
+        
+        if password != confirm_password:
+            flash('Passwords do not match', 'error')  # Flash message for password mismatch
+            return redirect(url_for(route.register))
 
-    if user_utils.verify_user(name):
-        flash('Username already exists', 'error')
-        return redirect(url_for(route.register))
-
-    res, msgs = auth_utils.validate_user_information(name, password)
-    if not res:
-        for msg in msgs:
-            flash(msg, 'error')
-        return redirect(url_for(route.register))
-    
-    if password != confirm:
-        flash('Passwords do not match', 'error')
-        return redirect(url_for(route.register))
-    
-    user_utils.add_user(name, password)
-
-    #print('added new user ' + name)
-    return redirect(url_for(route.login))
+        res, msgs = auth_utils.validate_user_information(name, password)
+        if not res:
+            for msg in msgs:
+                flash(msg, 'error')
+            return redirect(url_for(route.register))
+        
+        user_utils.add_user(name, password)
+        return redirect(url_for(route.login))
+    return render_template('register.html', form=form, route=route)
 
 @auth.route('/logout')
 @login_required
