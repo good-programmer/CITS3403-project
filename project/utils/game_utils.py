@@ -30,8 +30,6 @@ def sanitise_input(user_input):
 
 # verify the score of a user's puzzle solution
 def verify_score(submittedWords, puzzleString):
-    print(submittedWords)
-    print(puzzleString)
     sanitised_words = [sanitise_input(word) for word in submittedWords]
 
     if len(submittedWords) <=5:
