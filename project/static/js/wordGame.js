@@ -132,7 +132,7 @@ let Game = {
         document.getElementById('userInput').classList.remove('MatrixTextRed');
     },
 
-    solve: function() {
+    solve: async function() {
         if (!Game.solved) {
             let solveData = {
                 submittedWords: this.submittedWords,
@@ -141,7 +141,7 @@ let Game = {
 
             let jsonData = JSON.stringify(solveData);
 
-            fetch('/puzzle/' + Game.puzzleid + '/solve', {
+            await fetch('/puzzle/' + Game.puzzleid + '/solve', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -315,7 +315,7 @@ function displayLeaderboard() {
         url: '/puzzle/' + Game.puzzleid + '/lite-leaderboard',
         type: 'GET',
         success: function(data) {
-        
+
             leaderboardDiv.append($('<h2>').text('LEADERBOARD'));
 
             // display the leaderboard
@@ -378,7 +378,7 @@ function displayLeaderboard() {
             });
         
             $('#exitButton').click(function() {
-                window.location.href = '/profile';
+                window.location.href = '/puzzle/' + Game.puzzleid + '/info';
             });
         }
     });

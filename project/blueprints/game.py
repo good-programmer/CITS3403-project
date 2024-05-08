@@ -33,7 +33,7 @@ def api_solve_puzzle(puzzleid):
     puzzle = puzzle_utils.get_puzzle(id=puzzleid)
     score = game_utils.verify_score(submittedWords, puzzle.content)
 
-    if score:
+    if score and not puzzle.has_record(current_user):
         puzzle.add_record(current_user, score)
         print(f"Score: {score}")
     return data
