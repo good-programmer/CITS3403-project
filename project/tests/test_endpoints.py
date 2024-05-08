@@ -11,6 +11,8 @@ from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as r
 
 import datetime
 
+app.config["WTF_CSRF_ENABLED"] = False
+
 class GetRequestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
