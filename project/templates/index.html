@@ -13,12 +13,15 @@
     <div class = "title-container">
         <pre>
             
-██████╗ ██╗      █████╗  ██████╗███████╗██╗  ██╗ ██████╗ ██╗     ██████╗ ███████╗██████╗ 
-██╔══██╗██║     ██╔══██╗██╔════╝██╔════╝██║  ██║██╔═══██╗██║     ██╔══██╗██╔════╝██╔══██╗
-██████╔╝██║     ███████║██║     █████╗  ███████║██║   ██║██║     ██║  ██║█████╗  ██████╔╝
-██╔═══╝ ██║     ██╔══██║██║     ██╔══╝  ██╔══██║██║   ██║██║     ██║  ██║██╔══╝  ██╔══██╗
-██║     ███████╗██║  ██║╚██████╗███████╗██║  ██║╚██████╔╝███████╗██████╔╝███████╗██║  ██║
-╚═╝     ╚══════╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
+
+            ██╗    ██╗ ██████╗ ██████╗ ██████╗        █████╗ ███╗   ███╗██████╗ ██╗     ███████╗
+            ██║    ██║██╔═══██╗██╔══██╗██╔══██╗      ██╔══██╗████╗ ████║██╔══██╗██║     ██╔════╝
+            ██║ █╗ ██║██║   ██║██████╔╝██║  ██║█████╗███████║██╔████╔██║██████╔╝██║     █████╗  
+            ██║███╗██║██║   ██║██╔══██╗██║  ██║╚════╝██╔══██║██║╚██╔╝██║██╔══██╗██║     ██╔══╝  
+            ╚███╔███╔╝╚██████╔╝██║  ██║██████╔╝      ██║  ██║██║ ╚═╝ ██║██████╔╝███████╗███████╗
+             ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═════╝       ╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝ ╚══════╝╚══════╝
+                                                                                                
+            
                                                                                          
 
         </pre>
@@ -26,22 +29,17 @@
 
     <nav class="navbar">
         <ul class = "nav-item-list">
-            <li class = "nav-item"><a href = "wordGame.html">Random Puzzle</a></li>
-            <li class = "nav-item"></li><a href = "login.html">Login</a></li>
-            <li class = "nav-item"><a href = "register.html">Register</a></li>
+            <li class = "nav-item"><a href = "/search">Random Puzzle</a></li>
+            {%if  not current_user.is_authenticated%}
+                <li class = "nav-item"></li><a href = "{{ url_for('auth.login') }}">Login</a></li>
+                <li class = "nav-item"><a href = "{{ url_for('auth.register') }}">Register</a></li>
+            {%else%}
+                <li class = "nav-item"></li><a href = "{{ url_for('game.submitpuzzle') }}">Submit Puzzle</a></li>
+                <li class = "nav-item"></li><a href = "{{ url_for('main.profile') }}">Profile</a></li>
+                <li class = "nav-item"><a href = "{{ url_for('auth.logout') }}">Logout</a></li>
+            {%endif%}
         </ul>
     </nav>
-    <div class="searchbar">
-        <label for="search">Search Puzzle</label>
-        <input type="search" id = search>
-    </div>
 
-    <div class="puzzle-cards">
-        <div class="cards">
-            <div class="puz-id">12345</div>
-            <div class="puz-title">some title</div>
-            <div class="puz-author">John smith</div>
-        </div>
-    </div>
 </body>
 </html>
