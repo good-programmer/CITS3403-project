@@ -295,7 +295,6 @@ function displayLeaderboard() {
 
     // create new div for the leaderboard
     let leaderboardDiv = $('<div>').attr('id', 'leaderboard');
-    leaderboardDiv.append($('<h2>').text('LEADERBOARD - PUZZLEID'));
     leaderboardDiv.addClass('container Screen MatrixTextYellow')
 
     // create a table
@@ -317,9 +316,15 @@ function displayLeaderboard() {
         type: 'GET',
         success: function(data) {
         
+            leaderboardDiv.append($('<h2>').text('LEADERBOARD'));
+
             // display the leaderboard
             for (let i = 0; i < data.leaderboard.length; i++) {
-                let userLink = $('<a>').attr('href', '/user/' + data.leaderboard[i].userID + '/profile').text(data.leaderboard[i].username);
+                let username = data.leaderboard[i].username;
+                if (username.length > 20) {
+                    username = username.substring(0, 17) + '...';
+                }
+                let userLink = $('<a>').attr('href', '/user/' + data.leaderboard[i].userID + '/profile').text(username);
                 userLink.addClass('MatrixTextYellow');
                 tbody.append($('<tr>')
                     .append($('<td>').text(i + 1))                      // RANK
@@ -327,39 +332,46 @@ function displayLeaderboard() {
                     .append($('<td>').text(data.leaderboard[i].score))  // SCORE
                 );
             }
+            let currentUserRow = $('<tr>')
+                .append($('<td>').text(data.currentUser.rank))
+                .append($('<td>').text(data.currentUser.username))
+                .append($('<td>').text(data.currentUser.score));
+            currentUserRow.addClass('MatrixTextGreen');
+            tbody.append(currentUserRow);
             table.append(tbody);
+    
+            // add table to the leaderboard div
+            leaderboardDiv.append(table);
+
+            // create a button for closing the leaderboard
+            let closeButton = $('<button>').text('[SHOW PUZZLE]');
+            closeButton.addClass('Screen MatrixTextYellow Button');
+            closeButton.attr('id', 'closeButton');
+    
+            // create a button for exiting the game
+            let exitButton = $('<button>').text('[EXIT]');
+            exitButton.addClass('Screen MatrixTextYellow Button');
+            exitButton.attr('id', 'exitButton');
+    
+            // create a div to contain the buttons
+            let buttonContainer = $('<div>').attr('id', 'buttonContainer');
+            buttonContainer.append(closeButton, exitButton);
+            leaderboardDiv.append(buttonContainer);
+
+            $('#closeButton').click(function() {
+                $('#leaderboard').remove();
+                $('#gameContent').show();
+                $('#shuffleButton').remove();
+                $('#resetButton').remove();
+            });
+        
+            $('#exitButton').click(function() {
+                window.location.href = '/profile';
+            });
         }
     });
-
-    // add table to the leaderboard div
-    leaderboardDiv.append(table);
-
+    
     // add leaderboard to page
     $('#gameArea').append(leaderboardDiv);
 
-    // create a button for closing the leaderboard
-    let closeButton = $('<button>').text('[SHOW PUZZLE]');
-    closeButton.addClass('Screen MatrixTextYellow Button');
-    closeButton.attr('id', 'closeButton');
-
-    // create a button for exiting the game
-    let exitButton = $('<button>').text('[EXIT]');
-    exitButton.addClass('Screen MatrixTextYellow Button');
-    exitButton.attr('id', 'exitButton');
-
-    // create a div to contain the buttons
-    let buttonContainer = $('<div>').attr('id', 'buttonContainer');
-    buttonContainer.append(closeButton, exitButton);
-    leaderboardDiv.append(buttonContainer);
-
-    $('#closeButton').click(function() {
-        $('#leaderboard').remove();
-        $('#gameContent').show();
-        $('#shuffleButton').remove();
-        $('#resetButton').remove();
-    });
-
-    $('#exitButton').click(function() {
-        window.location.href = '/profile';
-    });
 }

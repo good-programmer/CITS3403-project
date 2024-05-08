@@ -164,7 +164,11 @@
 
 
 .leaderboard-table th, .leaderboard-table td {
-    padding: 0 30px;
+    padding: 0 0;
+}
+
+.leaderboard-table td:nth-child(2) {
+    text-align: left;
 }
 
 #buttonContainer {
