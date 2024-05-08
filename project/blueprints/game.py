@@ -23,7 +23,7 @@ def page_play_puzzle(puzzleid):
         print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
-        return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3))
+        return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
     
 @game.route('/puzzle/<int:puzzleid>/solve', methods=['POST'])
 def api_solve_puzzle(puzzleid):

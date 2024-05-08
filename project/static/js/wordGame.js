@@ -72,6 +72,18 @@ let Game = {
                 p.style.display = 'inline-block';
                 div.appendChild(p);
                 container.appendChild(div);
+                
+                const userInputLabel = document.querySelector('#userInputContainer > label[for="userInput"]');
+                const userInput = document.getElementById("userInput");
+                if (this.submittedWords.length >= 5) {
+                    userInputLabel.textContent = "|>";
+                    userInputLabel.classList.add("greyed");
+                    userInput.classList.add("greyed");
+                } else {
+                    userInput.classList.remove("greyed");
+                    userInputLabel.textContent = "$>";
+                    userInputLabel.classList.remove("greyed");
+                }
     
                 div.addEventListener('click', () => {
                     this.submittedWords.splice(index, 1);

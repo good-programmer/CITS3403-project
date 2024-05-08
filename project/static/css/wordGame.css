@@ -214,3 +214,8 @@
     margin: 0 auto; 
     text-align: center; 
 }
+
+.greyed {
+    filter: grayscale() brightness(80%);
+    text-decoration: line-through;
+}

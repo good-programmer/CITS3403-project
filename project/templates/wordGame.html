@@ -28,7 +28,7 @@
                 <label for="userInput" class="Screen MatrixTextYellow">$></label>
                 <div id="userSubmission">
                     <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="Game.updateString()" autofocus>
-                    <button class="Screen MatrixTextYellow Button" onclick="Game.solve()" id="submitButton">
+                    <button class="Screen MatrixTextYellow Button {% if completed %}greyed{% endif %}" onclick="Game.solve()" id="submitButton">
                         [FINISH]
                     </button>
                 </div>
