@@ -370,8 +370,6 @@ function displayLeaderboard() {
             });
         }
     });
-    
     // add leaderboard to page
     $('#gameArea').append(leaderboardDiv);
-
 }

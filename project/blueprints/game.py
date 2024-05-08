@@ -1,7 +1,8 @@
 from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort
 from .models import db, Puzzle, LeaderboardRecord, User
 from flask_login import login_required, current_user
-from sqlalchemy import desc
+from sqlalchemy import func, desc
+from sqlalchemy.sql import text
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
@@ -43,7 +44,17 @@ def get_leaderboard(puzzleid):
     # get current user's score and rank
     current_user_record = LeaderboardRecord.query.filter_by(userID=current_user.id, puzzleID=puzzleid).first()
     current_user_score = current_user_record.score if current_user_record else None
-    current_user_rank = next((index for index, record in enumerate(records, start=1) if record[0] == current_user.id), None)
+    # current_user_rank = next((index for index, record in enumerate(records, start=1) if record[0] == current_user.id), None)
+    
+    subq = db.session.query(
+    LeaderboardRecord.userID,
+    LeaderboardRecord.score,
+    func.rank().over(order_by=desc(LeaderboardRecord.score)).label('rank')
+    ).filter(
+        LeaderboardRecord.puzzleID == puzzleid
+    ).subquery()
+
+    current_user_rank = db.session.query(subq.c.rank).filter(subq.c.userID == current_user.id).scalar()
 
     # get the puzzle title
     puzzle_title = Puzzle.query.get(puzzleid).title
