@@ -32,7 +32,7 @@ async function getUserData() {
 }
 
 function createPostBody(puzzle) {
-    let puzzleUrl = '/puzzle/'+puzzle['id'];
+    let puzzleUrl = '/puzzle/'+puzzle['id'] + '/info';
     let userUrl = '/user/'+puzzle['creatorID'] + '/profile';
     let el = document.createElement('div');
     el.className = 'post-body';

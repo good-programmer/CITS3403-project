@@ -9,6 +9,7 @@ register = 'auth.register'
 profile = 'main.profile'
 
 puzzle = Group(
+    info = 'game.page_puzzle_info',
     play = 'game.page_play_puzzle',
     create='game.page_create_puzzle',
     get='game.api_get_puzzle',
