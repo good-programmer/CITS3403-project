@@ -7,7 +7,7 @@ from project.forms import PuzzleSubmissionForm
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
-import datetime, re
+import datetime, re, random
 
 game = Blueprint('game', __name__)
 
@@ -24,8 +24,19 @@ def page_play_puzzle(puzzleid):
         return jsonify(is_valid=is_valid)
     else:
         return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
+
+@game.route('/puzzle/random', methods=['GET'])
+@login_required
+def page_random_puzzle():
+    completed = [s.puzzleID for s in current_user.scores]
+    total = Puzzle.query.count()
+    r = random.randint(1, total)
+    while r in completed:
+        r = random.randint(1, total)
+    return redirect(url_for(route.puzzle.play, puzzleid=r))
     
 @game.route('/puzzle/<int:puzzleid>/solve', methods=['POST'])
+@login_required
 def api_solve_puzzle(puzzleid):
     data = json.loads(request.data)
     submittedWords = data['submittedWords']
@@ -39,6 +50,7 @@ def api_solve_puzzle(puzzleid):
     return data
 
 @game.route('/puzzle/<int:puzzleid>/lite-leaderboard', methods=['GET'])
+@login_required
 def get_leaderboard(puzzleid):
     
     records = db.session.query(User.id, User.name, LeaderboardRecord.score).join(LeaderboardRecord, User.id == LeaderboardRecord.userID).filter(LeaderboardRecord.puzzleID == puzzleid).order_by(desc(LeaderboardRecord.score)).limit(5).all()

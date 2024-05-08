@@ -8,11 +8,11 @@
   <body>
     <div class="header">
       <a href="{{ url_for(route.index) }}">Home</a>
-      <a href="{{ url_for(route.puzzle.play, puzzleid=1)}}">Word Game</a>
       {% if current_user.is_anonymous %}
       <a href="{{ url_for(route.login) }}">Login</a>
       <a href="{{ url_for(route.register) }}">Register</a>
       {% else %}
+      <a href="{{ url_for(route.puzzle.random)}}">Random</a>
       <a href="{{ url_for(route.puzzle.create) }}">Submit Puzzle</a>
       <a href="{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a>
       <a href="{{ url_for(route.logout) }}">Logout</a>
