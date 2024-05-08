@@ -28,10 +28,11 @@ def page_play_puzzle(puzzleid):
 def api_solve_puzzle(puzzleid):
     data = json.loads(request.data)
     submittedWords = data['submittedWords']
-    score = game_utils.verify_score(submittedWords)
+
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    score = game_utils.verify_score(submittedWords, puzzle.content)
 
     if score:
-        puzzle = puzzle_utils.get_puzzle(id=puzzleid)
         puzzle.add_record(current_user, score)
         print(f"Score: {score}")
     return data
