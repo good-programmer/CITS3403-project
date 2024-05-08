@@ -153,6 +153,16 @@
     margin: auto;
 }
 
+.leaderboard-table a, .leaderboard-table a:hover {
+    color: inherit;
+}
+
+.leaderboard-table a.MatrixTextYellow:hover {
+    color: black;
+    background-color: rgba(225,225,125,0.75);
+}
+
+
 .leaderboard-table th, .leaderboard-table td {
     padding: 0 30px;
 }

@@ -1,6 +1,7 @@
 from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort
-from .models import db, Puzzle
+from .models import db, Puzzle, LeaderboardRecord, User
 from flask_login import login_required, current_user
+from sqlalchemy import desc
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
@@ -33,6 +34,27 @@ def api_solve_puzzle(puzzleid):
         puzzle.add_record(current_user, score)
         print(f"Score: {score}")
     return data
+
+@game.route('/puzzle/<int:puzzleid>/lite-leaderboard', methods=['GET'])
+def get_leaderboard(puzzleid):
+    
+    records = db.session.query(User.id, User.name, LeaderboardRecord.score).join(LeaderboardRecord, User.id == LeaderboardRecord.userID).filter(LeaderboardRecord.puzzleID == puzzleid).order_by(desc(LeaderboardRecord.score)).limit(5).all()
+
+    # get current user's score and rank
+    current_user_record = LeaderboardRecord.query.filter_by(userID=current_user.id, puzzleID=puzzleid).first()
+    current_user_score = current_user_record.score if current_user_record else None
+    current_user_rank = next((index for index, record in enumerate(records, start=1) if record[0] == current_user.id), None)
+
+    # get the puzzle title
+    puzzle_title = Puzzle.query.get(puzzleid).title
+
+    data = {
+        'leaderboard': [{'userID': record[0], 'username': record[1], 'score': record[2]} for record in records],
+        'currentUser': {'username': current_user.name, 'score': current_user_score, 'rank': current_user_rank},
+        'puzzleTitle': puzzle_title
+    }
+
+    return jsonify(data)
 
 @game.route('/puzzle/create', methods=['GET','POST'])
 @login_required

@@ -312,22 +312,24 @@ function displayLeaderboard() {
 
     let tbody = $('<tbody>');
 
-    // PLACEHOLDER SCORES
-    let scores = [
-        { userID: 'User1', score: 40 },
-        { userID: 'User2', score: 23 },
-        { userID: 'User3', score: 3 },
-    ];
-
-    // populate score
-    for (let i = 0; i < scores.length; i++) {
-        tbody.append($('<tr>')
-            .append($('<td>').text(i + 1))              // RANK
-            .append($('<td>').text(scores[i].userID))   // USER
-            .append($('<td>').text(scores[i].score))    // SCORE
-        );
-    }
-    table.append(tbody);
+    $.ajax({
+        url: '/puzzle/' + Game.puzzleid + '/lite-leaderboard',
+        type: 'GET',
+        success: function(data) {
+        
+            // display the leaderboard
+            for (let i = 0; i < data.leaderboard.length; i++) {
+                let userLink = $('<a>').attr('href', '/user/' + data.leaderboard[i].userID + '/profile').text(data.leaderboard[i].username);
+                userLink.addClass('MatrixTextYellow');
+                tbody.append($('<tr>')
+                    .append($('<td>').text(i + 1))                      // RANK
+                    .append($('<td>').append(userLink))                 // USER
+                    .append($('<td>').text(data.leaderboard[i].score))  // SCORE
+                );
+            }
+            table.append(tbody);
+        }
+    });
 
     // add table to the leaderboard div
     leaderboardDiv.append(table);
