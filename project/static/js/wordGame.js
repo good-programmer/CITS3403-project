@@ -89,7 +89,7 @@ let Game = {
     // remove chars from displayString as the user types their word
     updateString: function() {
         let userInput = document.getElementById('userInput').value;
-        let tempString = Game.puzzleString;
+        let tempString = Game.puzzleString.toLowerCase();
         for (let i = 0; i < userInput.length; i++) {
             let lowerCaseChar = userInput[i].toLowerCase();
             if (tempString.includes(lowerCaseChar)) {
@@ -134,7 +134,7 @@ let Game = {
 
         let jsonData = JSON.stringify(solveData);
 
-        fetch('/wordGame/solve', {
+        fetch('/puzzle/solve', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ let Game = {
                     }
 
                     // send user input to the server
-                    fetch('/wordGame', {
+                    fetch('/puzzle/play', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
