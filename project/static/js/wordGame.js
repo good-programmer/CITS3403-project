@@ -326,18 +326,30 @@ function displayLeaderboard() {
                 }
                 let userLink = $('<a>').attr('href', '/user/' + data.leaderboard[i].userID + '/profile').text(username);
                 userLink.addClass('MatrixTextYellow');
-                tbody.append($('<tr>')
+
+                // create a new row
+                let row = $('<tr>')
                     .append($('<td>').text(i + 1))                      // RANK
                     .append($('<td>').append(userLink))                 // USER
-                    .append($('<td>').text(data.leaderboard[i].score))  // SCORE
-                );
+                    .append($('<td>').text(data.leaderboard[i].score)); // SCORE
+
+                // if the username matches the current user's username, highlight it in green
+                if (data.leaderboard[i].username === data.currentUser.username) {
+                    row.addClass('MatrixTextGreen');
+                }
+
+                // append the row to the tbody
+                tbody.append(row);
             }
-            let currentUserRow = $('<tr>')
+            // user's score did not make top 5 - append it to end
+            if (data.currentUser.rank > 5) {
+                let currentUserRow = $('<tr>')
                 .append($('<td>').text(data.currentUser.rank))
                 .append($('<td>').text(data.currentUser.username))
                 .append($('<td>').text(data.currentUser.score));
-            currentUserRow.addClass('MatrixTextGreen');
-            tbody.append(currentUserRow);
+                currentUserRow.addClass('MatrixTextGreen');
+                tbody.append(currentUserRow);
+            }
             table.append(tbody);
     
             // add table to the leaderboard div
