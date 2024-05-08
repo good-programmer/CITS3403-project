@@ -224,7 +224,7 @@ let Game = {
                 }
             }
             // 'Backspace' - remove red highlighting from incorrect word submission
-            if (event.key === 'Backspace' ) {
+            if (event.key === 'Backspace' || this.puzzleString.includes(event.key.toUpperCase()) ) {
                 document.getElementById('userInput').classList.remove('MatrixTextRed');
             }
         });
