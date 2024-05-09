@@ -1,7 +1,33 @@
 const postTemplate = document.querySelector("[post-template]")
 const postContainer = document.querySelector("[data-post-container]")
 
-fetch('/puzzle/search/recent')
+document.querySelectorAll(".toggle-button").forEach(togBut=>{
+    togBut.addEventListener("click", () => {
+    
+        togBut.classList.toggle("toggle-button--selected")
+
+        clearTemplates()
+
+        trend = togBut.textContent.trim().toLowerCase()
+        loadTemplates(trend)
+
+        document.querySelectorAll(".toggle-button").forEach(otherBut => {
+            if (otherBut !== togBut) {
+                otherBut.classList.remove("toggle-button--selected")
+            }
+        })
+    })
+})
+
+function clearTemplates() {
+    while (postContainer.firstChild) {
+        postContainer.removeChild(postContainer.firstChild)
+    }
+}
+
+function loadTemplates(trend){
+
+    fetch('/puzzle/search/' + trend)
     .then(response => response.json())
     .then(data => {
         data.puzzles.forEach(puz => {
@@ -40,4 +66,4 @@ fetch('/puzzle/search/recent')
     })
     .catch(error => console.error('Error fetching data:', error));
 
-
+}

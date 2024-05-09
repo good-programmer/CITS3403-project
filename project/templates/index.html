@@ -41,28 +41,33 @@
         </ul>
     </nav>
 
-    <div class="post-container" data-post-container>
-        <template post-template>
-            <div class="post">
-                <div class="puzzle-row">
-                    <a class="puzzle-title" href="" data-puz-title></a>
-                    <a class="puzzle-id" href="" data-puz-id></a>
+    <div class="panel-container">
+        <div class="buttons-container">
+            <button class="toggle-button" type=button>Popular</button>
+            <button class="toggle-button" type="button">Hot</button>
+            <button class="toggle-button toggle-button--selected" type="button">Recent</button>
+        </div>
+        <div class="post-container" data-post-container>
+            <template post-template>
+                <div class="post">
+                    <div class="puzzle-row">
+                        <a class="puzzle-title" href="" data-puz-title></a>
+                        <a class="puzzle-id" href="" data-puz-id></a>
+                    </div>
+                    <div class="author-row">
+                        <a class="author-name" href="" data-author-name></a>
+                        <a class="author-id" href="" data-author-id></a>
+                        <div class="date-created" data-date-created></div> 
+                    </div>
+                    <div class="stats-row">
+                        <div class="playcount" data-playcount></div>
+                        <div class="avg-rating" data-avg-rating></div>
+                        <div class="highscore" data-highscore></div>
+                    </div>
                 </div>
-                <div class="author-row">
-                    <a class="author-name" href="" data-author-name></a>
-                    <a class="author-id" href="" data-author-id></a>
-                    <div class="date-created" data-date-created></div> 
-                </div>
-                <div class="stats-row">
-                    <div class="playcount" data-playcount></div>
-                    <div class="avg-rating" data-avg-rating></div>
-                    <div class="highscore" data-highscore></div>
-                </div>
-            </div>
-        </template>
-
+            </template>
+        </div>
     </div>
-
 
 </body>
 </html>

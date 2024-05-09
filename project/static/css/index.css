@@ -50,11 +50,38 @@ a:hover{
     margin-right: auto;
 }
 
-.searchbar{
+
+.panel-container{
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+}
+
+.buttons-container{
     display: flex;
     flex-direction: row;
-    gap: 1rem;
 }
+.buttons-container:first-child{
+    margin-left: 10%;
+}
+.toggle-button{
+    margin-right: 0.5rem;
+    padding: 0.5em 1em;
+    border-radius: 1em;
+    border: solid 1px rgba(125,225,125,0.75);
+    color: rgba(125,225,125,0.75);
+    background-color: #1a0600;
+}
+.toggle-button:not(.toggle-button--selected):hover{
+    background-color: #293102;;
+}
+.toggle-button--selected{
+    background-color: rgba(125,225,125,0.75);
+    color: #1a0600;
+    border: solid 1px #1a0600;
+
+}
+
 
 .post-container{
     display:flex;
