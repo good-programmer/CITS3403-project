@@ -10,26 +10,28 @@
 {% block content %}
 <body id="body">
     <div class="col-sm-12" id="gameArea">
-        <div class="container" id="puzzleStringContainer">
-            <p class="Screen MatrixTextGreen" id="puzzleString"></p>
-            <div id="userButtons">
-            <button class="Screen MatrixTextGreen Button" onclick="Game.shuffleString()" id="shuffleButton">
-                [SHUFFLE]
-            </button>
-            <button class="Screen MatrixTextGreen Button" onclick="Game.reset()" id="resetButton">
-                [RESET]
-            </button>
-            <p class="Screen MatrixTextGreen" id="score">SCORE: <span id="scoreValue"></span></p>
-            </div>
-        </div>
-        <div class="container" id="userInputContainer">
-            <div id="submittedWords"></div>
-            <label for="userInput" class="Screen MatrixTextYellow">$></label>
-            <div id="userSubmission">
-                <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="Game.updateString()" autofocus>
-                <button class="Screen MatrixTextYellow Button" onclick="Game.solve()" id="submitButton">
-                    [FINISH]
+        <div id="gameContent">
+            <div class="container" id="puzzleStringContainer" data-puzzlestring="{{puzzle['content']}}">
+                <p class="Screen MatrixTextGreen" id="puzzleString"></p>
+                <div id="userButtons">
+                <button class="Screen MatrixTextGreen Button" onclick="Game.shuffleString()" id="shuffleButton">
+                    [SHUFFLE]
                 </button>
+                <button class="Screen MatrixTextGreen Button" onclick="Game.reset()" id="resetButton">
+                    [RESET]
+                </button>
+                <p class="Screen MatrixTextGreen" id="score">SCORE: <span id="scoreValue"></span></p>
+                </div>
+            </div>
+            <div class="container" id="userInputContainer">
+                <div id="submittedWords"></div>
+                <label for="userInput" class="Screen MatrixTextYellow">$></label>
+                <div id="userSubmission">
+                    <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="Game.updateString()" autofocus>
+                    <button class="Screen MatrixTextYellow Button {% if completed %}greyed{% endif %}" onclick="Game.solve()" id="submitButton">
+                        [FINISH]
+                    </button>
+                </div>
             </div>
         </div>
     </div>

@@ -1,33 +1,85 @@
 from flask import Blueprint, request, render_template, jsonify, json, url_for, redirect, abort, flash
-from .models import db, Puzzle
+from .models import db, Puzzle, LeaderboardRecord, User
 from flask_login import login_required, current_user
+from sqlalchemy import func, desc
+from sqlalchemy.sql import text
 from project.forms import PuzzleSubmissionForm
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
-import datetime, re
+import datetime, re, random
 
 game = Blueprint('game', __name__)
 
 @game.route('/puzzle/<int:puzzleid>/play', methods=['GET', 'POST'])
 @login_required
 def page_play_puzzle(puzzleid):
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    if not puzzle:
+        abort(404)
     if request.method == 'POST':
         user_input = request.form['userInput']
         is_valid = game_utils.validate_input(user_input)
         print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
-        return render_template('wordGame.html', route=route)
+        return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
+
+@game.route('/puzzle/random', methods=['GET'])
+@login_required
+def page_random_puzzle():
+    completed = [s.puzzleID for s in current_user.scores]
+    total = Puzzle.query.count()
+    r = random.randint(1, total)
+    while r in completed:
+        r = random.randint(1, total)
+    return redirect(url_for(route.puzzle.play, puzzleid=r))
     
 @game.route('/puzzle/<int:puzzleid>/solve', methods=['POST'])
+@login_required
 def api_solve_puzzle(puzzleid):
     data = json.loads(request.data)
     submittedWords = data['submittedWords']
-    score = game_utils.verify_score(submittedWords)
-    print(data)
-    print(f"Score: {score}")
+
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    score = game_utils.verify_score(submittedWords, puzzle.content)
+
+    if score and not puzzle.has_record(current_user):
+        puzzle.add_record(current_user, score)
+        print(f"Score: {score}")
     return data
+
+@game.route('/puzzle/<int:puzzleid>/lite-leaderboard', methods=['GET'])
+@login_required
+def get_leaderboard(puzzleid):
+    
+    records = db.session.query(User.id, User.name, LeaderboardRecord.score).join(LeaderboardRecord, User.id == LeaderboardRecord.userID).filter(LeaderboardRecord.puzzleID == puzzleid).order_by(desc(LeaderboardRecord.score)).limit(5).all()
+
+    # get current user's score and rank
+    current_user_record = LeaderboardRecord.query.filter_by(userID=current_user.id, puzzleID=puzzleid).first()
+    current_user_score = current_user_record.score if current_user_record else None
+    # current_user_rank = next((index for index, record in enumerate(records, start=1) if record[0] == current_user.id), None)
+    
+    subq = db.session.query(
+    LeaderboardRecord.userID,
+    LeaderboardRecord.score,
+    func.rank().over(order_by=desc(LeaderboardRecord.score)).label('rank')
+    ).filter(
+        LeaderboardRecord.puzzleID == puzzleid
+    ).subquery()
+
+    current_user_rank = db.session.query(subq.c.rank).filter(subq.c.userID == current_user.id).scalar()
+
+    # get the puzzle title
+    puzzle_title = Puzzle.query.get(puzzleid).title
+
+    data = {
+        'leaderboard': [{'userID': record[0], 'username': record[1], 'score': record[2]} for record in records],
+        'currentUser': {'username': current_user.name, 'score': current_user_score, 'rank': current_user_rank},
+        'puzzleTitle': puzzle_title
+    }
+
+    return jsonify(data)
 
 @game.route('/puzzle/create', methods=['GET','POST'])
 @login_required
@@ -68,6 +120,21 @@ def api_get_puzzle(puzzleid):
         return data
     abort(404)
 
+@game.route('/puzzle/<int:puzzleid>/info')
+def page_puzzle_info(puzzleid):
+    puzzle = puzzle_utils.get_puzzle(id=puzzleid)
+    if not puzzle:
+        abort(404)
+    data = puzzle_utils.pack_puzzle(puzzle, detail=2)
+    if current_user.is_authenticated:
+        if puzzle.has_rating(current_user):
+            r = puzzle.get_rating(current_user)
+            data['rated'] = {"rating": r.rating, "dateRated": str(r.dateRated)}
+        if puzzle.has_record(current_user):
+            s = puzzle.get_record(current_user)
+            data['score'] = {"score": s.score, "dateSubmitted": str(s.dateSubmitted)}
+    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data, following=[f.userID for f in current_user.following] + [current_user.id])
+
 @game.route('/puzzle/<int:puzzleid>/rate', methods=['POST'])
 def api_rate_puzzle(puzzleid):
     '''
@@ -80,9 +147,9 @@ def api_rate_puzzle(puzzleid):
     if puzzle:
         if puzzle.has_record(current_user):
             if puzzle.has_rating(current_user):
-                puzzle.update_rating(current_user, request.values['rating'])
+                puzzle.update_rating(current_user, request.get_json()['rating'])
             else:
-                puzzle.add_rating(current_user, request.values['rating'])
+                puzzle.add_rating(current_user, request.get_json()['rating'])
             return {"average_rating": puzzle.average_rating}
         abort(401)
     abort(404)

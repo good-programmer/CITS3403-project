@@ -436,17 +436,17 @@ class PostRequestCase(unittest.TestCase):
         puzzle.add_rating(__, 5)
 
         #unauthenticated case
-        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True), 401)
+        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), json=dict(rating=2), follow_redirects=True), 401)
         #uncompleted case
         self.t.login("POST_USER", "123")
-        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True), 401)
+        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), json=dict(rating=2), follow_redirects=True), 401)
         #correct case
         puzzle.add_record(user, 50)
-        response = self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), data=dict(rating=2), follow_redirects=True), 200)
+        response = self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=puzzle.id), json=dict(rating=2), follow_redirects=True), 200)
         #test average
         self.assertEqual(json.loads(response.data)['average_rating'], puzzle.average_rating)
         #404 (invalid puzzle) case
-        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=-1), data=dict(rating=2), follow_redirects=True), 404)
+        self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=-1), json=dict(rating=2), follow_redirects=True), 404)
 
     def test_submit_score(self):
         pass

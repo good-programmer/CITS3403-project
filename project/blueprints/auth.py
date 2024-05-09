@@ -102,11 +102,19 @@ def api_get_user(userid):
 
 @auth.route('/user/<int:userid>/profile', methods=["GET"])
 def page_user_profile(userid):
-
+    if not userid:
+        userid = current_user.id
     user = user_utils.get_user(id=userid)
     if not user:
         abort(404)
     return render_template('profile.html', route=route, current_user=current_user, user=user_utils.pack_user(user), following=(current_user.is_following(user) if current_user.is_authenticated else True))
+
+@auth.route('/user/current/profile', methods=["GET"])
+@auth.route('/user/profile', methods=["GET"])
+def redirect_current_user_profile():
+    if not current_user.is_authenticated:
+        return redirect(url_for(route.login))
+    return redirect(url_for(route.user.profile, userid=current_user.id))
 
 @auth.route('/user/follow', methods=["POST"])
 def api_follow_user():

@@ -161,3 +161,57 @@ input[type="checkbox"] {
     padding: 30px;
     margin-bottom: 20px;
 }
+
+#following-leaderboard {
+    display: none;
+}
+
+#switch-leaderboard-button {
+    top: calc(10% - 30px);
+    width: 80px;
+    height: 20px;
+    position:absolute;
+    margin-left: calc(40% - 80px);
+    left: 30%;
+}
+
+#rate-slider {
+    position: relative;
+    font-family: monospace;
+    font-size: 30px;
+    text-align: center;
+    user-select: none;
+    color: orange;
+    width: fit-content;
+    height: 50px;
+    margin: 0px;
+    padding: 0px;
+}
+
+#rate-slider:hover {
+    text-shadow: 0px 0px 0.5px, 0px 0px 0.5px, 0px 0px 0.5px;
+    cursor: pointer;
+}
+
+#rate-back {
+    margin: 0px;
+    height: fit-content;
+    position: absolute;
+    width: auto;
+    text-overflow: hidden;
+    overflow: hidden;
+    top:0;
+}
+#rate-current {
+    margin: 0px;
+    position: absolute;
+    width: 0px;
+    text-overflow: hidden;
+    overflow: hidden;
+    top:0;
+    height: fit-content;
+}
+
+.disabled {
+    pointer-events: none;
+}

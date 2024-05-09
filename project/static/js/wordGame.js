@@ -1,4 +1,6 @@
 let Game = {
+    puzzleid: null,
+    solved: false,
     score: 0,
     puzzleString: '',
     displayString: '',
@@ -16,6 +18,10 @@ let Game = {
             result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
         return result;
+    },
+
+    getPuzzleString: function () {
+        return document.getElementById("puzzleStringContainer").dataset.puzzlestring
     },
 
     // animate puzzleString to appear letter by letter
@@ -66,6 +72,18 @@ let Game = {
                 p.style.display = 'inline-block';
                 div.appendChild(p);
                 container.appendChild(div);
+                
+                const userInputLabel = document.querySelector('#userInputContainer > label[for="userInput"]');
+                const userInput = document.getElementById("userInput");
+                if (this.submittedWords.length >= 5) {
+                    userInputLabel.textContent = "|>";
+                    userInputLabel.classList.add("greyed");
+                    userInput.classList.add("greyed");
+                } else {
+                    userInput.classList.remove("greyed");
+                    userInputLabel.textContent = "$>";
+                    userInputLabel.classList.remove("greyed");
+                }
     
                 div.addEventListener('click', () => {
                     this.submittedWords.splice(index, 1);
@@ -126,28 +144,32 @@ let Game = {
         document.getElementById('userInput').classList.remove('MatrixTextRed');
     },
 
-    solve: function() {
-        let solveData = {
-            submittedWords: this.submittedWords,
-            date: new Date()
-        };
+    solve: async function() {
+        if (!Game.solved) {
+            let solveData = {
+                submittedWords: this.submittedWords,
+                date: new Date()
+            };
 
-        let jsonData = JSON.stringify(solveData);
+            let jsonData = JSON.stringify(solveData);
 
-        fetch('/puzzle/solve', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: jsonData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+            await fetch('/puzzle/' + Game.puzzleid + '/solve', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: jsonData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+        Game.solved = true;
+        displayLeaderboard();
     },
 
     // sets EventListeners for word submission
@@ -171,7 +193,7 @@ let Game = {
                     }
 
                     // send user input to the server
-                    fetch('/puzzle/play', {
+                    fetch('/puzzle/' + Game.puzzleid + '/play', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded',
@@ -182,7 +204,7 @@ let Game = {
                     .then(data => {
                         console.log(data);
                         if (data.is_valid) {
-                            // The word is valid, update the submitted words and score
+                            // the word is valid, update the submitted words and score
                             console.log('Valid word');
                             this.submittedWords.push(word);
                             this.updateSubmittedWords();
@@ -202,17 +224,18 @@ let Game = {
                 }
             }
             // 'Backspace' - remove red highlighting from incorrect word submission
-            if (event.key === 'Backspace' ) {
+            if (event.key === 'Backspace' || this.puzzleString.includes(event.key.toUpperCase()) ) {
                 document.getElementById('userInput').classList.remove('MatrixTextRed');
             }
         });
     },
 
     // initialise game
-    init: function () {
+    init: async function () {
+        Game.puzzleid = window.location.pathname.split('/')[2];
         Game.animatePuzzleString();
         Game.setUserInputs();
-        Game.puzzleString = Game.generateRandomString(15);
+        Game.puzzleString = Game.getPuzzleString();
         Game.displayString = Game.puzzleString;
         Game.updateScore();
 
@@ -274,4 +297,103 @@ function setEventListeners() {
 window.onload = function() {
     Game.init();
     setEventListeners();
+}
+
+function displayLeaderboard() {
+    // hide the game content
+    $('#gameContent').hide();
+    $('#userInput').prop('disabled', true);
+    $('#submittedWords').find('div').css('pointer-events', 'none');
+
+    // create new div for the leaderboard
+    let leaderboardDiv = $('<div>').attr('id', 'leaderboard');
+    leaderboardDiv.addClass('container Screen MatrixTextYellow')
+
+    // create a table
+    let table = $('<table>').addClass('leaderboard-table');
+
+    // create leadboard table
+    let thead = $('<thead>');
+    thead.append($('<tr>')
+        .append($('<th>').text('RANK'))
+        .append($('<th>').text('NAME'))
+        .append($('<th>').text('SCORE'))
+    );
+    table.append(thead);
+
+    let tbody = $('<tbody>');
+
+    $.ajax({
+        url: '/puzzle/' + Game.puzzleid + '/lite-leaderboard',
+        type: 'GET',
+        success: function(data) {
+
+            leaderboardDiv.append($('<h2>').text('LEADERBOARD'));
+
+            // display the leaderboard
+            for (let i = 0; i < data.leaderboard.length; i++) {
+                let username = data.leaderboard[i].username;
+                if (username.length > 20) {
+                    username = username.substring(0, 17) + '...';
+                }
+                let userLink = $('<a>').attr('href', '/user/' + data.leaderboard[i].userID + '/profile').text(username);
+                userLink.addClass('MatrixTextYellow');
+
+                // create a new row
+                let row = $('<tr>')
+                    .append($('<td>').text(i + 1))                      // RANK
+                    .append($('<td>').append(userLink))                 // USER
+                    .append($('<td>').text(data.leaderboard[i].score)); // SCORE
+
+                // if the username matches the current user's username, highlight it in green
+                if (data.leaderboard[i].username === data.currentUser.username) {
+                    row.addClass('MatrixTextGreen');
+                }
+
+                // append the row to the tbody
+                tbody.append(row);
+            }
+            // user's score did not make top 5 - append it to end
+            if (data.currentUser.rank > 5) {
+                let currentUserRow = $('<tr>')
+                .append($('<td>').text(data.currentUser.rank))
+                .append($('<td>').text(data.currentUser.username))
+                .append($('<td>').text(data.currentUser.score));
+                currentUserRow.addClass('MatrixTextGreen');
+                tbody.append(currentUserRow);
+            }
+            table.append(tbody);
+    
+            // add table to the leaderboard div
+            leaderboardDiv.append(table);
+
+            // create a button for closing the leaderboard
+            let closeButton = $('<button>').text('[SHOW PUZZLE]');
+            closeButton.addClass('Screen MatrixTextYellow Button');
+            closeButton.attr('id', 'closeButton');
+    
+            // create a button for exiting the game
+            let exitButton = $('<button>').text('[EXIT]');
+            exitButton.addClass('Screen MatrixTextYellow Button');
+            exitButton.attr('id', 'exitButton');
+    
+            // create a div to contain the buttons
+            let buttonContainer = $('<div>').attr('id', 'buttonContainer');
+            buttonContainer.append(closeButton, exitButton);
+            leaderboardDiv.append(buttonContainer);
+
+            $('#closeButton').click(function() {
+                $('#leaderboard').remove();
+                $('#gameContent').show();
+                $('#shuffleButton').remove();
+                $('#resetButton').remove();
+            });
+        
+            $('#exitButton').click(function() {
+                window.location.href = '/puzzle/' + Game.puzzleid + '/info';
+            });
+        }
+    });
+    // add leaderboard to page
+    $('#gameArea').append(leaderboardDiv);
 }

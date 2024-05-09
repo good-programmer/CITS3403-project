@@ -11,6 +11,7 @@
 }
 
 #gameArea {
+    align-items: center;
     margin: 50px;
 }
 
@@ -62,7 +63,7 @@
     padding-right: 10px;
 }
 
-#userButtons button, #submitButton {
+#userButtons button, #submitButton, #closeButton, #exitButton {
     text-align: center;
     margin-top: 0px;
     background-color: rgba(0,0,0,0);
@@ -86,7 +87,7 @@
 
 /* userInput */
  
-#userInputContainer label, #userInput, .wordTile, #userButtons, #submitButton {
+#userInputContainer label, #userInput, .wordTile, #userButtons, #submitButton, #closeButton, #exitButton {
     font-size: 30px;
 }
 
@@ -128,6 +129,60 @@
     margin-left: 46px;
 }
 
+/* userInput */
+
+#leaderboard{
+    box-sizing: border-box;
+    margin: 5px auto;
+    width: 550px;
+    height: 388px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+#leaderboard h2 {
+    font-size: 50px;
+    padding-top: 5px;  
+}
+
+.leaderboard-table {
+    font-size: 25px;
+    margin: auto;
+}
+
+.leaderboard-table a, .leaderboard-table a:hover {
+    color: inherit;
+}
+
+.leaderboard-table a.MatrixTextYellow:hover {
+    color: black;
+    background-color: rgba(225,225,125,0.75);
+}
+
+
+.leaderboard-table th, .leaderboard-table td {
+    padding: 0 0;
+}
+
+.leaderboard-table td:nth-child(2) {
+    text-align: left;
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+}
+
+#closeButton, #exitButton {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /* "Matrix" font - modified version of: https://codepen.io/freelesio/pen/MWQaGPb */
 
 .Screen {
@@ -158,4 +213,9 @@
 .puzzleFormContainer {
     margin: 0 auto; 
     text-align: center; 
+}
+
+.greyed {
+    filter: grayscale() brightness(80%);
+    text-decoration: line-through;
 }

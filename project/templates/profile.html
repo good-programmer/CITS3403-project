@@ -27,7 +27,7 @@
     <div id='created-list' class="post-list">
       {% for puzzle in user['puzzles']|sort(attribute='average_rating', reverse=True) %}
           <div class="post-body">
-              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.puzzle.info, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
               <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
               Total plays: {{ puzzle['play_count'] }}<br>
               Average rating: {{ puzzle['average_rating']|round(2) }}<br>
@@ -41,7 +41,7 @@
     <div id='completed-list' class="post-list">
       {% for puzzle in user['scores']|sort(attribute='dateSubmitted', reverse=True) %}
           <div class="post-body">
-              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.puzzle.info, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
               <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
               Total plays: {{ puzzle['play_count'] }}<br>
               Score: {{ puzzle['score'] }}<br>
@@ -55,7 +55,7 @@
     <div id='rated-list' class="post-list">
       {% for puzzle in user['ratings']|sort(attribute='dateRated', reverse=True) %}
           <div class="post-body">
-              <a href={{ url_for(route.puzzle.get, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
+              <a href={{ url_for(route.puzzle.info, puzzleid=puzzle['id']) }}><b>{{ puzzle['title'] }}</b></a><br>
               <a href={{ url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator'] }}</a><br>
               Total plays: {{ puzzle['play_count'] }}<br>
               Rating: {{ puzzle['rating'] }}<br>
