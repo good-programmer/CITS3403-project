@@ -17,6 +17,7 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
             }
         })
     })
+    loadTemplates('recent')
 })
 
 function clearTemplates() {
@@ -50,13 +51,13 @@ function loadTemplates(trend){
             authID.href = '/user/'+String(puz.creatorID)+'/profile'
 
             const dateCreation = post.querySelector("[data-date-created]")
-            dateCreation.textContent = puz.dateCreated
+            dateCreation.textContent = puz.dateCreated.slice(0,10)
 
             const playcount = post.querySelector("[data-playcount]")
             playcount.textContent = puz.play_count
 
             const avgRating= post.querySelector("[data-avg-rating]")
-            avgRating.textContent = puz.average_rating
+            avgRating.textContent = puz.average_rating.toFixed(1)
 
             const highestScore = post.querySelector("[data-highscore]")
             highestScore.textContent = puz.highscore
