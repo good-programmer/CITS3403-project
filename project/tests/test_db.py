@@ -3,12 +3,12 @@ import unittest
 
 from sqlalchemy import exc
 
-from project.tests import TestObject
+from project.tests import TestObject, app
 
-from project import app
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
 
 from project.utils import user_utils, puzzle_utils
+
 
 class UserModelCase(unittest.TestCase):
     @classmethod
@@ -93,14 +93,7 @@ class PuzzleModelCase(unittest.TestCase):
         return super().setUpClass()
     
     def setUp(self):
-        #disable & reenable commit for batch commit
-        '''Config.TESTING = True
-        self.t.generate_users()
-        self.t.generate_puzzles()
-        self.t.generate_scores()
-        self.t.generate_ratings()
-        Config.TESTING = False
-        db.session.commit()'''
+        pass
 
     def tearDown(self):
         self.t.clear_db()

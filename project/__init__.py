@@ -3,17 +3,18 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
-from .config import Config
-
 from .utils import route_utils as route
+
+from project import config
 
 db = SQLAlchemy()
 migrate = Migrate()
 
-def create_app(config):
+def create_app(conf):
     app = Flask(__name__)
-    app.config.from_object(config)
-    migrate.directory = config.MIGRATION_DIR
+    app.config.from_object(conf)
+    config.current_config = conf
+    migrate.directory = conf.MIGRATION_DIR
     
     db.init_app(app)
     migrate.init_app(app, db)

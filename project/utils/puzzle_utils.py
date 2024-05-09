@@ -2,7 +2,7 @@ import re
 from sqlalchemy import func, desc, asc
 from ..blueprints.models import db, User, Puzzle, Rating, LeaderboardRecord
 
-from project.config import Config
+from project import config
 
 def pack_puzzle(puzzle, detail=1):
     '''Packs a puzzle's public information into a dictionary with variable detail level'''
@@ -29,7 +29,7 @@ def add_puzzle(title, creator, content) -> Puzzle:
     '''Add a puzzle with a given title, creator and content.'''
     puzzle = Puzzle(title=title, creator=creator, content=content)
     db.session.add(puzzle)
-    if not Config.TESTING:
+    if not getattr(config.current_config, 'COMMITS_DISABLED', False):
         db.session.commit()
     return puzzle
 

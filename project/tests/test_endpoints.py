@@ -2,16 +2,13 @@ import unittest, json
 
 from flask import url_for
 
-from project.tests import TestObject
+from project.tests import TestObject, app
 
-from project import app
 from project.blueprints.models import db, Puzzle
 
 from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as route
 
 import datetime
-
-app.config["WTF_CSRF_ENABLED"] = False
 
 class GetRequestCase(unittest.TestCase):
     @classmethod

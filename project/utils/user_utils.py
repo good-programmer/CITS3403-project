@@ -1,7 +1,7 @@
 from ..blueprints.models import db, User
 from . import puzzle_utils
 
-from project.config import Config
+from project import config
 
 def pack_user(user:User) -> dict:
     '''Packs a user's public information into a dictionary'''
@@ -31,7 +31,7 @@ def add_user(name, password) -> User:
     '''Add a user with given name and password to the database.'''
     new_user = User(name=name, password=password)
     db.session.add(new_user)
-    if not Config.TESTING:
+    if not getattr(config.current_config, 'COMMITS_DISABLED', False):
         db.session.commit()
     return new_user
 

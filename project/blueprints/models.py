@@ -4,12 +4,12 @@ from flask_login import UserMixin
 
 from project import db
 
-from project.config import Config
+from project import config
 
 def commit():
-    if not Config.TESTING:
+    if not getattr(config.current_config, 'COMMITS_DISABLED', False):
         db.session.commit()
-
+        
 class Rating(db.Model):
     __tablename__ = "Ratings"
     userID = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
