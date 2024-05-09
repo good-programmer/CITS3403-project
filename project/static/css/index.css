@@ -19,7 +19,9 @@ a{
     text-decoration: none;
     color: rgba(125,225,125,0.75);
 }
-
+a:hover{
+    text-decoration: underline;
+}
 
 .navbar{
     width: 100vw;
@@ -53,10 +55,73 @@ a{
     flex-direction: row;
     gap: 1rem;
 }
-.searchbar input[type = "search"]{
-    background-color: #002400;
-    border: 2px solid rgba(125,225,125,0.75);
-    color: rgba(125,225,125,0.75);
-    font-family: 'VT323', monospace;
-    border-radius: 10%;
+
+.post-container{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
 }
+.post{
+    border: 1px solid rgba(125,225,125,0.75);
+    padding: 0.5rem;
+    border-radius: .25rem;
+    width: 80%;
+    margin-top: 1rem;
+}
+
+.puzzle-row{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.puzzle-title{
+    font-size: 1.25rem;
+    margin-right: 0.5rem;
+}
+.puzzle-id:before{ content: "#"}
+.puzzle-id{
+    font-size: 0.75rem;
+    color: grey;
+}
+
+.author-row{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.author-name{
+    margin-right: 0.5rem;
+    font-size: 0.9rem;
+}
+.author-id:before{ content: "#"}
+.author-id{
+    font-size: 0.75rem;
+    color: grey;
+    margin-right:0.5rem;
+}
+.date-created{
+    font-size: 0.75rem;
+    color: grey;
+}
+
+.stats-row{
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+}
+.playcount:before{ content: "Total Plays: "}
+.playcount{
+    font-size: 0.75rem;
+    margin-right: 2rem;
+}
+.avg-rating:before{ content: "Average rating: "}
+.avg-rating{
+    font-size: 0.75rem;
+    margin-right: 2rem;
+}
+.highscore:before{ content: "Highscore: "}
+.highscore{
+    font-size: 0.75rem;
+    margin-right: 2rem;
+}
+

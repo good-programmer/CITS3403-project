@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placeholder</title>
+    <title>word-amble</title>
 
     <link rel = "stylesheet" href = "../static/css/index.css">
-    <script src = "../static/js/index.js" async></script>
+    <script src = "../static/js/index.js" defer></script>
 </head>
 <body>
     
@@ -29,17 +29,40 @@
 
     <nav class="navbar">
         <ul class = "nav-item-list">
-            <li class = "nav-item"><a href = "/search">Random Puzzle</a></li>
+            <li class = "nav-item"><a href = {{url_for(route.puzzle.play, puzzleid=1)}}>Random Puzzle</a></li>
             {%if  not current_user.is_authenticated%}
-                <li class = "nav-item"></li><a href = "{{ url_for('auth.login') }}">Login</a></li>
-                <li class = "nav-item"><a href = "{{ url_for('auth.register') }}">Register</a></li>
+                <li class = "nav-item"></li><a href = "{{ url_for(route.login) }}">Login</a></li>
+                <li class = "nav-item"><a href = "{{ url_for(route.register) }}">Register</a></li>
             {%else%}
-                <li class = "nav-item"></li><a href = "{{ url_for('game.submitpuzzle') }}">Submit Puzzle</a></li>
-                <li class = "nav-item"></li><a href = "{{ url_for('main.profile') }}">Profile</a></li>
-                <li class = "nav-item"><a href = "{{ url_for('auth.logout') }}">Logout</a></li>
+                <li class = "nav-item"></li><a href = "{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></li>
+                <li class = "nav-item"></li><a href = "{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></li>
+                <li class = "nav-item"><a href = "{{ url_for(route.logout) }}">Logout</a></li>
             {%endif%}
         </ul>
     </nav>
+
+    <div class="post-container" data-post-container>
+        <template post-template>
+            <div class="post">
+                <div class="puzzle-row">
+                    <a class="puzzle-title" href="" data-puz-title></a>
+                    <a class="puzzle-id" href="" data-puz-id></a>
+                </div>
+                <div class="author-row">
+                    <a class="author-name" href="" data-author-name></a>
+                    <a class="author-id" href="" data-author-id></a>
+                    <div class="date-created" data-date-created></div> 
+                </div>
+                <div class="stats-row">
+                    <div class="playcount" data-playcount></div>
+                    <div class="avg-rating" data-avg-rating></div>
+                    <div class="highscore" data-highscore></div>
+                </div>
+            </div>
+        </template>
+
+    </div>
+
 
 </body>
 </html>
