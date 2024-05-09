@@ -8,11 +8,12 @@ from .config import Config
 from .utils import route_utils as route
 
 db = SQLAlchemy()
-migrate = Migrate(directory=Config.MIGRATION_DIR)
+migrate = Migrate()
 
-def create_app():
+def create_app(config):
     app = Flask(__name__)
-    app.config.from_object(Config)
+    app.config.from_object(config)
+    migrate.directory = config.MIGRATION_DIR
     
     db.init_app(app)
     migrate.init_app(app, db)
@@ -41,4 +42,4 @@ def create_app():
 
     return app
 
-app = create_app()
+#app = create_app()
