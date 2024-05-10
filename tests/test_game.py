@@ -6,7 +6,7 @@ from tests import TestObject, app
 
 from project.blueprints.models import db, Puzzle
 
-from project.utils import user_utils, puzzle_utils, auth_utils, route_utils as route
+from project.utils import user_utils, puzzle_utils, route_utils as route
 
 import datetime
 
