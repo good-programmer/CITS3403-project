@@ -4,7 +4,7 @@ Test ORM and methods of Puzzle class
 from datetime import datetime
 import unittest
 
-from sqlalchemy import exc
+from sqlalchemy import exc, func
 
 from tests import TestObject, app
 
@@ -130,3 +130,16 @@ class PuzzleModelCase(unittest.TestCase):
         puzzle.add_rating(user, 5)
         avg1 = (r + 5) / (l + 1)
         self.assertEqual(avg1, puzzle.average_rating)
+    
+    def test_highest_score(self):
+        '''
+        Tests the highest_score property of Puzzle
+        '''
+        puzzle = self.t.get_random_puzzle()
+        expected = db.session.query(LeaderboardRecord.puzzleID, func.coalesce(func.max(LeaderboardRecord.score),0)).filter_by(puzzleID=puzzle.id).first()[1]
+        self.assertEqual(puzzle.highest_score, expected)
+
+        puzzle = puzzle_utils.add_puzzle("test", self.t.get_random_user(), "abcdefghij")
+        expected = db.session.query(LeaderboardRecord.puzzleID, func.coalesce(func.max(LeaderboardRecord.score),0)).filter_by(puzzleID=puzzle.id).first()[1]
+        self.assertEqual(puzzle.highest_score, expected)
+        self.assertEqual(puzzle.highest_score, 0)
