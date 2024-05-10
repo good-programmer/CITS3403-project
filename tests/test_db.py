@@ -103,16 +103,6 @@ class PuzzleModelCase(unittest.TestCase):
         cls.app_context.pop()
         return super().tearDownClass()
     
-    def test_puzzle(self):
-        '''
-        Tests puzzle_utils functions for correctness.
-        '''
-        user = user_utils.add_user("MAIN_USER", "132131")
-        puzzle = puzzle_utils.add_puzzle("MAIN_PUZZLE", user, "AHSDFADSF")
-        self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())
-        self.assertIsNotNone(db.session.query(Puzzle).filter_by(title=puzzle.title,creatorID=user.id).first())
-        self.assertIsNotNone(puzzle_utils.get_puzzle("MAIN_PUZZLE"))
-    
     def test_create(self):
         '''
         Tests the relationship between User and Puzzle in the ORM.

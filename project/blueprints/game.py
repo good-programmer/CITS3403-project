@@ -221,7 +221,7 @@ def parse_search_parameters(request):
 
 def standardize(s:str):
     '''Turn a search query into a regex for database search'''
-    s = s.lower()
+    s = '.*' + s.lower() + '.*'
     common = ['_', ' ']
     for i in common:
         s = s.replace(i, '.*')

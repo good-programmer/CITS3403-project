@@ -17,7 +17,7 @@ class GetRequestCase(unittest.TestCase):
         cls.app_context.push()
         cls.client = app.test_client()
         cls.t = TestObject(app, db)
-        cls.t.add_test_client(cls.client)
+        cls.t.add_test_client(cls.client)   
         return super().setUpClass()
 
     def tearDown(self):
@@ -26,7 +26,7 @@ class GetRequestCase(unittest.TestCase):
     
     @classmethod
     def tearDownClass(cls) -> None:
-        cls.t.clear_db(True)
+        cls.t.clear_db()
         cls.app_context.pop()
         return super().tearDownClass()
     
