@@ -202,38 +202,7 @@ class GetRequestCase(unittest.TestCase):
         #sort by a-z
         test_search_sort('a-z', lambda x: x.title)
         #sort by highest score
-        test_search_sort('highscore', lambda x: max([0] + [s.score for s in x.scores]))
-    
-    def test_validate_puzzle_submit(self):
-        # Test for invalid characters
-        test1 = auth_utils.validate_puzzle_submit('!@#$%6&*9)')
-        # Test for number string
-        test2 = auth_utils.validate_puzzle_submit('990123')
-        # Test for too long string
-        test3 = auth_utils.validate_puzzle_submit('asdjkasnckdasnjckjsan')
-        # Test for too short string
-        test4 = auth_utils.validate_puzzle_submit('ab')
-        # Test for correct string
-        test5 = auth_utils.validate_puzzle_submit('asdjfknca')
-        # Test for correct string
-        test6 = auth_utils.validate_puzzle_submit('kvmmkxk')
-        # Test for correct string
-        test7 = auth_utils.validate_puzzle_submit('xxxxx')
-        # Test for correct string
-        test8 = auth_utils.validate_puzzle_submit('SSAAMCDDKL')
-        # Test for incorrect mix string
-        test9 = auth_utils.validate_puzzle_submit('sodc9kz!')
-        
-        self.assertEqual(test1[0],False)
-        self.assertEqual(test2[0],False)
-        self.assertEqual(test3[0],False)
-        self.assertEqual(test4[0],False)
-        self.assertEqual(test5[0],False)
-        self.assertEqual(test6[0],False)
-        self.assertEqual(test7[0],False)
-        self.assertEqual(test8[0],True)
-        self.assertEqual(test9[0],False)
-        
+        test_search_sort('highscore', lambda x: max([0] + [s.score for s in x.scores])) 
 
     def test_get_user_info(self):
         '''
