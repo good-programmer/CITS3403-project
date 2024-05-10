@@ -3,7 +3,7 @@ from .models import db, Puzzle, LeaderboardRecord, User
 from flask_login import login_required, current_user
 from sqlalchemy import func, desc
 from sqlalchemy.sql import text
-from project.forms import PuzzleSubmissionForm
+from project.blueprints.forms import PuzzleSubmissionForm
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 

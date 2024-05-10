@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
-from project.forms import LoginForm, RegistrationForm
+from project.blueprints.forms import LoginForm, RegistrationForm
 
 from ..utils import auth_utils, user_utils, route_utils as route
 
