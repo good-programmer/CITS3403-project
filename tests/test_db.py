@@ -3,7 +3,7 @@ import unittest
 
 from sqlalchemy import exc
 
-from project.tests import TestObject, app
+from tests import TestObject, app
 
 from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
 

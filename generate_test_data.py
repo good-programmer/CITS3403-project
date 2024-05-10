@@ -30,7 +30,7 @@ def generate():
     from project.config import configurations
     app = create_app(configurations['development'])
 
-    from project.tests import create_test_db, random_username, random_puzzletitle, TestObject
+    from tests import create_test_db, random_username, random_puzzletitle, TestObject
     TestObject.numUsers = users
     TestObject.numPuzzles = puzzles
     TestObject.numScores = scores

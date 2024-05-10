@@ -12,7 +12,7 @@ def clean():
         os.remove(os.path.abspath(loc + '-journal'))
 
 try:
-    from project import tests
+    import tests
 
     app = create_app(TestingConfig)
     tests.app = app
@@ -27,7 +27,7 @@ try:
     tests.create_test_db(app=app)
     
     loader = unittest.TestLoader()
-    start_dir = 'project/tests'
+    start_dir = 'tests'
     suite = loader.discover(start_dir)
 
     runner = unittest.TextTestRunner()

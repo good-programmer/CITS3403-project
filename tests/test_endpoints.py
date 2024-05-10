@@ -2,7 +2,7 @@ import unittest, json
 
 from flask import url_for
 
-from project.tests import TestObject, app
+from tests import TestObject, app
 
 from project.blueprints.models import db, Puzzle
 
