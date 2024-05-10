@@ -56,9 +56,6 @@ class PuzzleUtilCase(unittest.TestCase):
         }, pack_puzzle(puzzle, detail=3))
     
     def test_add_puzzle(self):
-        '''
-        Tests puzzle_utils functions for correctness.
-        '''
         user = User.query.first()
         puzzle = add_puzzle("test", user, "abcdefghij")
         self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())

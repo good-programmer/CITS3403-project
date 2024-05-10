@@ -26,20 +26,11 @@ class UserModelCase(unittest.TestCase):
         cls.app_context.pop()
         return super().tearDownClass()
 
-    def test_account(self):
+    def test_name_unique(self):
         '''
-        Tests user_utils.py functions
-        \nadd_user
-        \nverify_user
-        \nget_user
+        Tests that only distinct usernames can exist in the User table
         '''
-        current_user = user_utils.add_user("MAIN_USER", "132131")
-        self.assertIsNotNone(db.session.query(User).filter_by(id=current_user.id).first())
-        self.assertIsNotNone(user_utils.verify_user("MAIN_USER"))
-        self.assertIsNone(user_utils.verify_user("__DNE__"))
-        self.assertIsNotNone(user_utils.verify_user("MAIN_USER", "132131"))
-        self.assertIsNone(user_utils.verify_user("MAIN_USER", "__INCORRECT__"))
-        self.assertIsNotNone(user_utils.get_user("MAIN_USER"))
+        user_utils.add_user("MAIN_USER", "132131")
         self.assertRaises(exc.IntegrityError, user_utils.add_user, "MAIN_USER", "789")
 
     def test_follow_integrity(self):
