@@ -27,10 +27,20 @@ try:
     tests.create_test_db(app=app)
     
     loader = unittest.TestLoader()
-    start_dir = 'tests'
+    start_dir = 'tests/units'
     suite = loader.discover(start_dir)
 
     runner = unittest.TextTestRunner()
     runner.run(suite)
+
+    print('+' * 100)
+
+    loader = unittest.TestLoader()
+    start_dir = 'tests/selenium'
+    suite = loader.discover(start_dir)
+
+    runner = unittest.TextTestRunner()
+    runner.run(suite)
+
 finally: #clean up db files whether errored or not
     clean()
