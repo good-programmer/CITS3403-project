@@ -37,7 +37,7 @@ body {
     margin-bottom: 5px;
 }
 
-.post-list, #puzzle-info {
+.post-body, #puzzle-info {
     background-color: black;
     border: 1px solid rgba(125,225,125,0.75);
     padding: 0.5rem;
@@ -53,12 +53,18 @@ body {
 }
 
 .post-body {
+    max-height: 50px;
+}
+
+/*
+.post-body {
     background-color: transparent;
     border: none;
     max-height: 50px;
     padding: 5px;
     margin: 5px;
 }
+*/
 
 .user-link {
     color: inherit
