@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<link rel="stylesheet" href="{{url_for('static',filename='css/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/style.css')}}">
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/puzzleinfo.css')}}">
 
 <h1>{{puzzle['title']}}</h1>
 <h2>{{puzzle['creator']}}</h2>
@@ -28,11 +29,13 @@
     {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
       <div class="post-body">
         <b>{{loop.index}}</b><br>
-        <a href="/user/{{score['id']}}/profile">{{score['name']}}</a>  |  {{score['score']}}<br>
+        <a class="user-link" href="/user/{{score['id']}}/profile">{{score['name']}}</a>  |  {{score['score']}}<br>
         {{score['dateSubmitted'][:10]}}
       </div>
     {% endfor %}
   </div>
+</div>
+
 
   <div id="following-leaderboard" class="leaderboard post-list">
     {% set counter={"position": 1} %}
@@ -40,7 +43,7 @@
       {% if score['id'] in following %}
         <div class="post-body">
           <b>{{counter.position}}</b><br>
-          <a href="/user/{{score['id']}}/profile">{{score['name']}}</a>  |  {{score['score']}}<br>
+          <a class="user-link" href="/user/{{score['id']}}/profile">{{score['name']}}</a>  |  {{score['score']}}<br>
           {{score['dateSubmitted'][:10]}}
         </div>
         {% if counter.update({"position":counter.position + 1}) %} {% endif %}
