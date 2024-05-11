@@ -17,7 +17,7 @@ pre{
     justify-content: center;
     pointer-events: none;
     user-select: none;
-    animation: blink 4s linear infinite;
+    animation: ScreenEffect 0.3s ease infinite;
 }
 
 a{
@@ -27,7 +27,7 @@ a{
 
 a:hover{
     text-decoration: underline;
-    animation: blink 1s linear infinite;
+    animation: blink 1s ease infinite;
 }
 
 /* login.css */
@@ -57,7 +57,7 @@ a:hover{
 }
 
 .form-control:hover {
-    animation: blink 1s linear infinite;
+    animation: blink 1s ease;
 }
 
 .form-control:focus {
@@ -75,7 +75,7 @@ a:hover{
 }
 
 .submitbutton:hover {
-    animation: blink 1s linear infinite;
+    animation: blink 1s ease infinite;
 }
 
 @keyframes blink {
@@ -84,4 +84,8 @@ a:hover{
     100% { opacity: 1; }
 }
 
-
+@keyframes ScreenEffect {
+    0% { opacity: 0.88 }
+    50% { opacity: 1 }
+    100% { opacity: 0.93}
+}
