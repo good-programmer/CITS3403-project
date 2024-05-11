@@ -9,6 +9,10 @@ body {
     color: rgba(125,225,125,0.75);
 }
 
+#puzzle-info {
+    margin-left: 5%;
+}
+
 #puzzle-info * {
     font-family: 'VT323', monospace;
     font-size: 25px;
@@ -53,6 +57,7 @@ body {
 }
 
 .post-body {
+    margin-left: 5%;
     max-height: 50px;
 }
 
@@ -65,6 +70,10 @@ body {
     margin: 5px;
 }
 */
+
+#rate-slider, #rate-text {
+    margin-left: 5%;
+}
 
 .user-link {
     color: inherit
@@ -113,14 +122,20 @@ body {
     color: rgba(125,225,125,0.75);
     background-color: #1a0600;
 }
+
 .toggle-button:not(.toggle-button--selected):hover{
     background-color: #293102;;
 }
+
 .toggle-button--selected{
     background-color: rgba(125,225,125,0.75);
     color: #1a0600;
     border: solid 1px #1a0600;
 
+}
+
+.buttons-container:first-child{
+    margin-left: 5%;
 }
 
 .Screen {

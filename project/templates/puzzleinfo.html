@@ -4,6 +4,13 @@
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/puzzleinfo.css')}}">
 
 <h1>{{puzzle['title']}}</h1>
+<span>
+  <p id="rate-text">Rate this puzzle</p>
+  <div id="rate-slider">
+    <p class="Screen MatrixTextYellow" id="rate-back">☆☆☆☆☆</p>
+    <p class="Screen MatrixTextYellow" id="rate-current">★★★★★</p>
+  </div>
+</span>
 
 <div id="puzzle-info">
   <p>/* author: <a class="user-link" href="/user/{{puzzle['creator_id']}}/profile">{{puzzle['creator']}}</a> */</p>
@@ -19,13 +26,6 @@
   <a href="/puzzle/{{puzzle['id']}}/play"><button class="Screen MatrixTextGreen" id="play-button" {% if puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
 </div>
 <br>
-<span>
-  Rate this puzzle
-  <div id="rate-slider">
-    <p class="Screen MatrixTextYellow" id="rate-back">☆☆☆☆☆</p>
-    <p class="Screen MatrixTextYellow" id="rate-current">★★★★★</p>
-  </div>
-</span>
 
 <h1>LEADERBOARD</h1>
 <div class="leaderboard-body">
