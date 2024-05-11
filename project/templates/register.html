@@ -1,7 +1,7 @@
 {% extends "base.html" %}
+{% block title %} Register Page {% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-<link rel = "stylesheet" href = "../static/css/index.css">
+<link rel = "stylesheet" href = "../static/css/login.css">
 
 <div class = "title-container">
   <pre>
@@ -36,7 +36,7 @@
       {{ form.password2(class="form-control", id="confirm-password-input") }}
 
       <br>
-      <input class="submit button" type="submit" id=submit value="Register">
+      <input class="submitbutton" type="submit" id=submit value="Register">
       <br>
       <p id="create-account" class="hint">Already have an account? <a href="{{ url_for(route.login) }}">Login</a></p>
     </div>

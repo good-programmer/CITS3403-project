@@ -1,9 +1,9 @@
 {% extends "base.html" %}
+{% block title %} Login Page {% endblock %}
 {% block content %}
-<link rel = "stylesheet" href = "../static/css/login.css">
-
-<div class = "title-container">
-  <pre>
+<link rel="stylesheet" href="../static/css/login.css">
+<div class="title-container">
+  <pre id="word-amble">
       
 
       ██╗    ██╗ ██████╗ ██████╗ ██████╗        █████╗ ███╗   ███╗██████╗ ██╗     ███████╗
@@ -14,7 +14,7 @@
        ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═════╝       ╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝ ╚══════╝╚══════╝
                                                                                           
       
-                                      
+
   </pre>
 </div>
 
@@ -36,7 +36,7 @@
       </div>
       
       <br>
-      <input class="submit button" type="submit" id=submit value="Login">
+      <input class="submitbutton" type="submit" id=submit value="Login">
       <br>
       <p id="create-account" class="hint"><a href="{{url_for(route.register)}}">Create account</a></p>
     </div>

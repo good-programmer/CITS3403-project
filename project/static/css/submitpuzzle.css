@@ -30,23 +30,27 @@ a:hover{
     animation: blink 1s linear infinite;
 }
 
-/* login.css */
-
-#login {
+#puzzleFormContainer{
     width: 300px;
-    margin: 0 auto;
+    margin: 0 auto; /* Center the box horizontally */
     padding: 20px;
     border: 2px solid rgba(125, 225, 125, 0.75);
     box-shadow: 0 0 30px rgba(2, 213, 55, 0.307);
 }
 
-#login-inner {
+#innerForm {
     display: flex;
     flex-direction: column;
 }
 
-#login-inner > * {
+#innerForm > * {
     margin-bottom: 10px;
+}
+
+#showInstructions {
+    display: block; 
+    margin: 0 auto; 
+    margin-top: 20px;
 }
 
 .form-control {
@@ -61,17 +65,17 @@ a:hover{
 }
 
 .form-control:focus {
-    animation: none; 
+    animation: none;
 }
 
 
 .submitbutton {
-    background-color: rgba(125, 225, 125, 0.75); 
+    background-color: rgba(125, 225, 125, 0.75);
     color: white; 
     border: none;
     border-radius: 5px;
-    padding: 10px 20px; 
-    cursor: pointer; 
+    padding: 10px 20px;
+    cursor: pointer;
 }
 
 .submitbutton:hover {
