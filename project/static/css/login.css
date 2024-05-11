@@ -1,0 +1,67 @@
+* {
+    font-family: 'VT323', monospace;
+}
+
+body {
+    background-color: 	#1a0600;
+    color: rgba(125,225,125,0.75);
+}
+
+pre{
+    font-size: calc(8px + 0.2vw);
+}
+
+.title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
+}
+
+a{
+    text-decoration: none;
+    color: rgba(125,225,125,0.75);
+}
+
+a:hover{
+    text-decoration: underline;
+}
+
+/* login.css */
+
+#login {
+    width: 300px; /* Adjust width as needed */
+    margin: 0 auto; /* Center the box horizontally */
+    padding: 20px; /* Add padding for spacing */
+    border: 2px solid rgba(125, 225, 125, 0.75); /* Green border */
+    border-radius: 10px; /* Add rounded corners */
+}
+
+/* Stack children elements vertically */
+#login-inner {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Add spacing between stacked elements */
+#login-inner > * {
+    margin-bottom: 10px;
+}
+
+/* Style input boxes */
+.form-control {
+    border: 1px solid rgba(125, 225, 125, 0.75); /* Green border */
+    border-radius: 5px; /* Add rounded corners */
+    padding: 8px; /* Add padding for spacing */
+}
+
+/* Style submit button */
+.submit.button {
+    background-color: rgba(125, 225, 125, 0.75); /* Green background color */
+    color: white; /* White text color */
+    border: none; /* Remove default button border */
+    border-radius: 5px; /* Add rounded corners */
+    padding: 10px 20px; /* Add padding for spacing */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
