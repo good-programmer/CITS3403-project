@@ -23,6 +23,8 @@ document.querySelector(".toggle-button").click();
 
 
 window.onload = async function() {
+    let puzzleid = window.location.pathname.split('/')[2]
+
     let response = await fetch("/puzzle/" + puzzleid);
     let puzzleInfo = await response.json();
     let storedRating = 'rated' in puzzleInfo ? puzzleInfo['rated']['rating'] : 0
