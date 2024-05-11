@@ -37,7 +37,7 @@ body {
     margin-bottom: 5px;
 }
 
-.post-body, #puzzle-info {
+.post-list, #puzzle-info {
     background-color: black;
     border: 1px solid rgba(125,225,125,0.75);
     padding: 0.5rem;
@@ -52,13 +52,28 @@ body {
     radial-gradient(rgba(55, 70, 55, 0.2) 0.5px,transparent 0.5px) 2px 2px /3px 3px
 }
 
+.post-body {
+    background-color: transparent;
+    border: none;
+    max-height: 50px;
+    padding: 5px;
+    margin: 5px;
+}
+
 .user-link {
     color: inherit
 }
 
-.user-link:hover, #play-button:hover {
+.user-link:hover, #play-button:not(:disabled):hover, #switch-leaderboard-button:hover {
     color: black;
     background-color: rgba(125,225,125,0.75);
+}
+
+#play-button.MatrixTextGreen:disabled {
+    color: darkgrey;
+    text-shadow: none;
+    opacity: 0.6;
+    text-decoration: line-through;
 }
 
 #following-body {
