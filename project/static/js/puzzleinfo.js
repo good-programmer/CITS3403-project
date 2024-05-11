@@ -71,13 +71,6 @@ window.onload = async function() {
             debounce=false;
         });
     } else {
-        let playButton = document.getElementById('play-button');
-        if (playButton.classList.contains('Screen')) {
-            playButton.classList.remove('Screen');
-        }
-        if (playButton.classList.contains('MatrixTextGreen')) {
-            playButton.classList.remove('MatrixTextGreen');
-        }
         rateSlider.classList += ' disabled';
         rateSlider.style.color = 'darkgrey';
         rateSlider.style.opacity = '0.6';
