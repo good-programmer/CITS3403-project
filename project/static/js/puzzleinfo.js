@@ -1,20 +1,28 @@
-window.onload = async function() {
-    let puzzleid = window.location.pathname.split('/')[2]
-    let switchLeaderboard = document.getElementById("switch-leaderboard-button");
-    let main = document.getElementById("main-leaderboard");
-    let following = document.getElementById("following-leaderboard");
-    switchLeaderboard.onclick = function() {
-        if (main.style.display == "none") {
-            switchLeaderboard.textContent = "All";
+document.querySelectorAll(".toggle-button").forEach(togBut => {
+    togBut.addEventListener("click", () => {
+        let main = document.getElementById("main-leaderboard");
+        let following = document.getElementById("following-leaderboard");
+
+        document.querySelectorAll(".toggle-button").forEach(otherBut => {
+            otherBut.classList.remove("toggle-button--selected")
+        })
+
+        togBut.classList.add("toggle-button--selected")
+
+        if (togBut.textContent.trim().toLowerCase() == "all") {
             main.style.display = "block";
             following.style.display = "none";
         } else {
-            switchLeaderboard.textContent = "Following";
             main.style.display = "none";
             following.style.display = "block";
         }
-    }
+    })
+})
+document.querySelector(".toggle-button").click();
 
+
+
+window.onload = async function() {
     let response = await fetch("/puzzle/" + puzzleid);
     let puzzleInfo = await response.json();
     let storedRating = 'rated' in puzzleInfo ? puzzleInfo['rated']['rating'] : 0

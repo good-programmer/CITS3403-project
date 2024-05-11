@@ -29,8 +29,11 @@
 
 <h1>LEADERBOARD</h1>
 <div class="leaderboard-body">
-  <p>Filter by: <button class="Screen MatrixTextGreen" id="switch-leaderboard-button">All</button></p>
-  <div id="main-leaderboard" class="leaderboard post-list">
+  <div class="buttons-container">
+    <button class="toggle-button" type="button">All</button>
+    <button class="toggle-button" type="button">Following</button>
+</div>
+<div id="main-leaderboard" class="leaderboard post-list" style="display: block;">
     {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
       <div class="post-body">
         <b>{{loop.index}}</b><br>
@@ -38,10 +41,8 @@
         {{score['dateSubmitted'][:10]}}
       </div>
     {% endfor %}
-  </div>
 </div>
-
-  <div id="following-leaderboard" class="leaderboard post-list">
+<div id="following-leaderboard" class="leaderboard post-list" style="display: none;">
     {% set counter={"position": 1} %}
     {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
       {% if score['id'] in following %}
@@ -53,7 +54,6 @@
         {% if counter.update({"position":counter.position + 1}) %} {% endif %}
       {% endif %}
     {% endfor %}
-  </div>
 </div>
 
 <script src="{{url_for('static', filename='js/puzzleinfo.js')}}"></script>
