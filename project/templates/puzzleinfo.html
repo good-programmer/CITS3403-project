@@ -5,16 +5,16 @@
 
 <h1>{{puzzle['title']}}</h1>
 
-<div class="Screen MatrixTextGreen" id="puzzle-info">
+<div id="puzzle-info">
   <p>/* author: <a class="user-link" href="/user/{{puzzle['creator_id']}}/profile">{{puzzle['creator']}}</a> */</p>
-  <p>Stats {</p>
-  <p>Plays: {{puzzle['play_count']}}</p>
-  <p>Highest score: {{puzzle['highscore']}}</p>
+  <p>stats {</p>
+  <p>plays: {{puzzle['play_count']}}</p>
+  <p>highest_score: {{puzzle['highscore']}}</p>
   {% if 'score' in puzzle %}
-    <p>Your score: {{puzzle['score']['score']}} ({{puzzle['score']['dateSubmitted'][:10]}})</p>
+    <p>your_score: {{puzzle['score']['score']}} ({{puzzle['score']['dateSubmitted'][:10]}})</p>
   {% endif %}
-  <p>Date created: {{puzzle['dateCreated'][:10]}}</p>
-  <p>Average rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
+  <p>date_created: {{puzzle['dateCreated'][:10]}}</p>
+  <p>average_rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
   <p>}</p>
   <a href="/puzzle/{{puzzle['id']}}/play"><button class="Screen MatrixTextGreen" id="play-button" {% if puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
 </div>
@@ -27,8 +27,9 @@
   </div>
 </span>
 
+<h1>LEADERBOARD</h1>
 <div class="leaderboard-body">
-  <button class="Screen MatrixTextGreen" id="switch-leaderboard-button">All</button>
+  <p>Filter by: <button class="Screen MatrixTextGreen" id="switch-leaderboard-button">All</button></p>
   <div id="main-leaderboard" class="leaderboard post-list">
     {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
       <div class="post-body">
@@ -39,7 +40,6 @@
     {% endfor %}
   </div>
 </div>
-
 
   <div id="following-leaderboard" class="leaderboard post-list">
     {% set counter={"position": 1} %}
