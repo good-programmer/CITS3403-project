@@ -1,5 +1,7 @@
+@import url(https://fonts.googleapis.com/css?family=VT323);
+
 * {
-    font-family: 'VT323', monospace;
+    font-family: monospace;
 }
 
 body {
@@ -7,10 +9,39 @@ body {
     color: rgba(125,225,125,0.75);
 }
 
-.post-body {
+#puzzle-info * {
+    font-family: 'VT323', monospace;
+    font-size: 25px;
+}
+
+#puzzle-info p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 25px;
+}
+
+#puzzle-info p:nth-of-type(1) {
+    margin-left: 0px;
+    margin-top: 5px;
+    margin-bottom: 25px;
+}
+
+
+#puzzle-info p:nth-of-type(2) {
+    margin-left: 0px;
+    margin-top: 5px;
+}
+
+#puzzle-info p:last-of-type {
+    margin-left: 0px;
+    margin-bottom: 5px;
+}
+
+.post-body, #puzzle-info {
+    background-color: black;
     border: 1px solid rgba(125,225,125,0.75);
     padding: 0.5rem;
-    border-radius: .25rem;
+    border-radius: .125rem;
     width: 80%;
     margin-top: 1rem;
 
@@ -25,9 +56,27 @@ body {
     color: inherit
 }
 
-.user-link:hover {
+.user-link:hover, #play-button:hover {
     color: black;
     background-color: rgba(125,225,125,0.75);
+}
+
+#following-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#switch-leaderboard-button, #play-button {
+    text-align: center;
+    background-color: rgba(0,0,0,0);
+    border: none;
+}
+
+#play-button {
+    margin-top: 0px;
+    margin-bottom: 5px;
 }
 
 .Screen {
@@ -44,3 +93,9 @@ body {
     color: rgba(225,225,125,0.75);
     text-shadow: 0 0 5px rgba(225,225,125,0.5), 0 0 15px rgba(225,250,125,1);
 }
+
+.MatrixTextGreen {
+    color: rgba(125,225,125,0.75);
+    text-shadow: 0 0 5px rgba(125,225,125,0.5), 0 0 15px rgba(125,250,125,1);
+}
+  
