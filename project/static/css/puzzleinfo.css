@@ -1,0 +1,31 @@
+* {
+    font-family: 'VT323', monospace;
+}
+
+body {
+    background-color: 	#1a0600;
+    color: rgba(125,225,125,0.75);
+}
+
+.post-body {
+    border: 1px solid rgba(125,225,125,0.75);
+    padding: 0.5rem;
+    border-radius: .25rem;
+    width: 80%;
+    margin-top: 1rem;
+
+    /* scanline concept source: https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css */
+    background:
+    radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 0   0   /3px 3px,
+    radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 1px 1px /3px 3px,
+    radial-gradient(rgba(55, 70, 55, 0.2) 0.5px,transparent 0.5px) 2px 2px /3px 3px
+}
+
+.user-link {
+    color: inherit
+}
+
+.user-link:hover {
+    color: black;
+    background-color: rgba(125,225,125,0.75);
+}
