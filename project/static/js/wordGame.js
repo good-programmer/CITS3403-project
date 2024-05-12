@@ -294,10 +294,10 @@ function setEventListeners() {
     });
 }
 
-window.onload = function() {
+window.addEventListener('load', function() {
     Game.init();
     setEventListeners();
-}
+});
 
 function displayLeaderboard() {
     // hide the game content

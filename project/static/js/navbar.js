@@ -1,4 +1,4 @@
-window.onload = function () {
+window.addEventListener('load',function () {
     let nav = document.getElementById("nav-location");
     let links = document.querySelectorAll(".header > a")
     for (let link of links){
@@ -9,4 +9,4 @@ window.onload = function () {
             nav.textContent = ">>>"
         })
     }
-}
+});
