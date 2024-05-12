@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script defer src="{{url_for('static', filename='js/navbar.js')}}"></script>
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body>
@@ -17,6 +18,7 @@
       <a href="{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a>
       <a href="{{ url_for(route.logout) }}">Logout</a>
       {% endif %}
+      <span id="nav-location">>>></span>
     </div>
     <hr>
     {% block content %} {% endblock %}
