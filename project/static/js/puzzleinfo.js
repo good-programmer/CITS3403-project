@@ -10,11 +10,11 @@ document.querySelectorAll(".toggle-button").forEach(togBut => {
         togBut.classList.add("toggle-button--selected")
 
         if (togBut.textContent.trim().toLowerCase() == "all") {
-            main.style.display = "block";
+            main.style.display = "flex";
             following.style.display = "none";
         } else {
             main.style.display = "none";
-            following.style.display = "block";
+            following.style.display = "flex";
         }
     })
 })

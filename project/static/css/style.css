@@ -154,12 +154,14 @@ input[type="checkbox"] {
 }
 
 .post-body {
-    width: 100%;
+    width: 80%;
     height: 100px;
     background-color: darkcyan;
     border: 2px solid white;
     padding: 30px;
     margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #following-leaderboard {
