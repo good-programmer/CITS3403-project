@@ -263,4 +263,24 @@ class PostRequestCase(unittest.TestCase):
         self.assertCode(self.client.post(url_for(route.puzzle.rate, puzzleid=-1), json=dict(rating=2), follow_redirects=True), 404)
 
     def test_submit_score(self):
-        pass
+        '''
+        Tests the /puzzle/<puzzleid>/solve endpoint
+        '''
+        user = user_utils.add_user("POST_USER", "123")
+        puzzle = puzzle_utils.add_puzzle("POST_PUZZLE", user, "ABCMNOSTUV")
+        self.t.login(user.name, "123")
+
+        #invalid
+        self.client.post(url_for(route.puzzle.solve, puzzleid=puzzle.id), json=dict(submittedWords=['most', 'abcm', 'cat', 'cab']))
+        self.assertFalse(puzzle.has_record(user))
+        self.client.post(url_for(route.puzzle.solve, puzzleid=puzzle.id), json=dict(submittedWords=['most', 'cabs', 'cat', 'cab', 'not', 'vat']))
+        self.assertFalse(puzzle.has_record(user))
+        self.client.post(url_for(route.puzzle.solve, puzzleid=puzzle.id), json=dict(submittedWords=['most', 'most', 'most', 'cab', 'cats']))
+        self.assertFalse(puzzle.has_record(user))
+        
+        #valid
+        submit = {"submittedWords": ['most', 'stab', 'cat', 'cab']}
+        expected = 14
+        self.client.post(url_for(route.puzzle.solve, puzzleid=puzzle.id), json=submit)
+        self.assertTrue(puzzle.has_record(user))
+        self.assertEqual(expected, puzzle.get_record(user).score)
