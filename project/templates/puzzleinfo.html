@@ -16,7 +16,7 @@
   <p>date_created: {{puzzle['dateCreated'][:10]}}</p>
   <p>average_rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
   <p>}</p>
-  <a href="/puzzle/{{puzzle['id']}}/play"><button class="Screen MatrixTextGreen" id="play-button" {% if puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
+  <a href="{{url_for(route.puzzle.play, puzzleid=puzzle['id'])}}"><button class="Screen MatrixTextGreen" id="play-button" {% if puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
 </div>
 <br>
 <span>
