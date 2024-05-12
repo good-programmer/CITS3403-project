@@ -36,6 +36,7 @@ class PuzzleUtilCase(unittest.TestCase):
         user = User.query.first()
         puzzle = add_puzzle("test", user, "abcdefghij")
 
+        #correct values for new puzzle at varying levels of detail specified
         self.assertDictContainsSubset({
             "title": 'test',
             "creator": user.name,
@@ -58,6 +59,8 @@ class PuzzleUtilCase(unittest.TestCase):
     def test_add_puzzle(self):
         user = User.query.first()
         puzzle = add_puzzle("test", user, "abcdefghij")
+
+        #verify addition to database with correct info
         self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())
         self.assertIsNotNone(db.session.query(Puzzle).filter_by(title="test",creatorID=user.id,content="abcdefghij").first())
         self.assertIsNone(db.session.query(Puzzle).filter_by(title='DoesNotExist',creatorID=user.id,content="abcdefghij").first())
@@ -66,6 +69,7 @@ class PuzzleUtilCase(unittest.TestCase):
         user = User.query.first()
         puzzle = add_puzzle("test", user, "abcdefghij")
 
+        #verify correct retrieval from database with correct info
         self.assertEqual(get_puzzle("test").id, puzzle.id)
         self.assertEqual(get_puzzle(id=puzzle.id).title, "test")
         self.assertIsNone(get_puzzle(title="_test_"))
@@ -74,8 +78,13 @@ class PuzzleUtilCase(unittest.TestCase):
     def test_search_puzzles(self):
         user = User.query.first()
         puzzle = add_puzzle("test", user, "abcdefghij")
+
+        #test a puzzle can be retrieved given filters
         result = search_puzzles(query=".*tes.*", rating=[0,5], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,99999], sort_by="date", order="desc").first()
         self.assertEqual(puzzle.id, result.id)
-        
-    
-
+        result = search_puzzles(query=".*tes.*", rating=[0,1], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,99999], sort_by="date", order="desc").first()
+        self.assertEqual(puzzle.id, result.id)
+        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['2024-01-01', '2025-12-31'], completed=None, play_count=[0,99999], sort_by="date", order="desc").first()
+        self.assertEqual(puzzle.id, result.id)
+        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,0], sort_by="date", order="desc").first()
+        self.assertEqual(puzzle.id, result.id)

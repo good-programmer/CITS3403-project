@@ -25,10 +25,14 @@ class UserModelCase(unittest.TestCase):
         return super().tearDownClass()
     
     def test_password(self):
+        '''
+        Tests that only identical passwords result in a pass
+        '''
         current_user = user_utils.add_user("MAIN_USER", "132131")
         current_user.set_password("hello")
 
         self.assertTrue(current_user.check_password("hello"))
+        self.assertFalse(current_user.check_password("Hello"))
         self.assertFalse(current_user.check_password("bye"))
         self.assertFalse(current_user.check_password(""))
 

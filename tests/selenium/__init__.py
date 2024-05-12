@@ -51,6 +51,7 @@ class WebDriverCase(unittest.TestCase):
         return super().tearDownClass()
     
     def emulate_register(self, username, password, confirm_password):
+        '''Grouped steps involved in registering a new user'''
         driver = self.get_driver()
         driver.get(localhost + url_for(route.register))
         driver.find_element(By.ID, "username-input").clear()
@@ -60,6 +61,7 @@ class WebDriverCase(unittest.TestCase):
         driver.find_element(By.ID, "submit").click()
     
     def emulate_login(self, username, password):
+        '''Grouped steps involved in logging in a user'''
         driver = self.get_driver()
         driver.get(localhost + url_for(route.login))
         driver.find_element(By.ID, "username-input").clear()
@@ -158,6 +160,7 @@ class WebDriverCase(unittest.TestCase):
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#completed-list > .post-body")), len(user.scores))
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#rated-list > .post-body")), len(user.ratings))
 
+        #test pressing the follow button
         user2.unfollow_user(user)
         self.emulate_login(user2.name, "123")
         driver.get(localhost + url_for(route.user.profile, userid=1))

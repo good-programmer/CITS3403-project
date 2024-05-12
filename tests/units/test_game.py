@@ -51,6 +51,7 @@ class GetRequestCase(unittest.TestCase):
             self.assertCode(self.client.get(url_for(path)), code)
         self.assertCode(self.client.get(url_for(route.puzzle.play, puzzleid=1), follow_redirects=False), 302)
 
+        #authenticated pages
         user = user_utils.add_user("GET_USER", "123")
         self.assertCode(self.t.login("GET_USER", "123"),200)
         self.assertCode(self.client.get(url_for(route.puzzle.create)), 200)

@@ -28,6 +28,7 @@ class UserUtilCase(unittest.TestCase):
     def test_pack_user(self):
         user = add_user("test", "*****")
 
+        #tests default values are correct
         self.assertDictContainsSubset({
             "username": 'test',
             "followers": [],
@@ -40,6 +41,8 @@ class UserUtilCase(unittest.TestCase):
     
     def test_add_user(self):
         user = add_user("test", "*****")
+
+        #verify addition to database with correct info
         self.assertIsNotNone(db.session.query(User).filter_by(id=user.id).first())
         self.assertIsNotNone(db.session.query(User).filter_by(name="test",id=user.id).first())
         self.assertIsNone(db.session.query(User).filter_by(name='DoesNotExist').first())
@@ -47,6 +50,7 @@ class UserUtilCase(unittest.TestCase):
     def test_get_user(self):
         user = add_user("test", "*****")
 
+        #verify correct retrieval from database with correct info
         self.assertEqual(get_user("test").id, user.id)
         self.assertEqual(get_user(id=user.id).name, "test")
         self.assertIsNone(get_user(name="_test_"))
