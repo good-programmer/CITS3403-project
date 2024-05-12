@@ -85,7 +85,27 @@ a:hover{
 }
 
 @keyframes ScreenEffect {
-    0% { opacity: 0.88 }
-    50% { opacity: 1 }
-    100% { opacity: 0.93}
+    0% { opacity: 0.88; }
+    50% { opacity: 1;}
+    100% { opacity: 0.93;}
+}
+
+@keyframes FlickerGlowEffect {
+    0% { text-shadow: 0px 0px 2px; }
+    50% { text-shadow: 0px 0px 0px;}
+    100% { text-shadow: 0px 0px 2px;}
+}
+
+@keyframes FlickerEffect {
+    0% { opacity: 100%; }
+    50% { opacity: 40%;}
+    90% { opacity: 100%;}
+}
+
+.error-message {
+    color: red;
+    text-shadow: 0px 0px 4px;
+    animation: ScreenEffect 0.3s ease infinite;
+    animation: FlickerEffect 0.15s step-end normal;
+    animation-iteration-count: 2;
 }
