@@ -14,7 +14,7 @@
 
 <a href="/puzzle/{{puzzle['id']}}/play"><button id="play-button" {% if puzzle['score'] %}disabled{% endif %}>Play</button></a><br>
 <br>
-<span>
+<span id="rate-section" {% if not current_user.is_authenticated %}style="display: none;"{% endif %}>
   Rate this puzzle
   <div id="rate-slider">
     <p id="rate-back">☆☆☆☆☆</p>
@@ -23,7 +23,7 @@
 </span>
 
 <div class="leaderboard-body">
-  <button id="switch-leaderboard-button">All</button>
+  <button id="switch-leaderboard-button" {% if not current_user.is_authenticated %}style="display: none;"{% endif %}>All</button>
   <div id="main-leaderboard" class="leaderboard post-list">
     {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
       <div class="post-body">
