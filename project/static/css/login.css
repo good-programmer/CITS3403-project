@@ -2,15 +2,6 @@
     font-family: 'VT323', monospace;
 }
 
-body {
-    background-color: 	#1a0600;
-    color: rgba(125,225,125,0.75);
-}
-
-pre{
-    font-size: calc(8px + 0.2vw);
-}
-
 #title-container {
     display: flex;
     flex-direction: row;
@@ -25,9 +16,12 @@ a{
     color: rgba(125,225,125,0.75);
 }
 
+
 a:hover{
     text-decoration: underline;
-    animation: blink 1s ease infinite;
+    color: var(--matrix-secondary);
+    text-decoration-color: var(--matrix-secondary);
+    animation: blink 1s steps(4) infinite;
 }
 
 /* login.css */
@@ -40,6 +34,7 @@ a:hover{
     box-shadow: 0 0 30px rgba(2, 213, 55, 0.307);
 }
 
+
 #login-inner {
     display: flex;
     flex-direction: column;
@@ -47,6 +42,11 @@ a:hover{
 
 #login-inner > * {
     margin-bottom: 10px;
+}
+
+#remember-me {
+    position: relative;
+    left: 10%;
 }
 
 .form-control {
@@ -57,13 +57,12 @@ a:hover{
 }
 
 .form-control:hover {
-    animation: blink 1s ease;
+    animation: blink 1s steps(4);
 }
 
 .form-control:focus {
     animation: none; 
 }
-
 
 .submitbutton {
     background-color: rgba(125, 225, 125, 0.75); 
@@ -75,7 +74,7 @@ a:hover{
 }
 
 .submitbutton:hover {
-    animation: blink 1s ease infinite;
+    animation: blink 1s steps(4) infinite;
 }
 
 @keyframes blink {

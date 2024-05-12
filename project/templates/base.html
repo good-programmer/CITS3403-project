@@ -3,24 +3,31 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script defer src="{{url_for('static', filename='js/navbar.js')}}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+    <script defer src="{{ url_for('static', filename='js/navbar.js') }}"></script>
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body>
-    <div class="header">
-      <a href="{{ url_for(route.index) }}">Home</a>
-      {% if current_user.is_anonymous %}
-      <a href="{{ url_for(route.login) }}">Login</a>
-      <a href="{{ url_for(route.register) }}">Register</a>
-      {% else %}
-      <a href="{{ url_for(route.puzzle.random)}}">Random</a>
-      <a href="{{ url_for(route.puzzle.create) }}">Submit Puzzle</a>
-      <a href="{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a>
-      <a href="{{ url_for(route.logout) }}">Logout</a>
-      {% endif %}
-      <span id="nav-location">>>></span>
-    </div>
-    <hr>
+    <div id="crt-effect"></div>
+    <div id="scanlines"></div>
+    <nav class="sticky-top navbar navbar-expand-sm navbar-dark text-primary">
+      <ul id="nav-links" class="navbar-nav mr-auto">
+        <li class="nav-link"><a href="{{ url_for(route.index) }}">Home</a></li>
+        {% if current_user.is_anonymous %}
+        <li class="nav-link"><a href="{{ url_for(route.login) }}">Login</a></li>
+        <li class="nav-link"><a href="{{ url_for(route.register) }}">Register</a></li>
+        {% else %}
+        <li class="nav-link"><a href="{{ url_for(route.puzzle.random)}}">Random</a></li>
+        <li class="nav-link"><a href="{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></li>
+        <li class="nav-link"><a href="{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></li>
+        <li class="nav-link"><a href="{{ url_for(route.logout) }}">Logout</a></li>
+        {% endif %}
+      </ul>
+      <div id="nav-hint" class="navbar-nav ml-auto">
+        <span id="nav-location" class="nav-item">>>><span>
+      </div>
+    </nav>
     {% block content %} {% endblock %}
   </body>
 </html>

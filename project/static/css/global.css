@@ -1,0 +1,155 @@
+:root {
+    --matrix-primary: rgb(0, 188, 0);
+    --matrix-secondary: rgb(238, 214, 62);
+}
+
+body {
+    background-color: 	rgba(10, 10, 10, 1);
+    color: rgba(125,225,125,0.75);
+}
+
+@keyframes blink {
+    from, to { opacity: 100% }
+    85% { opacity: 0%; }
+}
+
+@keyframes ScreenEffect {
+    0% { opacity: 0.92 }
+    50% { opacity: 1 }
+    100% { opacity: 0.95}
+}
+
+@keyframes Pulse {
+    0% { text-shadow: 0 0 2px }
+    50% { text-shadow: 0 0 4px }
+    100% { text-shadow: 0 0 0px }
+}
+
+.Screen {
+    animation: ScreenEffect 0.3s ease infinite;
+}
+
+* {
+    font-family: 'VT323', monospace;
+}
+
+#title-container > pre{
+    animation: ScreenEffect 0.3s ease infinite;
+    animation: Pulse .9s ease infinite;
+    color: var(--matrix-primary);
+    font-size: max(0.9vw, 6px);
+    width: 100vw;
+    text-align: center;
+}
+
+.navbar {
+    background-color: rgba(10,10,10,1);
+    position: sticky;
+}
+
+#nav-links .nav-link > a{
+    color: var(--matrix-primary);
+    animation: Pulse 1.5s ease infinite;
+    text-decoration: none;
+}
+
+#nav-links .nav-link > a:hover {
+    animation: blink 0.8s step-end infinite;
+    color: var(--matrix-secondary);
+}
+
+#nav-hint {
+    width: 25%;
+    color: var(--matrix-primary);
+    animation: Pulse .9s ease infinite;
+    user-select: none;
+}
+
+@keyframes CRTShift {
+    0% { background-size: 4px 4px;}
+    50% { background-size: 4px 4px; }
+}
+
+@keyframes Scanlines {
+    0% { background-position-y: 0px;}
+    100% { background-position-y: 100px;}
+}
+
+
+#crt-effect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: 4px 4px;
+    background-image: radial-gradient(circle, rgba(255, 0, 0, .15) 1px, rgba(0, 0, 0, 0) 1px);
+    z-index: 1000;
+    user-select: none;
+    pointer-events: none;
+    animation: CRTShift 7s steps(60) infinite;
+}
+
+#crt-effect:before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: 4px 4px;
+    background-image: radial-gradient(circle, rgba(0, 255, 0, .15) 1px, rgba(0, 0, 0, 0) 1px);
+    background-position: 2px 0px;
+    z-index: 1000;
+    user-select: none;
+    pointer-events: none;
+    animation: CRTShift 7s steps(30) infinite;
+}
+
+#crt-effect:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: 4px 4px;
+    background-image: radial-gradient(circle, rgba(0, 0, 255, .15) 1px, rgba(0, 0, 0, 0) 1px);
+    background-position: 1px 2px;
+    z-index: 1000;
+    user-select: none;
+    pointer-events: none;
+    animation: CRTShift 7s steps(70) infinite;
+}
+
+body::after {
+    z-index: 200;
+    user-select: none;
+    pointer-events: none;
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 20%;
+    background-size: 40px 100px;
+    background-image: linear-gradient(to bottom, rgba(40,40,40,1) 2px, transparent 1px);
+    animation: Scanlines 1.5s steps(450) infinite;
+}
+
+#scanlines {
+    z-index: 200;
+    user-select: none;
+    pointer-events: none;
+    content: '';
+    position: fixed;
+    top: -2px;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 40%;
+    background-size: 40px 100px;
+    background-image: linear-gradient(to bottom, rgb(10, 10, 10) 2px, transparent 1px);
+    animation: Scanlines 1.5s steps(450) infinite;
+}
