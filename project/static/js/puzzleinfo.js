@@ -1,4 +1,4 @@
-window.onload = async function() {
+window.addEventListener('load', async function() {
     let puzzleid = window.location.pathname.split('/')[2]
     let response = await fetch("/puzzle/" + puzzleid);
     let puzzleInfo = await response.json();
@@ -74,4 +74,4 @@ window.onload = async function() {
         rateSlider.style.color = 'darkgrey';
         rateSlider.style.opacity = '0.6';
     }
-}
+});

@@ -2,7 +2,7 @@ let debounce = false;
 let follow;
 let data;
 let userid;
-window.onload = async function() {
+window.addEventListener('load', async function() {
     follow = document.getElementById("follow-button");
     data = await getUserData();
     if (follow) {
@@ -21,7 +21,7 @@ window.onload = async function() {
     let sortRatedSelect = document.getElementById('rated-puzzles-sort');
     sortRated(sortRatedSelect.value, data['ratings'])
     sortRatedSelect.onchange = function() {sortRated(sortRatedSelect.value, data['ratings']);}
-}
+});
 
 async function getUserData() {
     let userid = window.location.pathname.split('/')[2];

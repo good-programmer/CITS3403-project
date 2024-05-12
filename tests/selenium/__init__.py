@@ -224,19 +224,19 @@ class WebDriverCase(unittest.TestCase):
         #invalid content length
         driver.find_element(By.CSS_SELECTOR, "#puzzlename").send_keys("test")
         driver.find_element(By.CSS_SELECTOR, "#puzzle").send_keys("abcd")
-        driver.find_element(By.CSS_SELECTOR, '.puzzleFormContainer button[type="submit"]').click()
+        driver.find_element(By.CSS_SELECTOR, '#submit').click()
         self.assertIsNone(puzzle_utils.get_puzzle(title="test"))
 
         #invalid chars
         driver.find_element(By.CSS_SELECTOR, "#puzzle").clear()
         driver.find_element(By.CSS_SELECTOR, "#puzzle").send_keys("@#FS329fa5")
-        driver.find_element(By.CSS_SELECTOR, '.puzzleFormContainer button[type="submit"]').click()
+        driver.find_element(By.CSS_SELECTOR, '#submit').click()
         self.assertIsNone(puzzle_utils.get_puzzle(title="test"))
         
         #valid content
         driver.find_element(By.CSS_SELECTOR, "#puzzle").clear()
         driver.find_element(By.CSS_SELECTOR, "#puzzle").send_keys("abcdefghij")
-        driver.find_element(By.CSS_SELECTOR, '.puzzleFormContainer button[type="submit"]').click()
+        driver.find_element(By.CSS_SELECTOR, '#submit').click()
         WebDriverWait(driver, 2).until(expected_conditions.url_changes(localhost + url_for(route.puzzle.create)))
         self.assertEqual(driver.current_url, localhost + url_for(route.index))
         self.assertIsNotNone(puzzle_utils.get_puzzle(title="test"))
