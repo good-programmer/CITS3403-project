@@ -1,5 +1,5 @@
 import multiprocessing.process
-import unittest, multiprocessing
+import unittest, multiprocessing, logging
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
@@ -8,12 +8,15 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions
 
-from flask import url_for
+from flask import url_for, cli 
 
 from tests import TestObject, app
 
 from project import db
 from project.utils import user_utils, puzzle_utils, route_utils as route
+
+logging.getLogger("werkzeug").disabled = True
+cli.show_server_banner = lambda *args: None
 
 localhost = "http://127.0.0.1:5000"
 
@@ -194,7 +197,7 @@ class WebDriverCase(unittest.TestCase):
 
         #logged in, no record
         self.emulate_login(user.name, "123")
-        driver.get(localhost + url_for(route.puzzle.info, puzzleid=1))
+        driver.get(localhost + url_for(route.puzzle.info, puzzleid=puzzle.id))
         self.assertIsNone(driver.find_element(By.CSS_SELECTOR, "#play-button").get_attribute("disabled"))
         self.assertNotIn("display: none", driver.find_element(By.CSS_SELECTOR, "#switch-leaderboard-button").get_attribute("style"))
         self.assertNotIn("display: none", driver.find_element(By.CSS_SELECTOR, "#rate-section").get_attribute("style"))
@@ -213,4 +216,41 @@ class WebDriverCase(unittest.TestCase):
         pass
 
     def test_game(self):
+        driver = self.get_driver()
+        user = user_utils.get_user(id=1)
+        puzzle = puzzle_utils.add_puzzle("test", user, "ABCMNOSTUV")
+        self.emulate_login(user.name, "123")
+        driver.get(localhost + url_for(route.puzzle.play, puzzleid=puzzle.id))
+
+        content = puzzle.content.upper()
+        WebDriverWait(driver, 2).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "#puzzleString"), puzzle.content))
+        ps = driver.find_element(By.CSS_SELECTOR, "#puzzleString")
+        inp = driver.find_element(By.CSS_SELECTOR, "#userInput")
+        sub = driver.find_element(By.CSS_SELECTOR, "#submittedWords")
+
+        #series of valid and invalid key into the input box
+        self.assertEqual(ps.text, content)
+        inp.send_keys("a")
+        content = content.replace('A','',1)
+        self.assertEqual(ps.text, content)
+        inp.send_keys("axyz")
+        self.assertEqual(ps.text, content)
+        inp.send_keys("ct")
+        c1 = content.replace('C','',1)
+        content = c1.replace('T','',1)
+        self.assertEqual(ps.text, content)
+        inp.send_keys(Keys.BACK_SPACE)
+        self.assertEqual(ps.text, c1)
+        inp.send_keys("t")
+        inp.send_keys(Keys.ENTER)
+        self.assertEqual(inp.text, "")
+
+        #test score and submission
+        self.assertIn("act", sub.get_property("innerHTML"))
+        self.assertEqual("3", driver.find_element(By.CSS_SELECTOR, "#scoreValue").text)
+        driver.find_element(By.CSS_SELECTOR, "#submitButton").click()
+        WebDriverWait(driver, 2).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, "#leaderboard")))
+        self.assertTrue(puzzle.has_record(user))
+        
+    def test_search(self):
         pass

@@ -20,7 +20,7 @@ def page_play_puzzle(puzzleid):
     if request.method == 'POST':
         user_input = request.form['userInput']
         is_valid = game_utils.validate_input(user_input)
-        print(f"'{user_input}': {is_valid}")    
+        #print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
         return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
@@ -46,7 +46,7 @@ def api_solve_puzzle(puzzleid):
 
     if score and not puzzle.has_record(current_user):
         puzzle.add_record(current_user, score)
-        print(f"Score: {score}")
+        #print(f"Score: {score}")
     return data
 
 @game.route('/puzzle/<int:puzzleid>/lite-leaderboard', methods=['GET'])
