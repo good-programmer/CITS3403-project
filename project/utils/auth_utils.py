@@ -11,15 +11,15 @@ def validate_user_information(name, password) -> tuple[bool, str]:
 
     valid_username = re.compile('^\w+$')
 
-    if len(name) < 3:
+    if not (3 <= len(name) <= 20):
         valid = False
-        errors.append('Username must be 3 characters or longer')
+        errors.append('Username must be between 3 and 20 characters')
     
     if not valid_username.match(name):
         valid = False
         errors.append('Username must contain only letters, numbers and _')
     
-    if len(password) < 4:
+    if not len(password) >= 4:
         valid = False
         errors.append('Password must be 4 characters or longer')
     

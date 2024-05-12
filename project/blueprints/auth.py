@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, abort
 from flask_login import login_user, login_required, logout_user, current_user
-from project.forms import LoginForm, RegistrationForm
+from project.blueprints.forms import LoginForm, RegistrationForm
 
 from ..utils import auth_utils, user_utils, route_utils as route
 
@@ -25,7 +25,6 @@ def login():
             return redirect(url_for(route.user.profile, userid=user.id))
 
         flash('Incorrect username or password', 'error')
-        return redirect(url_for(route.login))
 
     return render_template('login.html', form=form, route=route)
 
@@ -40,23 +39,26 @@ def register():
         password = form.password.data
         confirm_password = form.password2.data
 
+        valid = True
         # Perform user registration
         if user_utils.verify_user(name):
             flash('Username already exists', 'error')
-            return redirect(url_for(route.register))
+            valid = False
         
         if password != confirm_password:
             flash('Passwords do not match', 'error')  # Flash message for password mismatch
-            return redirect(url_for(route.register))
+            valid = False
 
         res, msgs = auth_utils.validate_user_information(name, password)
         if not res:
             for msg in msgs:
                 flash(msg, 'error')
-            return redirect(url_for(route.register))
+            valid = False
         
-        user_utils.add_user(name, password)
-        return redirect(url_for(route.login))
+        if valid:
+            user_utils.add_user(name, password)
+            return redirect(url_for(route.login))
+        
     return render_template('register.html', form=form, route=route)
 
 @auth.route('/logout')

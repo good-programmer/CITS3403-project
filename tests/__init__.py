@@ -5,7 +5,7 @@ from flask import url_for
 from project.blueprints.models import User, Puzzle
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
-from project.config import Config, PATH
+from project.config import TestingConfig, PATH
 
 import os
 import random
@@ -60,7 +60,7 @@ class TestObject:
         self.generate_puzzletitle = TestObject.generate_puzzletitle
     
     def commit_db(self):
-        if not Config.TESTING:
+        if not TestingConfig.COMMITS_DISABLED:
             self.db.session.commit()
     
     def clear_db(self, all=False):
@@ -108,21 +108,21 @@ class TestObject:
          return self.db.session.query(Puzzle).limit(1).offset(random.randint(0, self.numPuzzles - 1)).first()
     
     def generate_scores(self):
-         for puzzle in Puzzle.query.all():
+        for puzzle in Puzzle.query.all():
             for user in User.query.order_by(sqlalchemy.func.random()).limit(random.randint(0,self.numScores)):
                 puzzle.add_record(user, random.randrange(1, 1000))
                 puzzle.get_record(user).dateSubmitted = random_date(puzzle.dateCreated, datetime.datetime(year=2500, month=12, day=31))
-                self.commit_db()
+        self.commit_db()
 
     def generate_ratings(self):
-         for puzzle in Puzzle.query.all():
+        for puzzle in Puzzle.query.all():
             for j in range(puzzle.play_count):
                 user = random.choice(puzzle.scores).user
                 if puzzle.has_rating(user):
                     continue
                 puzzle.add_rating(user, random.randrange(0, 10) / 2)
                 puzzle.get_rating(user).dateRated = random_date(puzzle.get_record(user).dateSubmitted, datetime.datetime(year=3000, month=12, day=31))
-                self.commit_db()
+        self.commit_db()
     
     def generate_followers(self):
         for user in User.query.all():
@@ -144,8 +144,8 @@ class TestObject:
     def logout(self):
         return self.client.get(url_for(route.logout), follow_redirects=True)
 
-def create_test_db(msg='Generating standard test database...'):
-    from project import app, db
+def create_test_db(app=None, msg='Generating standard test database...'):
+    from project import db
 
     app_context = app.app_context()
     app_context.push()
@@ -154,7 +154,7 @@ def create_test_db(msg='Generating standard test database...'):
     #disable & reenable commit for batch commit
     start = datetime.datetime.now()
     print(msg)
-    Config.TESTING = True
+    TestingConfig.COMMITS_DISABLED = True
     t = TestObject(app, db)
     print('Users...')
     t.generate_users()
@@ -166,9 +166,11 @@ def create_test_db(msg='Generating standard test database...'):
     t.generate_ratings()
     print('Followers...')
     t.generate_followers()
-    Config.TESTING = False
+    TestingConfig.COMMITS_DISABLED = False
     db.session.commit()
     print('Done.')
     app_context.pop()
     elapsed = str((datetime.datetime.now()-start).total_seconds())
     print(f'Time elapsed: {float(elapsed):.3f}s')
+
+app = None

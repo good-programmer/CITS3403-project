@@ -26,7 +26,11 @@ def generate():
     puzzles =  valid_int_input("Number of puzzles: ")
     scores = valid_int_input("Max user scores and ratings per puzzle (LIMIT: number of users): ")
 
-    from project.tests import create_test_db, random_username, random_puzzletitle, TestObject
+    from project import create_app
+    from project.config import configurations
+    app = create_app(configurations['development'])
+
+    from tests import create_test_db, random_username, random_puzzletitle, TestObject
     TestObject.numUsers = users
     TestObject.numPuzzles = puzzles
     TestObject.numScores = scores
@@ -36,7 +40,7 @@ def generate():
     TestObject.generate_puzzletitle = random_puzzletitle
 
     input('ENTER to begin generating, CTRL+C to quit.')
-    create_test_db('Generating data...')
+    create_test_db(app=app, msg='Generating data...')
 
 if __name__ == '__main__':
     generate()

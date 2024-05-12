@@ -3,7 +3,7 @@ from .models import db, Puzzle, LeaderboardRecord, User
 from flask_login import login_required, current_user
 from sqlalchemy import func, desc
 from sqlalchemy.sql import text
-from project.forms import PuzzleSubmissionForm
+from project.blueprints.forms import PuzzleSubmissionForm
 
 from ..utils import game_utils, auth_utils, puzzle_utils, route_utils as route
 
@@ -20,7 +20,7 @@ def page_play_puzzle(puzzleid):
     if request.method == 'POST':
         user_input = request.form['userInput']
         is_valid = game_utils.validate_input(user_input)
-        print(f"'{user_input}': {is_valid}")    
+        #print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
         return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
@@ -46,7 +46,7 @@ def api_solve_puzzle(puzzleid):
 
     if score and not puzzle.has_record(current_user):
         puzzle.add_record(current_user, score)
-        print(f"Score: {score}")
+        #print(f"Score: {score}")
     return data
 
 @game.route('/puzzle/<int:puzzleid>/lite-leaderboard', methods=['GET'])
@@ -126,6 +126,7 @@ def page_puzzle_info(puzzleid):
     if not puzzle:
         abort(404)
     data = puzzle_utils.pack_puzzle(puzzle, detail=2)
+    following = []
     if current_user.is_authenticated:
         if puzzle.has_rating(current_user):
             r = puzzle.get_rating(current_user)
@@ -133,7 +134,8 @@ def page_puzzle_info(puzzleid):
         if puzzle.has_record(current_user):
             s = puzzle.get_record(current_user)
             data['score'] = {"score": s.score, "dateSubmitted": str(s.dateSubmitted)}
-    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data, following=[f.userID for f in current_user.following] + [current_user.id])
+        following = [f.userID for f in current_user.following] + [current_user.id]
+    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data, following=following)
 
 @game.route('/puzzle/<int:puzzleid>/rate', methods=['POST'])
 def api_rate_puzzle(puzzleid):
@@ -221,7 +223,7 @@ def parse_search_parameters(request):
 
 def standardize(s:str):
     '''Turn a search query into a regex for database search'''
-    s = s.lower()
+    s = '.*' + s.lower() + '.*'
     common = ['_', ' ']
     for i in common:
         s = s.replace(i, '.*')

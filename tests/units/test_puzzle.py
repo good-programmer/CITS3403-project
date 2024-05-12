@@ -1,87 +1,16 @@
+'''
+Test ORM and methods of Puzzle class
+'''
 from datetime import datetime
 import unittest
 
-from sqlalchemy import exc
+from sqlalchemy import exc, func
 
-from project.tests import TestObject
+from tests import TestObject, app
 
-from project import app
-from project.blueprints.models import db, User, Follow, Puzzle, LeaderboardRecord, Rating
+from project.blueprints.models import db, Puzzle, LeaderboardRecord, Rating
 
 from project.utils import user_utils, puzzle_utils
-
-class UserModelCase(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.app_context = app.app_context()
-        cls.app_context.push()
-        cls.t = TestObject(app, db)
-        return super().setUpClass()
-
-    def tearDown(self):
-        self.t.clear_db()
-    
-    @classmethod
-    def tearDownClass(cls) -> None:
-        cls.app_context.pop()
-        return super().tearDownClass()
-
-    def test_account(self):
-        '''
-        Tests user_utils.py functions
-        \nadd_user
-        \nverify_user
-        \nget_user
-        '''
-        current_user = user_utils.add_user("MAIN_USER", "132131")
-        self.assertIsNotNone(db.session.query(User).filter_by(id=current_user.id).first())
-        self.assertIsNotNone(user_utils.verify_user("MAIN_USER"))
-        self.assertIsNone(user_utils.verify_user("__DNE__"))
-        self.assertIsNotNone(user_utils.verify_user("MAIN_USER", "132131"))
-        self.assertIsNone(user_utils.verify_user("MAIN_USER", "__INCORRECT__"))
-        self.assertIsNotNone(user_utils.get_user("MAIN_USER"))
-        self.assertRaises(exc.IntegrityError, user_utils.add_user, "MAIN_USER", "789")
-
-    def test_follow_integrity(self):
-        '''
-        Tests the integrity of the database (in particular, the unique constraint).
-        \nTests that the follow and unfollow methods of User work as expected.
-        '''
-        current_user = user_utils.add_user("MAIN_USER", "132131")
-        u2 = user_utils.add_user("TEST2", "123")
-        u2.follow_user(current_user)
-
-        self.assertRaises(exc.IntegrityError, u2.follow_user, current_user)
-        db.session.rollback()
-        self.assertTrue(u2.unfollow_user(current_user))
-        self.assertFalse(u2.unfollow_user(current_user))
-
-    def test_follow(self):
-        '''
-        Tests that the relationship between User and Follow ORMs is correct and appends followers correctly.
-        \nTests the is_following method of User
-        '''
-        current_user = user_utils.add_user("MAIN_USER", "132131")
-        
-        for i in range(20):
-            user_utils.add_user("TEST_FOLLOWER" + str(i), "123").follow_user(current_user)
-
-        f1 = db.session.query(Follow).filter_by(userID=current_user.id).all()
-        f2 = db.session.query(User).filter_by(id=current_user.id).first().followers
-        x = [f.follower.name for f in f1]
-        y = [f.follower.name for f in f2]
-        x.sort()
-        y.sort()
-
-        self.assertListEqual(x, y)
-
-        u2 = user_utils.add_user("TEST2", "123")
-        self.assertFalse(u2.is_following(current_user))
-        u2.follow_user(current_user)
-        self.assertTrue(u2.is_following(current_user))
-        u2.unfollow_user(current_user)
-        self.assertFalse(u2.is_following(current_user))
-        self.assertIsNone(db.session.query(Follow).filter_by(userID=current_user.id, followerID=u2.id).first())
 
 class PuzzleModelCase(unittest.TestCase):
     @classmethod
@@ -93,14 +22,7 @@ class PuzzleModelCase(unittest.TestCase):
         return super().setUpClass()
     
     def setUp(self):
-        #disable & reenable commit for batch commit
-        '''Config.TESTING = True
-        self.t.generate_users()
-        self.t.generate_puzzles()
-        self.t.generate_scores()
-        self.t.generate_ratings()
-        Config.TESTING = False
-        db.session.commit()'''
+        pass
 
     def tearDown(self):
         self.t.clear_db()
@@ -109,16 +31,6 @@ class PuzzleModelCase(unittest.TestCase):
     def tearDownClass(cls) -> None:
         cls.app_context.pop()
         return super().tearDownClass()
-    
-    def test_puzzle(self):
-        '''
-        Tests puzzle_utils functions for correctness.
-        '''
-        user = user_utils.add_user("MAIN_USER", "132131")
-        puzzle = puzzle_utils.add_puzzle("MAIN_PUZZLE", user, "AHSDFADSF")
-        self.assertIsNotNone(db.session.query(Puzzle).filter_by(id=puzzle.id).first())
-        self.assertIsNotNone(db.session.query(Puzzle).filter_by(title=puzzle.title,creatorID=user.id).first())
-        self.assertIsNotNone(puzzle_utils.get_puzzle("MAIN_PUZZLE"))
     
     def test_create(self):
         '''
@@ -218,6 +130,16 @@ class PuzzleModelCase(unittest.TestCase):
         puzzle.add_rating(user, 5)
         avg1 = (r + 5) / (l + 1)
         self.assertEqual(avg1, puzzle.average_rating)
+    
+    def test_highest_score(self):
+        '''
+        Tests the highest_score property of Puzzle
+        '''
+        puzzle = self.t.get_random_puzzle()
+        expected = db.session.query(LeaderboardRecord.puzzleID, func.coalesce(func.max(LeaderboardRecord.score),0)).filter_by(puzzleID=puzzle.id).first()[1]
+        self.assertEqual(puzzle.highest_score, expected)
 
-if __name__ == '__main__':
-    unittest.main(verbosity=2)
+        puzzle = puzzle_utils.add_puzzle("test", self.t.get_random_user(), "abcdefghij")
+        expected = db.session.query(LeaderboardRecord.puzzleID, func.coalesce(func.max(LeaderboardRecord.score),0)).filter_by(puzzleID=puzzle.id).first()[1]
+        self.assertEqual(puzzle.highest_score, expected)
+        self.assertEqual(puzzle.highest_score, 0)

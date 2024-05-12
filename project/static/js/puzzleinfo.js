@@ -1,22 +1,31 @@
 window.onload = async function() {
     let puzzleid = window.location.pathname.split('/')[2]
+    let response = await fetch("/puzzle/" + puzzleid);
+    let puzzleInfo = await response.json();
+    response = await fetch("/user/current");
+    let userInfo = await response.json();
+
     let switchLeaderboard = document.getElementById("switch-leaderboard-button");
     let main = document.getElementById("main-leaderboard");
     let following = document.getElementById("following-leaderboard");
-    switchLeaderboard.onclick = function() {
-        if (main.style.display == "none") {
-            switchLeaderboard.textContent = "All";
-            main.style.display = "block";
-            following.style.display = "none";
-        } else {
-            switchLeaderboard.textContent = "Following";
-            main.style.display = "none";
-            following.style.display = "block";
+    if (userInfo['id'] != -1) {
+        switchLeaderboard.onclick = function() {
+            if (main.style.display == "none") {
+                switchLeaderboard.textContent = "All";
+                main.style.display = "block";
+                following.style.display = "none";
+            } else {
+                switchLeaderboard.textContent = "Following";
+                main.style.display = "none";
+                following.style.display = "block";
+            }
         }
+    } else {
+        switchLeaderboard.style.display = "none";
+        document.getElementById("rate-section").style.display = "none";
+        document.getElementById("play-button").setAttribute("disabled", true);
+        document.getElementById("play-button").setAttribute("title", "Login to play");
     }
-
-    let response = await fetch("/puzzle/" + puzzleid);
-    let puzzleInfo = await response.json();
     let storedRating = 'rated' in puzzleInfo ? puzzleInfo['rated']['rating'] : 0
     let rateSlider = document.getElementById('rate-slider');
     let x = rateSlider.getBoundingClientRect().left
