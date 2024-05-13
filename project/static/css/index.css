@@ -62,10 +62,11 @@ a:hover{
 .buttons-container{
     display: flex;
     flex-direction: row;
-}
-.buttons-container:first-child{
     margin-left: 10%;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
 }
+
 .toggle-button{
     margin-right: 0.5rem;
     padding: 0.5em 1em;

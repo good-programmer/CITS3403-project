@@ -28,7 +28,7 @@ function clearTemplates() {
 
 function loadTemplates(trend){
 
-    fetch('/puzzle/search/' + trend)
+    fetch('/puzzle/find/' + trend)
     .then(response => response.json())
     .then(data => {
         data.puzzles.forEach(puz => {
