@@ -20,7 +20,7 @@
     </pre>
 </div>
 
-<nav class="navbar">
+<nav id="page-navbar" class="navbar">
     <ul class = "nav-item-list">
         <li class = "nav-item"><a href = {{url_for(route.puzzle.random)}}>Random Puzzle</a></li>
         {%if  not current_user.is_authenticated%}

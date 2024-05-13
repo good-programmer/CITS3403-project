@@ -6,9 +6,11 @@ window.addEventListener('load',function () {
         link.addEventListener('mousemove', function(){
             let path = new URL(link.href).pathname;
             nav.textContent = ">>>"+path;
+            nav.setAttribute('hovered', true);
         });
         link.addEventListener('mouseleave', function() {
-            nav.textContent = ">>>"
+            nav.textContent = ">>>";
+            nav.setAttribute('hovered',false);
         })
     }
 });

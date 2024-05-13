@@ -8,8 +8,7 @@
 
 <div id="title-container">
     <pre>
-        
-  
+
         ██╗    ██╗ ██████╗ ██████╗ ██████╗        █████╗ ███╗   ███╗██████╗ ██╗     ███████╗
         ██║    ██║██╔═══██╗██╔══██╗██╔══██╗      ██╔══██╗████╗ ████║██╔══██╗██║     ██╔════╝
         ██║ █╗ ██║██║   ██║██████╔╝██║  ██║█████╗███████║██╔████╔██║██████╔╝██║     █████╗  
@@ -17,12 +16,34 @@
         ╚███╔███╔╝╚██████╔╝██║  ██║██████╔╝      ██║  ██║██║ ╚═╝ ██║██████╔╝███████╗███████╗
          ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═════╝       ╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝ ╚══════╝╚══════╝
                                                                                             
-        
-  
     </pre>
 </div>
+<div id="puzzle-name-input"></div>
+<br>
+<div id="content-box">
+    <div class="letter-square" id="ls1"></div>
+    <div class="letter-square" id="ls2"></div>
+    <div class="letter-square" id="ls3"></div>
+    <div class="letter-square" id="ls4"></div>
+    <div class="letter-square" id="ls5"></div>
+    <div class="letter-square" id="ls6"></div>
+    <div class="letter-square" id="ls7"></div>
+    <div class="letter-square" id="ls8"></div>
+    <div class="letter-square" id="ls9"></div>
+    <div class="letter-square" id="ls10"></div>
+  </div>
 
-<h1 style="text-align: center;"> Submit a Puzzle! </h1>
+<div id="error-box">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} MatrixTextRed error-message one-eighth" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
 
 <div id="puzzleFormContainer">
     <form method="POST">
@@ -30,9 +51,9 @@
         <div id="innerForm">
         {{ form.csrf_token }}
         <label for="puzzlename">Puzzle Name:</label>
-        {{ form.puzzlename(class="form-control", id="puzzlename") }}
+        {{ form.puzzlename(class="form-control", id="puzzlename", autocomplete="off") }}
         <label for="puzzle">Puzzle String:</label>
-        {{ form.puzzle(class="form-control", id="puzzle") }}
+        {{ form.puzzle(class="form-control", id="puzzle", autocomplete="off") }}
         <br>
         <input class="submitbutton" type="submit" id="submit" value="Submit Puzzle">
         <br>
@@ -40,19 +61,12 @@
     </form>
 </div>
 
+<input type="submit" id="create-puzzle-btn" value="Create">
+
 <button class="submitbutton" id="showInstructions"> Show Instructions </button>
 <p id="instructions"> Create a <b>PUZZLE!</b> Insert a string of alphabetical characters only, 
     that can be used to form potentially new words alongside a puzzle name. 
     Example: inputting 'asdkflkasc' as a puzzle. Users can then submit answers based on this string, e.g. 'flask'. 
     String length is limited to 10 and cannot contain special characters * . , - etc.
 </p>
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }} MatrixTextRed" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
 {% endblock %}

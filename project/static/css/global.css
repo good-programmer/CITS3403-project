@@ -13,6 +13,15 @@ body {
     85% { opacity: 0%; }
 }
 
+@keyframes QuickBlink {
+    0% {opacity: 100%;}
+    20% {opacity: 0%;}
+    30% {opacity: 100%;}
+    40% {opacity: 0%;}
+    50% {opacity: 100%;}
+    60% {opacity: 0%;}
+}
+
 @keyframes ScreenEffect {
     0% { opacity: 0.92 }
     50% { opacity: 1 }
@@ -23,6 +32,26 @@ body {
     0% { text-shadow: 0 0 2px }
     50% { text-shadow: 0 0 4px }
     100% { text-shadow: 0 0 0px }
+}
+
+@keyframes FlickerGlowEffect {
+    0% { text-shadow: 0px 0px 2px; }
+    50% { text-shadow: 0px 0px 0px;}
+    100% { text-shadow: 0px 0px 2px;}
+}
+
+@keyframes FlickerEffect {
+    0% { opacity: 100%; }
+    50% { opacity: 40%;}
+    90% { opacity: 100%;}
+}
+
+.error-message {
+    color: red;
+    text-shadow: 0px 0px 4px;
+    animation: ScreenEffect 0.3s ease infinite;
+    animation: FlickerEffect 0.15s step-end normal;
+    animation-iteration-count: 2;
 }
 
 .Screen {
@@ -51,11 +80,61 @@ body {
     color: var(--matrix-primary);
     animation: Pulse 1.5s ease infinite;
     text-decoration: none;
+    position: relative;
 }
 
 #nav-links .nav-link > a:hover {
-    animation: blink 0.8s step-end infinite;
+    animation: blink 1s step-end infinite;
     color: var(--matrix-secondary);
+}
+#nav-links .nav-link > a:hover::before {
+    position: absolute;
+    content: '_________________________';
+    text-overflow: clip;
+    white-space: nowrap;
+    overflow: hidden; 
+    text-shadow: 0 0 2px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    user-select: none;
+    pointer-events: none;
+}
+#nav-links .nav-link > a:hover::after {
+    position: absolute;
+    content: '_________________________';
+    text-overflow: clip;
+    white-space: nowrap;
+    overflow: hidden; 
+    text-shadow: 0 0 10px;
+    bottom: -5px;
+    left: 10%;
+    width: 80%;
+    height: 100%;
+    z-index: -1;
+    user-select: none;
+    pointer-events: none;
+}
+
+#nav-links .nav-link {
+    position: relative;
+}
+
+#nav-links .nav-link:hover::before {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0%;
+    background-color: rgba(10,10,10,1);
+    z-index: 2;
+    user-select: none;
+    pointer-events: none;
+    animation: QuickBlink 0.5s step-end normal;
 }
 
 #nav-hint {
@@ -122,7 +201,7 @@ body {
     animation: CRTShift 7s steps(70) infinite;
 }
 
-body::after {
+#scanlines::after {
     z-index: 200;
     user-select: none;
     pointer-events: none;
@@ -152,4 +231,27 @@ body::after {
     background-size: 40px 100px;
     background-image: linear-gradient(to bottom, rgb(10, 10, 10) 2px, transparent 1px);
     animation: Scanlines 1.5s steps(450) infinite;
+}
+
+#nav-location {
+    position: relative;
+}
+
+@keyframes reveal {
+    0% {width: 110%;}
+    100% {width: 0%;}
+}
+#nav-location[hovered="true"]::after {
+    position: absolute;
+    content: '';
+    top: 0;
+    right: -10%;
+    width: 0%;
+    height: 100%;
+    opacity: 100%;
+    background-color: rgba(10,10,10,1);
+    z-index: 1000;
+    user-select: none;
+    pointer-events: none;
+    animation: reveal 0.3s steps(10) normal;
 }

@@ -3,7 +3,7 @@
 }
 
 body {
-    background-color: 	#1a0600;
+    background-color: 	rgb(1, 5, 0);
     color: rgba(125,225,125,0.75);
 }
 
@@ -31,11 +31,16 @@ a:hover{
 }
 
 #puzzleFormContainer{
-    width: 300px;
+    position: absolute;
+    top: 35%;
+    left: 30%;
+    width: 40%;
     margin: 0 auto; /* Center the box horizontally */
     padding: 20px;
     border: 2px solid rgba(125, 225, 125, 0.75);
     box-shadow: 0 0 30px rgba(2, 213, 55, 0.307);
+    opacity: 0%;
+    pointer-events: none;
 }
 
 #innerForm {
@@ -94,3 +99,119 @@ a:hover{
     100% { opacity: 0.93}
 }
 
+.background-square,
+.letter-square {
+    background-color: color-mix(in srgb, var(--matrix-primary) 10%,rgb(0,0,0) 90%);
+    outline: 2px solid color-mix(in srgb, var(--matrix-primary) 20%,rgb(0,0,0) 80%);
+    margin: 3%;
+    border-radius: 0px;
+    aspect-ratio: 1/1;
+    position: inherit;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: max(3vw, 40px);
+    font-weight: 400;
+    padding: 0px;
+    color: rgba(255,255,255, 0);
+    transition: background-color 120ms ease, border 50ms ease, color 75ms ease-in-out;
+    user-select: none;
+}
+
+#content-box {
+    position: relative;
+    top: 0%;
+    width: max(30%, 400px) ;
+    margin: auto;
+    aspect-ratio: 10 / 1;
+    background-color: color-mix(in srgb, var(--matrix-primary) 10%,rgb(0,0,0) 90%);
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(30px, 1fr));
+    grid-template-rows: repeat(autofit, 1fr);
+    padding: 0.5%;
+    cursor: pointer;
+}
+
+[selected="true"] {
+    outline: 2px solid var(--matrix-primary);
+}
+
+#content-box::after {
+    content: "";
+    height: 100%;
+    width: 100%;
+    left: 2%;
+    top: 2%;
+    position: absolute;
+    z-index: -1;
+    background-color: rgba(0,0,0,0.8);
+    box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
+}
+
+.has-text {
+    border: 3px solid rgb(10, 10, 10);
+    color: var(--matrix-primary);
+    background-color: color-mix(in srgb, var(--matrix-primary) 25%,rgb(0,0,0) 75%);
+    outline: 2px solid var(--matrix-primary);
+    filter: saturate(150%);
+    box-shadow: 0px 0px 5px var(--matrix-primary), 0px 0px 7px var(--matrix-primary), 0px 0px 9px var(--matrix-primary);
+    animation: QuickBlink 0.08s step-end normal, Pulse 1s ease infinite;
+}
+
+#puzzle-name-input {
+    margin: auto;
+    position: relative;
+    width: max(30vh, 400px);
+    height: max(5.5vh, 55px);
+    font-size: max(0.8vw, 12px);
+    cursor: pointer;
+    background-color: color-mix(in srgb, var(--matrix-primary) 25%,rgb(0,0,0) 75%);
+    border: 2px dotted green;
+    filter: saturate(150%);
+    text-align: center;
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    overflow-wrap: break-word;
+    overflow:hidden;
+    white-space: pre;
+}
+
+#puzzle-name-input[selected="true"]::after {
+    content: '|';
+    animation: blink 1s step-end infinite;
+}
+
+#error-box {
+    width: 100%;
+    padding: 1%;
+    text-align: center;
+}
+
+#create-puzzle-btn {
+    margin: auto;
+    position: relative;
+    left: calc(50vw - max(15vh, 200px)/2);
+    width: max(15vh, 200px);
+    height: max(5.5vh, 55px);
+    font-size: max(0.8vw, 12px);
+    cursor: pointer;
+    background-color: rgba(0,0,0,0);
+    border: 2px solid green;
+    filter: saturate(100%);
+    text-align: center;
+    font-family: 'VT323', monospace;
+    color: var(--matrix-primary);
+    border-radius: 1px;
+    animation: ScreenEffect 0.3s ease infinite; 
+}
+
+#create-puzzle-btn:hover {
+    background-color: var(--matrix-primary);
+    color: rgb(0,0,0,1);
+    animation: ScreenEffect 0.3s ease infinite, FlickerEffect 0.1s step-end normal;
+    animation-iteration-count: 2;
+}
