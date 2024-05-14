@@ -139,8 +139,8 @@ a:hover{
     flex-direction: row;
     align-items: baseline;
 }
-.playcount:before{ content: "Total Plays: "}
-.playcount{
+.play-count:before{ content: "Total Plays: "}
+.play-count{
     font-size: 0.75rem;
     margin-right: 2rem;
 }

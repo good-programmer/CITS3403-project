@@ -19,13 +19,19 @@
     <div class="panel-container">
         <div class="buttons-container">
             <p class="button-label">Sort By</p>
-            <button class="toggle-button" type=button>Popular</button>
-            <button class="toggle-button" type="button">Hot</button>
-            <button class="toggle-button toggle-button--selected" type="button">Recent</button>
+            <button class="toggle-button toggle-button--selected" type=button>Date</button>
+            <button class="toggle-button" type="button">Playcount</button>
+            <button class="toggle-button" type="button">Highscore</button>
+            <button class="toggle-button" type="button">Rating</button>
+            <button class="toggle-button" type="button">Alphabet</button>
         </div>
         <div class="buttons-container">
             <button class = "row-label">rating</button>
-            <label for="min-rating" class="rating-label">from</label>
+            <button class="row-label">playcount</button>
+            <button class="row-label">date</button>
+        </div>
+        <div class="buttons-container">
+            <label for="min-rating" class="rating-label"> Browse by rating from</label>
             <select class = "rating" id="min-rating">
                 <option value="0">Minimum Rating:</option>
                 <option value="0">0</option>
@@ -48,14 +54,23 @@
             </select>
         </div>
         <div class="buttons-container">
-            <button class="row-label">playcount</button>
-            <label for="min-playcount" class="playcount-label">from</label>
+            <label for="min-playcount" class="playcount-label">Browse by playcount from</label>
             <form onkeydown="return event.key != 'Enter';">
                 <input type="number" class="playcount" id="min-playcount" placeholder="Minimum playcount:"/>
             </form>
             <label for="max-playcount" class="playcount-label">to</label>
             <form onkeydown="return event.key != 'Enter';">
                 <input type="number" class="playcount" id="max-playcount" placeholder="Maximum playcount:"/>
+            </form>
+        </div>
+        <div class="buttons-container">
+            <label for="min-date" class="date-label">Browse by date from</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="date" id="min-date" class="date">
+            </form>
+            <label for="max-date" class="date-label">to</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="date" id="max-date" class="date">
             </form>
         </div>
         <div class="post-container" data-post-container>
@@ -71,7 +86,7 @@
                         <div class="date-created" data-date-created></div> 
                     </div>
                     <div class="stats-row">
-                        <div class="playcount" data-playcount></div>
+                        <div class="play-count" data-playcount></div>
                         <div class="avg-rating" data-avg-rating></div>
                         <div class="highscore" data-highscore></div>
                     </div>

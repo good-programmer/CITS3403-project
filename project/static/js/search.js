@@ -92,3 +92,23 @@ maxPlaycount.addEventListener('blur', function(){
         maxPlaycount.value = minimumCount + 1
     }
 })
+
+//event listeners for date
+const minDate = document.getElementById('min-date');
+const maxDate = document.getElementById('max-date');
+minDate.addEventListener('input', function() {
+    const minDateVal = new Date(minDate.value);
+    const maxDateVal = new Date(maxDate.value);
+
+    if (maxDateVal < minDateVal) {
+        maxDate.valueAsDate = minDateVal;
+    }
+});
+maxDate.addEventListener('input', function() {
+    const minDateValue = new Date(minDate.value);
+    const maxDateValue = new Date(maxDate.value);
+
+    if (maxDateValue < minDateValue) {
+        minDate.valueAsDate = maxDateValue;
+    }
+});

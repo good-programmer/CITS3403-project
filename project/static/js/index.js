@@ -8,8 +8,10 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
 
         clearTemplates()
 
-        trend = togBut.textContent.trim().toLowerCase()
-        loadTemplates(trend)
+        sortBy = togBut.textContent.trim().toLowerCase()
+        if(['recent','hot','popular'].includes(sortBy)){
+            loadTemplates(sortBy)
+        }
 
         document.querySelectorAll(".toggle-button").forEach(otherBut => {
             if (otherBut !== togBut) {
