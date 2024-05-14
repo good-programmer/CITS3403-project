@@ -1,8 +1,9 @@
 $(document).ready(function(){
 
-    // Function to slide down the instructions information
+    //Function to slide down the instructions information
+    let instr = document.querySelector("#instructions");
     $("#showInstructions").click(function(){
-        $("#instructions").slideToggle("slow");
+        instr.dataset.display = instr.dataset.display === "false";
     });
 });
 

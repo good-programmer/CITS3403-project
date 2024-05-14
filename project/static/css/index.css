@@ -8,6 +8,7 @@
     justify-content: center;
     pointer-events: none;
     user-select: none;
+    animation: ScreenEffect 0.3s step-end infinite;
 }
 
 a{

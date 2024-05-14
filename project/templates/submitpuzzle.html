@@ -2,7 +2,7 @@
 {% block title %} Submit Puzzle Page {% endblock %}
 {% block content %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<link rel = "stylesheet" href = "../static/css/submitpuzzle.css">
+<link rel = "stylesheet" href = "{{url_for('static', filename='css/submitpuzzle.css')}}">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="{{url_for('static', filename='js/submitpuzzle.js')}}"></script>
 
@@ -15,11 +15,25 @@
         ██║███╗██║██║   ██║██╔══██╗██║  ██║╚════╝██╔══██║██║╚██╔╝██║██╔══██╗██║     ██╔══╝  
         ╚███╔███╔╝╚██████╔╝██║  ██║██████╔╝      ██║  ██║██║ ╚═╝ ██║██████╔╝███████╗███████╗
          ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═════╝       ╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝ ╚══════╝╚══════╝
-                                                                                            
+                                                                                  
     </pre>
 </div>
 <div id="puzzle-name-input"></div>
 <br>
+
+<div id="instructions-container">
+    <div id="instructions" data-display="false"><b>&ltCreate a puzzle!&gt</b>
+        <ul>
+            <li>Enter any ten letters (repetitions allowed)</li>
+            <li>Give your puzzle a title</li>
+            <li>Press create!</li>
+        </ul>
+        The aim of the game is for users to come up with the five longest words they can think of using those letters.
+        The more letters, the more points, and the higher they'll rise on the leaderboard.
+        Users can rate your puzzle, so an especially tricky or enjoyable one will rise to the top!
+    </div>
+</div>
+
 <div id="content-box">
     <div class="letter-square" id="ls1"></div>
     <div class="letter-square" id="ls2"></div>
@@ -60,12 +74,8 @@
     </form>
 </div>
 
-<input type="submit" id="create-puzzle-btn" value="Create">
-
-<button class="submitbutton" id="showInstructions"> Show Instructions </button>
-<p id="instructions"> Create a <b>PUZZLE!</b> Insert a string of alphabetical characters only, 
-    that can be used to form potentially new words alongside a puzzle name. 
-    Example: inputting 'asdkflkasc' as a puzzle. Users can then submit answers based on this string, e.g. 'flask'. 
-    String length is limited to 10 and cannot contain special characters * . , - etc.
-</p>
+<div id="create-puzzle-container">
+    <input type="submit" id="create-puzzle-btn" value="Create">
+    <button class="submitbutton" id="showInstructions">?</button>
+</div>
 {% endblock %}
