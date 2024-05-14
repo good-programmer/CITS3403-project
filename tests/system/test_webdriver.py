@@ -1,7 +1,7 @@
 from selenium import webdriver
-import tests.selenium
+import tests.system
 
-class ChromeWebDriverCase(tests.selenium.WebDriverCase):
+class ChromeWebDriverCase(tests.system.WebDriverCase):
     @classmethod
     def setUpClass(cls) -> None:
         options = webdriver.ChromeOptions()
