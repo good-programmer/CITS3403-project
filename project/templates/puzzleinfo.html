@@ -1,58 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/style.css')}}">
 <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/puzzleinfo.css')}}">
 
-<h1>{{puzzle['title']}}</h1>
 
-<div class="Screen MatrixTextGreen" id="puzzle-info">
-  <p>/* author: <a class="user-link" href="{{url_for(route.user.profile, userid=puzzle['creatorID'])}}">{{puzzle['creator']}}</a> */</p>
-  <p>stats {</p>
-  <p>plays: {{puzzle['play_count']}}</p>
-  <p>highest_score: {{puzzle['highscore']}}</p>
-  {% if 'score' in puzzle %}
-    <p>your_score: {{puzzle['score']['score']}} ({{puzzle['score']['dateSubmitted'][:10]}})</p>
-  {% endif %}
-  <p>date_created: {{puzzle['dateCreated'][:10]}}</p>
-  <p>average_rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
-  <p class="no_indent">}</p>
-  <a href="{{url_for(route.puzzle.play, puzzleid=puzzle['id'])}}"><button class="Screen MatrixTextGreen" id="play-button" {% if puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
-    <p class="no_indent" id="rate-text">rate_puzzle {</p>
-    <div id="rate-slider">
-      <p class="Screen MatrixTextYellow" id="rate-back">☆☆☆☆☆</p>
-      <p class="Screen MatrixTextYellow" id="rate-current">★★★★★</p>
-    </div>
-    <p class="no_indent">}</p>
-</div>
-<br>
-
-<h1>LEADERBOARD</h1>
-<div class="buttons-container">
-  <button class="toggle-button" type="button">All</button>
-  <button class="toggle-button" type="button">Following</button>
-</div>
-<div class="leaderboard-body">
-<div id="main-leaderboard" class="leaderboard post-list" style="display: flex;">
-    {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
-      <div class="post-body">
-        <b>{{loop.index}}</b><br>
-        <a class="user-link" href="{{url_for(route.user.profile, userid=score['id'])}}">{{score['name']}}</a>  |  {{score['score']}}<br>
-        {{score['dateSubmitted'][:10]}}
-      </div>
-    {% endfor %}
-</div>
-<div id="following-leaderboard" class="leaderboard post-list" style="display: none;">
-    {% set counter={"position": 1} %}
-    {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
-      {% if score['id'] in following %}
-        <div class="post-body">
-          <b>{{counter.position}}</b><br>
-          <a class="user-link" href="{{url_for(route.user.profile, userid=score['id'])}}>{{score['name']}}</a>  |  {{score['score']}}<br>
-          {{score['dateSubmitted'][:10]}}
-        </div>
-        {% if counter.update({"position":counter.position + 1}) %} {% endif %}
+<div class="row">
+  <div class="col-md-6">
+    <h1 id="puzzle-title">puzzle: {{puzzle['title']}}</h1>
+    <div class="Screen MatrixTextGreen" id="puzzle-info">
+      <p>/* author: <a class="user-link" href="{{url_for(route.user.profile, userid=puzzle['creatorID'])}}">{{puzzle['creator']}}</a> */</p>
+      <p>stats {</p>
+      <p>plays: {{puzzle['play_count']}}</p>
+      <p>highest_score: {{puzzle['highscore']}}</p>
+      {% if 'score' in puzzle %}
+        <p>your_score: {{puzzle['score']['score']}} ({{puzzle['score']['dateSubmitted'][:10]}})</p>
       {% endif %}
-    {% endfor %}
+      <p>date_created: {{puzzle['dateCreated'][:10]}}</p>
+      <p>average_rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
+      <p class="no-indent">}</p>
+      <a href="{{url_for(route.puzzle.play, puzzleid=puzzle['id'])}}"><button class="Screen MatrixTextGreen" id="play-button" {% if puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
+        <p class="no-indent" id="rate-text">rate_puzzle {</p>
+        <div id="rate-slider">
+          <p class="Screen MatrixTextYellow" id="rate-back">☆☆☆☆☆</p>
+          <p class="Screen MatrixTextYellow" id="rate-current">★★★★★</p>
+        </div>
+        <p class="no-indent">}</p>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <h1 id="leaderboard-title">leaderboard:</h1>
+    <div class="buttons-container">
+      <button class="toggle-button" type="button">All</button>
+      <button class="toggle-button" type="button">Following</button>
+    </div>
+    <div class="leaderboard-body">
+      <div id="main-leaderboard" class="leaderboard post-list" style="display: flex;">
+        {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
+          <div class="post-body">
+            <b>{{loop.index}}</b><br>
+            <a class="user-link" href="{{url_for(route.user.profile, userid=score['id'])}}">{{score['name']}}</a>  |  {{score['score']}}<br>
+            {{score['dateSubmitted'][:10]}}
+          </div>
+        {% endfor %}
+      </div>
+      <div id="following-leaderboard" class="leaderboard post-list" style="display: none;">
+        {% set counter={"position": 1} %}
+        {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
+          {% if score['id'] in following %}
+            <div class="post-body">
+              <b>{{counter.position}}</b><br>
+              <a class="user-link" href="{{url_for(route.user.profile, userid=score['id'])}}">{{score['name']}}</a>  |  {{score['score']}}<br>
+              {{score['dateSubmitted'][:10]}}
+            </div>
+            {% if counter.update({"position":counter.position + 1}) %} {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="{{url_for('static', filename='js/puzzleinfo.js')}}"></script>
