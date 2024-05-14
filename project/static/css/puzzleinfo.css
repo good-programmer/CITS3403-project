@@ -5,12 +5,13 @@
 }
 
 h1 {
-    text-align: center;
+    text-align: left;
+    margin-left: 5%;
 }
 
 h1:first-of-type {
     margin-top: 10%;
-    margin-bottom: 5%;
+    margin-bottom: 2%;
 }
 
 body {
@@ -41,6 +42,14 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
     margin-left: 25px;
+}
+
+#rate-slider {
+    margin-left: 25px;
+}
+
+.no_indent {
+    margin-left: 0px !important;
 }
 
 #puzzle-info p:nth-of-type(1) {
@@ -83,7 +92,7 @@ body {
 }
 */
 
-#rate-slider, #rate-text, .buttons-container {
+.buttons-container {
     margin-left: 10%;
 }
 
@@ -115,8 +124,8 @@ body {
 }
 
 #play-button {
-    margin-top: 0px;
-    margin-bottom: 5px;
+    margin-top: 25px;
+    margin-bottom: 25px;
 }
 
 .buttons-container:first-child{
