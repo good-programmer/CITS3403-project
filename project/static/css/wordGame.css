@@ -1,10 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=VT323);
 
-* {
-    font-family: 'VT323', monospace;
-    user-select: none;
-}
-
 #body {
     background-color: black;
     cursor: default;
@@ -13,6 +8,8 @@
 #gameArea {
     align-items: center;
     margin: 50px;
+    font-family: 'VT323', monospace;
+    user-select: none;
 }
 
 /* containers */
