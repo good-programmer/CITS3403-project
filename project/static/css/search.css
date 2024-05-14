@@ -1,23 +1,63 @@
+*:focus{
+    outline:none;
+}
+
+.row-label:before{content: '>Browse by ';}
+.row-label{
+    width: 15rem;
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: solid 1px rgba(125,225,125,0.75);
+    color: rgba(125,225,125,0.75);
+    background-color: #1a0600;
+}
+.row-label:not(.row-label--selected):hover{
+    background-color: #293102;;
+}
+.row-label--selected{
+    background-color: rgba(125,225,125,0.75);
+    color: #1a0600;
+    border: solid 1px #1a0600;
+}
+
 label{
     margin-right: 0.75rem;
+    display: none;
 }
 
 .button-label{
     margin-right: 0.75rem;
 }
 
-.dropdown {
+.rating {
+    display:none;
     width: 15rem;
     margin-right: 0.5rem;
     padding: 0.5em 1em;
-    border-radius: 1em;
+    border-radius: 1rem;
     border: solid 1px rgba(125,225,125,0.75);
     color: rgba(125,225,125,0.75);
     background-color: #1a0600;
 }
 
-.dropdown option:first-child{
+.rating option:first-child{
     display: none;
 }
+
+.playcount{
+    display:none;
+    width: 15rem;
+    margin-right: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: solid 1px rgba(125,225,125,0.75);
+    color: rgba(125,225,125,0.75);
+    background-color: #1a0600;
+}
+.playcount::placeholder{
+    color: rgba(125,225,125,0.75);
+}
+
 
 

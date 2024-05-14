@@ -24,8 +24,9 @@
             <button class="toggle-button toggle-button--selected" type="button">Recent</button>
         </div>
         <div class="buttons-container">
-            <label for="rating-select">Browse by rating from</label>
-            <select class = "dropdown" id="min-rating">
+            <button class = "row-label">rating</button>
+            <label for="min-rating" class="rating-label">from</label>
+            <select class = "rating" id="min-rating">
                 <option value="0">Minimum Rating:</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
@@ -35,8 +36,8 @@
                 <option value="5">5</option>
             </select>
 
-            <label for="rating-select">to</label>
-            <select class = "dropdown" id="max-rating">
+            <label for="max-rating" class="rating-label">to</label>
+            <select class = "rating" id="max-rating">
                 <option value="5">Maximum Rating:</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
@@ -45,6 +46,17 @@
                 <option value="4">4</option>
                 <option value="5">5</option>
             </select>
+        </div>
+        <div class="buttons-container">
+            <button class="row-label">playcount</button>
+            <label for="min-playcount" class="playcount-label">from</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="number" class="playcount" id="min-playcount" placeholder="Minimum playcount:"/>
+            </form>
+            <label for="max-playcount" class="playcount-label">to</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="number" class="playcount" id="max-playcount" placeholder="Maximum playcount:"/>
+            </form>
         </div>
         <div class="post-container" data-post-container>
             <template post-template>
