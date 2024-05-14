@@ -5,6 +5,8 @@
 body {
     background-color: 	rgb(1, 5, 0);
     color: rgba(125,225,125,0.75);
+    margin: 0;
+    padding: 0;
 }
 
 pre{
@@ -142,12 +144,12 @@ a:hover{
     content: "";
     height: 100%;
     width: 100%;
-    left: 2%;
-    top: 2%;
+    left: 1%;
+    top: 1%;
     position: absolute;
     z-index: -1;
-    background-color: rgba(0,0,0,0.8);
-    box-shadow: 5px 5px 5px rgba(0,0,0,0.2);
+    background-color: var(--matrix-primary);
+    opacity: 15%;
 }
 
 .has-text {
@@ -183,6 +185,10 @@ a:hover{
 #puzzle-name-input[selected="true"]::after {
     content: '|';
     animation: blink 1s step-end infinite;
+}
+
+#puzzle-name-input[empty="true"][selected="false"]::before {
+    content: '<Puzzle title>';
 }
 
 #error-box {

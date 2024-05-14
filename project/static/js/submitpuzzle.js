@@ -32,7 +32,7 @@ window.addEventListener('load', function() {
 
     titleInput.addEventListener('input', function () {
         titleInput.value = titleInput.value.slice(0,40);
-        titleFace.textContent = titleInput.value;
+        updateTitle(titleInput.value);
     })
 
     contentInput.addEventListener('input', function () {
@@ -45,9 +45,10 @@ window.addEventListener('load', function() {
         contentInput.value = n.slice(0,10);
         updateContent(contentInput.value);
     })
-    titleFace.textContent = titleInput.value;
+    updateTitle(titleInput.value);
     updateContent(contentInput.value);
 
+    titleFace.setAttribute('selected', false);
     titleInput.addEventListener('focus', function(){
         titleFace.setAttribute('selected', true);
     })
@@ -55,6 +56,7 @@ window.addEventListener('load', function() {
         titleFace.setAttribute('selected', false);
     })
 
+    contentFace.setAttribute('selected', false);
     contentInput.addEventListener('focus', function(){
         contentFace.setAttribute('selected', true);
     })
@@ -76,4 +78,13 @@ function updateContent(text) {
         }
         
     }
+}
+
+function updateTitle(title) {
+    if (title == '') {
+        titleFace.setAttribute('empty', 'true');
+    } else {
+        titleFace.setAttribute('empty', 'false');
+    }
+    titleFace.textContent = title;
 }
