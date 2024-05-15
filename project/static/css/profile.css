@@ -6,7 +6,7 @@
 
 h1 {
     text-align: left;
-    margin-left: 5%;
+    margin-left: 2.5%;
     font-size: 25px;
 }
 
@@ -22,6 +22,7 @@ body {
 #user-info {
     margin: auto;
     margin-bottom: 5%;
+    width: auto;
     /* scanline concept source: https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css */
     background:
         radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 0   0   /3px 3px,
@@ -42,7 +43,7 @@ body {
     margin-left: 25px;
 }
 
-#user-info, .post-body {
+#user-info, .post-body, #created-puzzles-sort, #completed-puzzles-sort, #rated-puzzles-sort  {
     border: 1px solid rgba(125,225,125,0.75);
     padding: 0.5rem;
     border-radius: .125rem;
@@ -54,6 +55,14 @@ body {
     background-color: transparent;
     margin: 0;
     margin-bottom: 5px;
+    height: auto;
+    margin-left: 5%;
+}
+
+#created-puzzles-sort, #completed-puzzles-sort, #rated-puzzles-sort {
+    background-color: transparent;
+    text-align: center;
+    margin-left: 5%;
 }
 
 a.hlink {
