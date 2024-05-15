@@ -3,6 +3,11 @@ const searchMap = new Map()
 const defaultMap = new Map()
 const storedMap = new Map()
 
+let pageSize = 10
+let page = 1
+
+let currentURL = ''
+
 defaultMap.set('query', '');
 defaultMap.set('rating', '0-5');
 defaultMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
@@ -25,16 +30,25 @@ for (const keyName of keyNameList){
 }
 
 function handleSubmit(){
-    var urlInjection ='?'
+    var urlInjection ='?' + 'page_size=' + pageSize
+    var storedParameters = ''
         for (const keyName of keyNameList){
             if (searchMap.get(keyName)==defaultMap.get(keyName)) {
                 continue
             }
-            urlInjection += '&' + keyName + '=' + searchMap.get(keyName)
+            storedParameters += '&' + keyName + '=' + searchMap.get(keyName)
         }
         clearTemplates()
-        loadTemplates(urlInjection)
-        window.history.pushState({},null,urlInjection)
+        loadTemplates(urlInjection + storedParameters)
+        currentURL = storedParameters
+        window.history.pushState({}, null, urlInjection + storedParameters)
+}
+
+function updatePageForSize(){
+    var urlInjection ='?' + 'page_size=' + pageSize
+    clearTemplates()
+    loadTemplates(urlInjection + currentURL)
+    window.history.pushState({}, null, urlInjection + currentURL)
 }
 
 //event listeners for rating
@@ -117,6 +131,13 @@ document.querySelectorAll(".row-label").forEach(rowLabel=>{
         toggleRowLabel(isOn, className)
         console.log(searchMap.get(keyName))
     })
+})
+
+//event listeners for page size
+const pageSizeMenu = document.getElementById("page-size")
+pageSizeMenu.addEventListener("change", function(){
+    pageSize = pageSizeMenu.value
+    updatePageForSize()
 })
 
 //event listeners for playcount
