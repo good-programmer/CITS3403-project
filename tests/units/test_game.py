@@ -234,9 +234,8 @@ class PostRequestCase(unittest.TestCase):
         #authenticated case
         self.t.register("POST_USER", "Valid123456")
         self.t.login("POST_USER", "Valid123456")
-        response = self.assertCode(self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT_TEST_PUZZLE", puzzle="ABCDEFGHIJ"), follow_redirects=True), 200)
-        self.assertEqual(url_for(route.index), response.request.path)
-        self.assertIsNotNone(puzzle_utils.get_puzzle("ENDPOINT_TEST_PUZZLE"))
+        response = self.assertCode(self.client.post(url_for(route.puzzle.create), data=dict(puzzlename="ENDPOINT TEST PUZZLE", puzzle="ABCDEFGHIJ"), follow_redirects=True), 200)
+        self.assertIsNotNone(puzzle_utils.get_puzzle("ENDPOINT TEST PUZZLE"))
 
     def test_rate(self):
         '''

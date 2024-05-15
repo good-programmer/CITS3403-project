@@ -21,24 +21,42 @@ Primary webpages include:
 - user profiles
 - puzzle profiles
 
+## Getting started
+
+Setting up a virtual environment:
+- This app uses a number of external modules. You may want to keep these separate.
+- Execute `python -m venv /path/to/env` to create the virtual environment.
+- Execute `source <venv>/bin/activate` to activate the virtual environment
+- Make sure you are in the repository directory (the directory of this README)
+- Execute `pip install -r requirements.txt` to install dependencies.
+
 To start the app:
 
-- `cd` into the repository directory (i.e. the directory of this README)
+- `cd` into the repository directory (the directory of this README)
 - `export FLASK_APP=run.py` to set the target app
 - `export FLASK_SECRET_KEY=<your-key>` to set the private key for security purposes
 - `export FLASK_DATABASE_URI=<your-database>` to set the database the app will connect to (optional, see Databases section for more information)
 - `flask run` to start the app (default 127.0.0.1:5000)
+- `run.py` by default executes the app in `default` configuration, which is (currently) equivalent to the 'development' config. See `/project/config.py` for the differences.
+- You can change the config by setting the FLASK_CONFIG environment variable. Again see `/project/config.py` for available configs.
+- To create dummy data, see "Generate test data" in the Databases section.
 
 ## Testing
 
 To run tests, execute `run_tests.py` from CLI in the repository directory, i.e. `cd project_repository; python3 run_tests.py`.
+
 This will create a transient in-memory database for testing purposes (which should take around 5sec on default settings), then run all tests. This includes a unit test suite and a system (selenium) test suite.
-You should *not* run individual test by running `python3 -m unittest tests` or similar. The database the tests rely on is only generated once for all tests, and efficiently cleaned on tearDown. 
+
+You should *not* run individual tests with `python3 -m unittest tests` or similar. The database the tests rely on is only generated once for all tests, and methodically cleaned on tearDown. 
+
 The alternative was to create and destroy the database before and after each test, which led to very large overhead for the number of tests performed (40+).
 
 ## Databases
 
-By default, the database used is `project/db/app.db`. It will be created if it does not exist when the app is started. To use or create a different database, see "Create a test database" below.
+By default, the database used is `project/db/test.db` - this is the default development database target. It will be created if it does not exist when the app is started.
+    > `project/db/app.db` is the default production database target.
+
+To use or create a different database, see "Create a test database" below.
 
 Create a new database with the most recent schema:
 
@@ -61,7 +79,7 @@ Generate test data:
 ## Migrations
 To migrate a database when `models.py` is updated (i.e. when the schema is changed), run `flask db migrate`, then `flask db upgrade`.
 
-Update your current database (`app.db`):
+Update your current database:
 
 - Find the version of the database that correctly matches yours (this may be hard to do - if your database was created just prior to commit 820a997, it should be identical to a90c7a8f4860. If it was created earlier, you may have to delete that database)
 - Run `flask db stamp <your_version_here>`

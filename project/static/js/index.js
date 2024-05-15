@@ -42,7 +42,7 @@ function loadTemplates(trend){
 
             const puzID = post.querySelector("[data-puz-id]")
             puzID.textContent = puz.id
-            puzID.href = '/puzzle/'+String(puz.id)+'/play'
+            puzID.href = '/puzzle/'+String(puz.id)+'/info'
 
             const authName = post.querySelector("[data-author-name]")
             authName.textContent = puz.creator

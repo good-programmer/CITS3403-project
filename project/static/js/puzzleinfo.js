@@ -1,31 +1,32 @@
-window.addEventListener('load', async function() {
+document.querySelectorAll(".toggle-button").forEach(togBut => {
+    togBut.addEventListener("click", () => {
+        let main = document.getElementById("main-leaderboard");
+        let following = document.getElementById("following-leaderboard");
+
+        document.querySelectorAll(".toggle-button").forEach(otherBut => {
+            otherBut.classList.remove("toggle-button--selected")
+        })
+
+        togBut.classList.add("toggle-button--selected")
+
+        if (togBut.textContent.trim().toLowerCase() == "all") {
+            main.style.display = "flex";
+            following.style.display = "none";
+        } else {
+            main.style.display = "none";
+            following.style.display = "flex";
+        }
+    })
+})
+document.querySelector(".toggle-button").click();
+
+
+
+window.onload = async function() {
     let puzzleid = window.location.pathname.split('/')[2]
+
     let response = await fetch("/puzzle/" + puzzleid);
     let puzzleInfo = await response.json();
-    response = await fetch("/user/current");
-    let userInfo = await response.json();
-
-    let switchLeaderboard = document.getElementById("switch-leaderboard-button");
-    let main = document.getElementById("main-leaderboard");
-    let following = document.getElementById("following-leaderboard");
-    if (userInfo['id'] != -1) {
-        switchLeaderboard.onclick = function() {
-            if (main.style.display == "none") {
-                switchLeaderboard.textContent = "All";
-                main.style.display = "block";
-                following.style.display = "none";
-            } else {
-                switchLeaderboard.textContent = "Following";
-                main.style.display = "none";
-                following.style.display = "block";
-            }
-        }
-    } else {
-        switchLeaderboard.style.display = "none";
-        document.getElementById("rate-section").style.display = "none";
-        document.getElementById("play-button").setAttribute("disabled", true);
-        document.getElementById("play-button").setAttribute("title", "Login to play");
-    }
     let storedRating = 'rated' in puzzleInfo ? puzzleInfo['rated']['rating'] : 0
     let rateSlider = document.getElementById('rate-slider');
     let x = rateSlider.getBoundingClientRect().left
@@ -74,4 +75,4 @@ window.addEventListener('load', async function() {
         rateSlider.style.color = 'darkgrey';
         rateSlider.style.opacity = '0.6';
     }
-});
+}
