@@ -1,7 +1,7 @@
 const postTemplate = document.querySelector("[post-template]")
 const postContainer = document.querySelector("[data-post-container]")
 
-loadTemplates('/recent')
+if (window.location.pathname === '/'){loadTemplates('/recent');}
 
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
