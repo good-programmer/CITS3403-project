@@ -18,17 +18,27 @@
 
     <div class="panel-container">
         <div class="buttons-container">
+            <form id="search-trigger">
+                <input type="text" id="search" placeholder="Search">
+            </form>
+        </div>
+        <div class="buttons-container">
             <p class="button-label">Sort By</p>
-            <button class="toggle-button toggle-button--selected" type=button>Date</button>
+            <button class="toggle-button toggle-button--selected" type="button">Date</button>
             <button class="toggle-button" type="button">Playcount</button>
             <button class="toggle-button" type="button">Highscore</button>
             <button class="toggle-button" type="button">Rating</button>
             <button class="toggle-button" type="button">Alphabet</button>
         </div>
         <div class="buttons-container">
-            <button class = "row-label">rating</button>
-            <button class="row-label">playcount</button>
+            <p class="button-label">Currently ordering by:</p>
+            <button class="basic-toggle basic-toggle--selected" id="order" type="button">Descending</button>
+        </div>
+        <div class="buttons-container">
+            <button class="row-label">rating</button>
+            <button class="row-label">play count</button>
             <button class="row-label">date</button>
+            <button class="basic-toggle basic-toggle--selected" type="button">Ignore completed</button>
         </div>
         <div class="buttons-container">
             <label for="min-rating" class="rating-label"> Browse by rating from</label>
@@ -54,13 +64,13 @@
             </select>
         </div>
         <div class="buttons-container">
-            <label for="min-playcount" class="playcount-label">Browse by playcount from</label>
+            <label for="min-playcount" class="play_count-label">Browse by playcount from</label>
             <form onkeydown="return event.key != 'Enter';">
-                <input type="number" class="playcount" id="min-playcount" placeholder="Minimum playcount:"/>
+                <input type="number" class="play_count" id="min-playcount" placeholder="Minimum playcount:" value="0"/>
             </form>
-            <label for="max-playcount" class="playcount-label">to</label>
+            <label for="max-playcount" class="play_count-label">to</label>
             <form onkeydown="return event.key != 'Enter';">
-                <input type="number" class="playcount" id="max-playcount" placeholder="Maximum playcount:"/>
+                <input type="number" class="play_count" id="max-playcount" placeholder="Maximum playcount:" value="999999"/>
             </form>
         </div>
         <div class="buttons-container">
