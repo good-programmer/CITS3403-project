@@ -106,7 +106,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     opacity: 1;
 }
 
-.basic-toggle{
+.basic-toggle, .cycle-label{
     width: 15rem;
     margin-right: 0.5rem;
     padding: 0.5rem 1rem;
