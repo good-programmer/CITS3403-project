@@ -151,23 +151,4 @@ body {
     width: 100%;
 }
 
-.Screen {
-    animation: ScreenEffect 0.3s ease infinite;
-}
-
-@keyframes ScreenEffect {
-    0% { opacity: 0.92 }
-    50% { opacity: 1 }
-    100% { opacity: 0.95}
-}
-
-.MatrixTextYellow {
-    color: rgba(225,225,125,0.75);
-    text-shadow: 0 0 5px rgba(225,225,125,0.5), 0 0 15px rgba(225,250,125,1);
-}
-
-.MatrixTextGreen {
-    color: rgba(125,225,125,0.75);
-    text-shadow: 0 0 5px rgba(125,225,125,0.5), 0 0 15px rgba(125,250,125,1);
-}
   

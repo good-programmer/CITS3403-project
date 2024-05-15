@@ -1,0 +1,79 @@
+@import url(https://fonts.googleapis.com/css?family=VT323);
+
+* {
+    font-family: monospace;
+}
+
+h1 {
+    text-align: left;
+    margin-left: 5%;
+    font-size: 25px;
+}
+
+body {
+    background-color: 	#1a0600;
+    color: rgba(125,225,125,0.75);
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+#user-info {
+    margin: auto;
+    margin-bottom: 5%;
+    /* scanline concept source: https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css */
+    background:
+        radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 0   0   /3px 3px,
+        radial-gradient(rgba(55, 70, 55, 0.2) 1px,transparent 0.5px) 1px 1px /3px 3px,
+        radial-gradient(rgba(55, 70, 55, 0.2) 0.5px,transparent 0.5px) 2px 2px /3px 3px;
+    background-color: black;
+
+}
+
+#user-info * {
+    font-family: 'VT323', monospace;
+    font-size: 25px;
+}
+
+#user-info p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 25px;
+}
+
+#user-info, .post-body {
+    border: 1px solid rgba(125,225,125,0.75);
+    padding: 0.5rem;
+    border-radius: .125rem;
+    width: 80%;
+    margin-top: 1rem;
+}
+
+.post-body {
+    background-color: transparent;
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+a.hlink {
+    color: inherit;
+}
+
+a.hlink:hover, #follow-button:hover {
+    color: black !important;
+    background-color: rgba(125,225,125,0.75) !important;
+}
+
+#follow-button {
+    text-align: center;
+    background-color: rgba(0,0,0,0);
+    border: none;
+}
+
+#follow-button.MatrixTextGreen:disabled {
+    color: darkgrey;
+    text-shadow: none;
+    opacity: 0.6;
+    text-decoration: line-through;
+}
