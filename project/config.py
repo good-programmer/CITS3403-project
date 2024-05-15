@@ -28,7 +28,8 @@ class TestingConfig(DevelopmentConfig):
 configurations = {
     "default": DevelopmentConfig,
     "development": DevelopmentConfig,
-    "testing": TestingConfig
+    "testing": TestingConfig,
+    "production": ProductionConfig
 }
 
 current_config = None

@@ -36,13 +36,34 @@ def validate_puzzle_submit(input):
     # Check if input contains only alphabetical characters
     if not alpha_chars.match(input):
         valid = False
-        errors.append("String can only have alphabetical characters")
+        errors.append("Only alphabetical characters permitted")
 
     # Check if input length is correct
     str_len = len(input)
     if str_len != 10:
         valid = False
-        errors.append("String is incorrect length, need to be length 10")
+        errors.append("Incorrect length: must be 10 characters")
+
+    # If input passes all checks, return True
+    return valid, errors
+
+def validate_puzzle_title(title):
+    valid = True
+    errors = []
+
+    # Regex for special characters
+    alpha_chars = re.compile('^[a-zA-Z \d]+$')
+
+    # Check if input contains only alphabetical characters, numbers, and spaces
+    if not alpha_chars.match(title):
+        valid = False
+        errors.append("Puzzle title can only have alphabetical characters, numbers and spaces")
+
+    # Check if input length is correct
+    str_len = len(title)
+    if str_len > 40:
+        valid = False
+        errors.append("Puzzle title is too long, must be less than or equal to 40 characters")
 
     # If input passes all checks, return True
     return valid, errors

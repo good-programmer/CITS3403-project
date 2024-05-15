@@ -86,20 +86,20 @@ def get_leaderboard(puzzleid):
 def page_create_puzzle():
     if not current_user.is_authenticated:
         abort(401)
-    
+    errors = []
     form = PuzzleSubmissionForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            puzzlename = form.puzzlename.data
-            content = form.puzzle.data.lower()
-
-            if auth_utils.validate_puzzle_submit(content)[0]:
-                puzzle_utils.add_puzzle(puzzlename, current_user, content)
-                return redirect(url_for(route.index))
-
+    if form.validate_on_submit():
+        puzzlename = form.puzzlename.data
+        content = form.puzzle.data.lower()
+        valid_title, valid_content = auth_utils.validate_puzzle_title(puzzlename), auth_utils.validate_puzzle_submit(content)
+        errors = valid_title[1] + valid_content[1]
+        if valid_content[0] and valid_title[0]:
+            puzzle = puzzle_utils.add_puzzle(puzzlename, current_user, content)
+            return redirect(url_for(route.puzzle.info, puzzleid=puzzle.id))
+        for error in errors:
+            flash(error, 'error')
         return render_template('submitpuzzle.html', route=route, form=form)
-    else:
-        return render_template('submitpuzzle.html', route=route, form=form)
+    return render_template('submitpuzzle.html', route=route, form=form)
     
 @game.route('/puzzle/<int:puzzleid>', methods=['GET'])
 def api_get_puzzle(puzzleid):

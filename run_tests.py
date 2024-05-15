@@ -36,7 +36,7 @@ try:
     print('+' * 100)
 
     loader = unittest.TestLoader()
-    start_dir = 'tests/selenium'
+    start_dir = 'tests/system'
     suite = loader.discover(start_dir)
 
     runner = unittest.TextTestRunner()
