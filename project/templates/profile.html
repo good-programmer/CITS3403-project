@@ -31,7 +31,7 @@
 
 <div class="row">
 <div class="col-md-4">
-  Created puzzles <select class="Screen MatrixTextGreen" id="created-puzzles-sort"><option value="rating">sort by rating</option><option value="play_count">sort by plays</option></select>
+<h2>created puzzles</h2><select class="Screen MatrixTextGreen" id="created-puzzles-sort"><option value="rating">sort by rating</option><option value="play_count">sort by plays</option></select>
   <div id='created-list' class="post-list">
     {% for puzzle in user['puzzles']|sort(attribute='average_rating', reverse=True) %}
         <div class="post-body">
@@ -46,7 +46,7 @@
 </div>
 
 <div class="col-md-4">
-  Completed puzzles <select class="Screen MatrixTextGreen" id="completed-puzzles-sort"><option value="date">sort by date</option><option value="score">sort by score</option></select>
+  <h2>completed puzzles</h2> <select class="Screen MatrixTextGreen" id="completed-puzzles-sort"><option value="date">sort by date</option><option value="score">sort by score</option></select>
   <div id='completed-list' class="post-list">
     {% for puzzle in user['scores']|sort(attribute='dateSubmitted', reverse=True) %}
         <div class="post-body">
@@ -60,7 +60,7 @@
   </div>
 </div>
 <div class="col-md-4">
-  Rated puzzles <select class="Screen MatrixTextGreen" id="rated-puzzles-sort"><option value="date">sort by date</option><option value="rating">sort by rating</option></select>
+  <h2>rated puzzles</h2><select class="Screen MatrixTextGreen" id="rated-puzzles-sort"><option value="date">sort by date</option><option value="rating">sort by rating</option></select>
   <div id='rated-list' class="post-list">
     {% for puzzle in user['ratings']|sort(attribute='dateRated', reverse=True) %}
         <div class="post-body">
