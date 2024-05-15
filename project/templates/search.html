@@ -18,27 +18,26 @@
 
     <div class="panel-container">
         <div class="buttons-container">
-            <form id="search-trigger">
-                <input type="text" id="search" placeholder="Search">
-            </form>
+            <input type="text" id="search" placeholder="Search"/>
+            <button id="submit">Submit</button>
         </div>
         <div class="buttons-container">
             <p class="button-label">Sort By</p>
             <button class="toggle-button toggle-button--selected" type="button">Date</button>
-            <button class="toggle-button" type="button">Playcount</button>
+            <button class="toggle-button" type="button">Play count</button>
             <button class="toggle-button" type="button">Highscore</button>
             <button class="toggle-button" type="button">Rating</button>
             <button class="toggle-button" type="button">Alphabet</button>
         </div>
         <div class="buttons-container">
-            <p class="button-label">Currently ordering by:</p>
+            <p class="button-label">Order by:</p>
             <button class="basic-toggle basic-toggle--selected" id="order" type="button">Descending</button>
         </div>
         <div class="buttons-container">
             <button class="row-label">rating</button>
             <button class="row-label">play count</button>
             <button class="row-label">date</button>
-            <button class="basic-toggle basic-toggle--selected" type="button">Ignore completed</button>
+            <button class="basic-toggle" id="ignore-completed" type="button">Ignore completed</button>
         </div>
         <div class="buttons-container">
             <label for="min-rating" class="rating-label"> Browse by rating from</label>

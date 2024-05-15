@@ -6,7 +6,7 @@ const storedMap = new Map()
 defaultMap.set('query', '');
 defaultMap.set('rating', '0-5');
 defaultMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
-defaultMap.set('completed', 'true');
+defaultMap.set('completed', 'false');
 defaultMap.set('play_count', '0-999999');
 defaultMap.set('sort_by', 'date');
 defaultMap.set('order', 'desc');
@@ -22,6 +22,19 @@ function setDefault (keyName){
 const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'sort_by', 'order']
 for (const keyName of keyNameList){
     setDefault(keyName)
+}
+
+function handleSubmit(){
+    var urlInjection ='?'
+        for (const keyName of keyNameList){
+            if (searchMap.get(keyName)==defaultMap.get(keyName)) {
+                continue
+            }
+            urlInjection += '&' + keyName + '=' + searchMap.get(keyName)
+        }
+        clearTemplates()
+        loadTemplates(urlInjection)
+        window.history.pushState({},null,urlInjection)
 }
 
 //event listeners for rating
@@ -156,7 +169,7 @@ minDate.addEventListener('input', function() {
 
     if (!maxDate.value) {maxDateVal.setFullYear(9999, 0, 1)}
     if (!minDate.value) {minDateVal.setFullYear(0, 0, 1)}
-    
+
     if (maxDateVal < minDateVal) {
         maxDate.valueAsDate = minDateVal;
     }
@@ -184,21 +197,53 @@ document.querySelectorAll(".basic-toggle").forEach(basicToggle=>{
         basicToggle.classList.toggle("basic-toggle--selected")
     })
 })
-
+//event listener for order
 const orderButton = document.getElementById("order")
 orderButton.addEventListener("click", () =>{
     const isDesc = orderButton.classList.contains('basic-toggle--selected');
-    orderButton.textContent = isDesc ? 'Descending' : 'Ascending'
+    if (isDesc){
+        orderButton.textContent = 'Descending'
+        searchMap.set('order', 'desc')
+    }
+    else{
+        orderButton.textContent = 'Ascending'
+        searchMap.set('order', 'asc')
+    }
+    console.log(searchMap.get('order'))
 })
 
-//event listiners for search
-const searchSubmit = document.getElementById("search-trigger")
+const ignoreCompleted = document.getElementById("ignore-completed")
+ignoreCompleted.addEventListener("click", () =>{
+    const willIgnore = ignoreCompleted.classList.contains('basic-toggle--selected');
+
+    willIgnore ? searchMap.set("completed", true) : searchMap.set("completed", false)
+    console.log(searchMap.get('completed'))
+})
+
+//event listeners for search
 const searchInput = document.getElementById("search")
+const submitButton = document.getElementById("submit")
 searchInput.addEventListener("input", e =>{
     const input = e.target.value
     searchMap.set('query', input)
     console.log(searchMap.get("query"))
 })
-searchSubmit.addEventListener("submit", () =>{
-    const query = searchInput.value.lower.trim
+searchInput.addEventListener("keypress", function(event){
+    if (event.key === 'Enter'){
+        handleSubmit()
+    }
+})
+submitButton.addEventListener("click", handleSubmit)
+
+//event listeners for sort
+document.querySelectorAll(".toggle-button").forEach(togBut=>{
+    togBut.addEventListener("click", () => {
+        sortBy = togBut.textContent.trim().toLowerCase().replace(' ', '_')
+        
+        if (sortBy == 'alphabet') {sortBy = 'a-z'}
+
+        searchMap.set('sort_by', sortBy)
+
+        console.log(searchMap.get('sort_by'))
+    })
 })

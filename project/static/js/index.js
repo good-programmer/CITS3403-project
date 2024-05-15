@@ -1,16 +1,17 @@
 const postTemplate = document.querySelector("[post-template]")
 const postContainer = document.querySelector("[data-post-container]")
 
+loadTemplates('/recent')
+
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
     
         togBut.classList.toggle("toggle-button--selected")
 
-        clearTemplates()
-
         sortBy = togBut.textContent.trim().toLowerCase()
         if(['recent','hot','popular'].includes(sortBy)){
-            loadTemplates(sortBy)
+            clearTemplates()
+            loadTemplates('/' + sortBy)
         }
 
         document.querySelectorAll(".toggle-button").forEach(otherBut => {
@@ -19,7 +20,6 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
             }
         })
     })
-    loadTemplates('recent')
 })
 
 function clearTemplates() {
@@ -30,7 +30,7 @@ function clearTemplates() {
 
 function loadTemplates(trend){
 
-    fetch('/puzzle/find/' + trend)
+    fetch('/puzzle/find' + trend)
     .then(response => response.json())
     .then(data => {
         data.puzzles.forEach(puz => {
