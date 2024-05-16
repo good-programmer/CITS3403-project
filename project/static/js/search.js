@@ -10,21 +10,23 @@ let currentURL = ''
 
 defaultMap.set('query', '');
 defaultMap.set('rating', '0-5');
-defaultMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
+defaultMap.set('after', '0000-01-01')
+defaultMap.set('to', '9999-01-01')
 defaultMap.set('completed', 'any');
 defaultMap.set('play_count', '0-999999');
 defaultMap.set('sort_by', 'date');
 defaultMap.set('order', 'desc');
 
 storedMap.set('rating', '0-5');
-storedMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
+storedMap.set('after', '0000-01-01')
+storedMap.set('to', '9999-01-01')
 storedMap.set('play_count', '0-999999');
 
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
 let currentParams = new URLSearchParams(window.location.search);
-const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'sort_by', 'order']
+const keyNameList = ['query', 'rating', 'after', 'to', 'completed', 'play_count', 'sort_by', 'order']
 for (const keyName of keyNameList){
     if (currentParams.get(keyName) === null) {
         setDefault(keyName)
@@ -117,13 +119,28 @@ function toggleRowLabel (isOn, browseClass){
         label.style['display'] = isOn ? 'block' : 'none'
     })
 }
+function handleDate(isOn){
+    if (!isOn){
+        storedMap.set('after', searchMap.get('after'))
+        storedMap.set('to', searchMap.get('to'))
+        setDefault('after')
+        setDefault('to')
+    }
+    else{
+        searchMap.set('after', storedMap.get('after'))
+        searchMap.set('to', storedMap.get('to'))
+    }
+}
 document.querySelectorAll(".row-label").forEach(rowLabel=>{
     rowLabel.addEventListener("click", () => {
         rowLabel.classList.toggle("row-label--selected")
         const isOn = rowLabel.classList.contains('row-label--selected');
         const keyName = rowLabel.textContent.replace(" ","_")
-
-        if (!isOn){
+        
+        if (keyName == 'date'){
+            handleDate(isOn)
+        }
+        else if (!isOn){
             storedMap.set(keyName, searchMap.get(keyName))
             setDefault(keyName)
         }
@@ -133,7 +150,13 @@ document.querySelectorAll(".row-label").forEach(rowLabel=>{
 
         const className = '.' + keyName
         toggleRowLabel(isOn, className)
-        console.log(searchMap.get(keyName))
+        if (keyName == 'date'){
+            console.log(searchMap.get('after'))
+            console.log(searchMap.get('to'))
+        }
+        else{
+            console.log(searchMap.get(keyName))
+        }
     })
 })
 
@@ -144,6 +167,10 @@ pageSizeMenu.addEventListener("change", function(){
     updatePageForSize()
 })
 
+//event listerners for page number
+const pageNumDisplay = document.getElementById("page-select")
+const leftArrow = document.getElementById("left-arrow")
+const rightArrow = document.getElementById("right-arrow")
 //event listeners for playcount
 document.querySelectorAll(".play_count").forEach(numInput=>{
     numInput.addEventListener('input', function(){
@@ -178,7 +205,6 @@ maxPlaycount.addEventListener('blur', function(){
     searchMap.set('play_count', newValue)
     console.log(searchMap.get('play_count'))
 })
-
 //event listeners for date
 function formatDate(date) {
     const year = date.getFullYear().toString().padStart(4,'0');
@@ -199,8 +225,10 @@ minDate.addEventListener('input', function() {
         maxDate.valueAsDate = minDateVal;
     }
 
-    searchMap.set('date', { after: formatDate(minDateVal), to: formatDate(maxDateVal) })
-    console.log(searchMap.get('date'))
+    searchMap.set('after', formatDate(minDateVal))
+    searchMap.set('to', formatDate(maxDateVal))
+    console.log(searchMap.get('after'))
+    console.log(searchMap.get('to'))
 });
 maxDate.addEventListener('input', function() {
     const minDateVal = new Date(minDate.value);
@@ -212,8 +240,11 @@ maxDate.addEventListener('input', function() {
     if (maxDateVal < minDateVal) {
         minDate.valueAsDate = maxDateVal;
     }
-    searchMap.set('date', { after: formatDate(minDateVal), to: formatDate(maxDateVal) })
-    console.log(searchMap.get('date'))
+
+    searchMap.set('after', formatDate(minDateVal))
+    searchMap.set('to', formatDate(maxDateVal))
+    console.log(searchMap.get('after'))
+    console.log(searchMap.get('to'))
 });
 
 //event listers for basic-toggle
