@@ -14,7 +14,7 @@ window.addEventListener('load', function() {
     contentInput = document.getElementById("puzzle");
     titleFace = document.getElementById("puzzle-name-input");
     contentFace = document.getElementById("content-box");
-    submitInput = document.getElementById("submit-search");
+    submitInput = document.getElementById("submit");
     submitFace = document.getElementById("create-puzzle-btn");
 
     submitFace.addEventListener('click', function() {

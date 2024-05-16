@@ -237,7 +237,7 @@ ignoreCompleted.addEventListener("click", () =>{
 
 //event listeners for search
 const searchInput = document.getElementById("search")
-const submitButton = document.getElementById("submit")
+const submitButton = document.getElementById("submit-search")
 searchInput.addEventListener("input", e =>{
     const input = e.target.value
     searchMap.set('query', input)

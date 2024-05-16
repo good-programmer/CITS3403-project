@@ -614,16 +614,17 @@ pre {
     width: max(20vw,300px);
     height: auto;
     pointer-events: none;
-    font-size: min(min(3.5vw,3.5vh),16px)
+    font-size: min(min(3.5vw,3.5vh),16px);
+    padding: 20px;
 }
 
-#instructions[data-display=true] {
+#instructions[data-display="true"] {
     opacity: 100%;
     z-index: 1000;
     position: relative
 }
 
-#instructions[data-display=true]::after {
+#instructions[data-display="true"]::after {
     position: absolute;
     content: "";
     top: 0;
@@ -668,7 +669,7 @@ pre {
     --one-fourth: calc(max(25vw, 400px))
 }
 
-.error-message {
+#login-inner .error-message {
     display: flex;
     justify-content: center;
     align-items: center
@@ -1227,11 +1228,6 @@ a:hover {
     text-align: left;
     caret-color: rgba(225,225,125,.75);
     margin-left: 45px
-}
-
-#instructions {
-    padding: 20px;
-    display: none
 }
 
 .wordTile {

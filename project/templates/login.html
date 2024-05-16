@@ -36,12 +36,14 @@
       <p id="create-account" class="hint"><a href="{{url_for(route.register)}}">Create account</a></p>
     </div>
   </form>
-  {% with messages = get_flashed_messages() %}
-  {% if messages %}
-  <div class="error-message one-eighth">
-        {{ messages[0] }}
-    </div>
-  {% endif %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="error-message" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
   {% endwith %}
 </div>
 {% endblock %}
