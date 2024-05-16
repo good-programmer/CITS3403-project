@@ -15,10 +15,10 @@
       <div class="container-fluid">
         <ul id="nav-links" class="navbar-nav mr-auto">
           <li class="nav-link"><a href="{{ url_for(route.index) }}">Home</a></li>
+          <li class="nav-link"><a href="{{ url_for(route.about_us) }}">About the Creators</a></li>
           {% if current_user.is_anonymous %}
           <li class="nav-link"><a href="{{ url_for(route.login) }}">Login</a></li>
           <li class="nav-link"><a href="{{ url_for(route.register) }}">Register</a></li>
-          <li class="nav-link"><a href="{{ url_for(route.about_us) }}">About the Creators</a></li>
           {% else %}
           <li class="nav-link"><a href="{{ url_for(route.puzzle.random)}}">Random</a></li>
           <li class="nav-link"><a href="{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></li>
