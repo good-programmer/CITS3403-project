@@ -29,10 +29,13 @@ function clearTemplates() {
 }
 
 function loadTemplates(trend){
-
+    postContainer.dataset.empty = false;
+    postContainer.dataset.loading = true;
     fetch('/puzzle/find' + trend)
     .then(response => response.json())
     .then(data => {
+        postContainer.dataset.loading = false;
+        postContainer.dataset.empty = (data.puzzles.length === 0);
         data.puzzles.forEach(puz => {
             const post = postTemplate.content.cloneNode(true)
 
