@@ -716,8 +716,9 @@ input[type=checkbox] {
     user-select: none;
     color: orange;
     width: fit-content;
-    height: 50px;
-    padding: 0
+    height: 30px;
+    padding: 0;
+    margin-bottom: 0px;
 }
 
 #rate-slider:hover {
@@ -914,7 +915,7 @@ h1 {
     margin-top: 1rem
 }
 
-#rate-text {
+#rate-section > #rate-text {
     margin-bottom: 0
 }
 

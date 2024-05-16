@@ -14,13 +14,15 @@
       <p>date_created: {{puzzle['dateCreated'][:10]}}</p>
       <p>average_rating: {{puzzle['average_rating']|round(2)}} ({{puzzle['rating_count']}})</p>
       <p class="no-indent">}</p>
-      <a href="{{url_for(route.puzzle.play, puzzleid=puzzle['id'])}}"><button class="Screen MatrixTextGreen" id="play-button" {% if puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
+      <a href="{{url_for(route.puzzle.play, puzzleid=puzzle['id'])}}"><button class="Screen MatrixTextGreen" id="play-button" {% if not current_user.is_authenticated or puzzle['score'] %}disabled{% endif %}>[PLAY THIS PUZZLE]</button></a><br>
+      <div id="rate-section" {% if not current_user.is_authenticated %}style="display: none"{% endif %}>
         <p class="no-indent" id="rate-text">rate_puzzle {</p>
-        <div id="rate-slider">
-          <p class="Screen MatrixTextYellow" id="rate-back">☆☆☆☆☆</p>
-          <p class="Screen MatrixTextYellow" id="rate-current">★★★★★</p>
-        </div>
+          <div id="rate-slider">
+            <p class="Screen MatrixTextYellow" id="rate-back">☆☆☆☆☆</p>
+            <p class="Screen MatrixTextYellow" id="rate-current">★★★★★</p>
+          </div>
         <p class="no-indent">}</p>
+      </div>
     </div>
   </div>
 
@@ -28,7 +30,7 @@
     <h1 id="leaderboard-title">leaderboard:</h1>
     <div class="buttons-container">
       <button class="toggle-button" type="button">All</button>
-      <button class="toggle-button" type="button">Following</button>
+      {% if current_user.is_authenticated %}<button class="toggle-button" type="button">Following</button>{% endif %}
     </div>
     <div class="leaderboard-body">
       <div id="main-leaderboard" class="leaderboard post-list" style="display: flex;">

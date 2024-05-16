@@ -9,6 +9,8 @@ document.querySelectorAll(".toggle-button").forEach(togBut => {
 
         togBut.classList.add("toggle-button--selected")
 
+        if (!following) return;
+        
         if (togBut.textContent.trim().toLowerCase() == "all") {
             main.style.display = "flex";
             following.style.display = "none";

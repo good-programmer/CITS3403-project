@@ -101,22 +101,22 @@ class GetRequestCase(unittest.TestCase):
         popular = [p.title for p in popular]
 
         #recent case
-        response = self.assertCode(self.client.get(url_for(route.puzzle.search, trend='recent', page=1)),200)
+        response = self.assertCode(self.client.get(url_for(route.puzzle.find, trend='recent', page=1)),200)
         data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, recent)
 
         #hot case
-        response = self.assertCode(self.client.get(url_for(route.puzzle.search, trend='hot', page=1)),200)
+        response = self.assertCode(self.client.get(url_for(route.puzzle.find, trend='hot', page=1)),200)
         data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, hot)
 
         #popular case
-        response = self.assertCode(self.client.get(url_for(route.puzzle.search, trend='popular', page=1)),200)
+        response = self.assertCode(self.client.get(url_for(route.puzzle.find, trend='popular', page=1)),200)
         data = [i['title'] for i in json.loads(response.data)['puzzles']]
         self.assertListEqual(data, popular)
 
         #404 case
-        self.assertCode(self.client.get(url_for(route.puzzle.search, trend='notvalid', page=1)),404)
+        self.assertCode(self.client.get(url_for(route.puzzle.find, trend='notvalid', page=1)),404)
     
     def test_puzzle_search(self):
         '''Tests that a list of puzzles (and their information) can be retrieved given a list of queries, filters, and sorts
@@ -128,7 +128,7 @@ class GetRequestCase(unittest.TestCase):
         \n-puzzle title
         '''
         def puzzle_get(**kwargs): #auxiliary function to make a GET request to /puzzle/search with parameters
-            return self.client.get(url_for(route.puzzle.search, page_size=1000, page=1, **kwargs))
+            return self.client.get(url_for(route.puzzle.find, page_size=1000, page=1, **kwargs))
         
         def parse_puzzle_search_response(response): #auxiliary function to parse the GET requests
             self.assertEqual(response.status_code, 200)
