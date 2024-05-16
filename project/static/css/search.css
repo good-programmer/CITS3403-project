@@ -31,7 +31,9 @@
 .rating,
 .play_count,
 .date,
-.basic-toggle{
+.basic-toggle,
+.arrow-button,
+#page-select{
     width: 15rem;
     margin-right: 0.5rem;
     padding: 0.5rem 1rem;
@@ -40,9 +42,20 @@
     color: rgba(125,225,125,0.75);
     background-color: #1a0600;
 }
+
+#page-select{
+    width: 3rem;
+    margin-left: 0.5rem;
+}
+
+.arrow-button{
+    width: 1rem;
+    margin-left: 0.5rem;
+}
+
 .row-label:not(.row-label--selected):hover,
-.basic-toggle:not(.basic-toggle--selected):hover
-{
+.basic-toggle:not(.basic-toggle--selected):hover,
+.arrow-button:hover{
     background-color: #293102;
 }
 .row-label--selected,
@@ -90,4 +103,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 input[type="date"]::-webkit-calendar-picker-indicator:hover {
     opacity: 1;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number]{
+    -moz-appearance: textfield;
+}
+
+.page-change-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1rem;
 }
