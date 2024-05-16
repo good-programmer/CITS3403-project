@@ -1,7 +1,110 @@
-{%extends 'base.html'}
+{%extends 'base.html'%}
 
 {% block content%}
 
-    <p>You searched for</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>word-amble</title>
+
+    <link rel = "stylesheet" href = "../static/css/index.css">
+    <link rel = "stylesheet" href = "../static/css/search.css">
+    <script src = "../static/js/index.js" defer></script>
+    <script src = "../static/js/search.js" defer></script>
+</head>
+<body>
+
+    <div class="panel-container">
+        <div class="buttons-container">
+            <input type="text" id="search" placeholder="Search"/>
+            <button id="submit">Submit</button>
+        </div>
+        <div class="buttons-container">
+            <p class="button-label">Sort By</p>
+            <button class="toggle-button toggle-button--selected" type="button">Date</button>
+            <button class="toggle-button" type="button">Play count</button>
+            <button class="toggle-button" type="button">Highscore</button>
+            <button class="toggle-button" type="button">Rating</button>
+            <button class="toggle-button" type="button">Alphabet</button>
+        </div>
+        <div class="buttons-container">
+            <p class="button-label">Order by:</p>
+            <button class="basic-toggle basic-toggle--selected" id="order" type="button">Descending</button>
+        </div>
+        <div class="buttons-container">
+            <button class="row-label">rating</button>
+            <button class="row-label">play count</button>
+            <button class="row-label">date</button>
+            <button class="cycle-label" id="ignore-completed" type="button">Ignore completed</button>
+        </div>
+        <div class="buttons-container">
+            <label for="min-rating" class="rating-label"> Browse by rating from</label>
+            <select class = "rating" id="min-rating">
+                <option value="0">Minimum Rating:</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+
+            <label for="max-rating" class="rating-label">to</label>
+            <select class = "rating" id="max-rating">
+                <option value="5">Maximum Rating:</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="buttons-container">
+            <label for="min-playcount" class="play_count-label">Browse by playcount from</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="number" class="play_count" id="min-playcount" placeholder="Minimum playcount:" value="0"/>
+            </form>
+            <label for="max-playcount" class="play_count-label">to</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="number" class="play_count" id="max-playcount" placeholder="Maximum playcount:" value="999999"/>
+            </form>
+        </div>
+        <div class="buttons-container">
+            <label for="min-date" class="date-label">Browse by date from</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="date" id="min-date" class="date">
+            </form>
+            <label for="max-date" class="date-label">to</label>
+            <form onkeydown="return event.key != 'Enter';">
+                <input type="date" id="max-date" class="date">
+            </form>
+        </div>
+        <div class="post-container" data-post-container>
+            <template post-template>
+                <div class="post">
+                    <div class="puzzle-row">
+                        <a class="puzzle-title" href="" data-puz-title></a>
+                        <a class="puzzle-id" href="" data-puz-id></a>
+                    </div>
+                    <div class="author-row">
+                        <a class="author-name" href="" data-author-name></a>
+                        <a class="author-id" href="" data-author-id></a>
+                        <div class="date-created" data-date-created></div> 
+                    </div>
+                    <div class="stats-row">
+                        <div class="play-count" data-playcount></div>
+                        <div class="avg-rating" data-avg-rating></div>
+                        <div class="highscore" data-highscore></div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+</body>
+</html>
 
 {% endblock %}

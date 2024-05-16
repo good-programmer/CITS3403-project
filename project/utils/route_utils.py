@@ -12,9 +12,10 @@ puzzle = Group(
     info = 'game.page_puzzle_info',
     play = 'game.page_play_puzzle',
     create='game.page_create_puzzle',
+    search='game.page_create_search',
     get='game.api_get_puzzle',
     rate='game.api_rate_puzzle',
-    search = 'game.api_search_puzzle',
+    find = 'game.api_search_puzzle',
     solve = 'game.api_solve_puzzle',
     random = 'game.page_random_puzzle'
 )

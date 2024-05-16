@@ -157,7 +157,11 @@ def api_rate_puzzle(puzzleid):
     abort(404)
 
 @game.route('/puzzle/search', methods=['GET'])
-@game.route('/puzzle/search/<string:trend>', methods=['GET'])
+def page_create_search():
+    return render_template('search.html', route=route)
+
+@game.route('/puzzle/find', methods=['GET'])
+@game.route('/puzzle/find/<string:trend>', methods=['GET'])
 def api_search_puzzle(trend=None):
     '''Endpoint for puzzle search API (either by trend or by specific parameters)'''
     page_size = request.args.get('page_size', '10')

@@ -1,15 +1,18 @@
 const postTemplate = document.querySelector("[post-template]")
 const postContainer = document.querySelector("[data-post-container]")
 
+if (window.location.pathname === '/'){loadTemplates('/recent');}
+
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
     
         togBut.classList.toggle("toggle-button--selected")
 
-        clearTemplates()
-
-        trend = togBut.textContent.trim().toLowerCase()
-        loadTemplates(trend)
+        sortBy = togBut.textContent.trim().toLowerCase()
+        if(['recent','hot','popular'].includes(sortBy)){
+            clearTemplates()
+            loadTemplates('/' + sortBy)
+        }
 
         document.querySelectorAll(".toggle-button").forEach(otherBut => {
             if (otherBut !== togBut) {
@@ -17,7 +20,6 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
             }
         })
     })
-    loadTemplates('recent')
 })
 
 function clearTemplates() {
@@ -28,7 +30,7 @@ function clearTemplates() {
 
 function loadTemplates(trend){
 
-    fetch('/puzzle/search/' + trend)
+    fetch('/puzzle/find' + trend)
     .then(response => response.json())
     .then(data => {
         data.puzzles.forEach(puz => {
