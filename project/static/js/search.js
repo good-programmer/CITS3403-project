@@ -10,6 +10,7 @@ defaultMap.set('completed', 'any');
 defaultMap.set('play_count', '0-999999');
 defaultMap.set('sort_by', 'date');
 defaultMap.set('order', 'desc');
+defaultMap.set('following', 'false');
 
 storedMap.set('rating', '0-5');
 storedMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
@@ -19,7 +20,7 @@ function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
 
-const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'sort_by', 'order']
+const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'following', 'sort_by', 'order']
 
 function handleSubmit(){
     var urlInjection ='?'
@@ -228,6 +229,19 @@ ignoreCompleted.addEventListener("click", () =>{
     searchMap.set('completed', currentCompletedState);
 })
 
+//event listener for following
+const followButton = document.getElementById("filter-following");
+followButton.addEventListener("click", () =>{
+    const follow = followButton.classList.contains('basic-toggle--selected');
+    if (follow){
+        console.log('set to true');
+        searchMap.set('following', 'true')
+    }
+    else{
+        searchMap.set('following', 'false')
+    }
+})
+
 //event listeners for search
 const searchInput = document.getElementById("search")
 const submitButton = document.getElementById("submit-search")
@@ -267,7 +281,7 @@ window.addEventListener('popstate', function () {
 updateSearchWithParams();
 
 //event listeners for sort
-document.querySelectorAll(".toggle-button").forEach(togBut=>{
+document.querySelectorAll("#sort-filter-container .toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
         sortBy = togBut.textContent.trim().toLowerCase().replace(' ', '_')
         

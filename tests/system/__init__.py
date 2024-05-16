@@ -149,12 +149,13 @@ class WebDriverCase(unittest.TestCase):
         self.assertIn("Log in to follow", driver.page_source)
         self.assertRaises(NoSuchElementException, driver.find_element, By.CSS_SELECTOR, "#follow-button")
         #basic info
-        self.assertIn(user.name, driver.page_source)
-        self.assertIn(f"total_completed_puzzles: {len(user.scores)}", driver.page_source)
-        self.assertIn(f"total_ratings: {len(user.ratings)}", driver.page_source)
-        self.assertIn(f"total_created puzzles: {len(user.puzzles)}", driver.page_source)
-        self.assertIn(f"following: {len(user.following)}", driver.page_source)
-        self.assertIn(f"followers: {len(user.followers)}", driver.page_source)
+        page_text = driver.find_element(By.CSS_SELECTOR, "body").text
+        self.assertIn(user.name, page_text)
+        self.assertIn(f"total_completed_puzzles: {len(user.scores)}", page_text)
+        self.assertIn(f"total_ratings: {len(user.ratings)}", page_text)
+        self.assertIn(f"total_created puzzles: {len(user.puzzles)}", page_text)
+        self.assertIn(f"following: {len(user.following)}", page_text)
+        self.assertIn(f"followers: {len(user.followers)}", page_text)
         #list lengths match number of puzzles/scores/ratings
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#created-list > .post-body")), len(user.puzzles))
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#completed-list > .post-body")), len(user.scores))
@@ -184,12 +185,13 @@ class WebDriverCase(unittest.TestCase):
         driver.get(localhost + url_for(route.puzzle.info, puzzleid=1))
         
         #basic info
+        page_text = driver.find_element(By.CSS_SELECTOR, "body").text
         self.assertIn(puzzle.title, driver.page_source)
-        self.assertIn(puzzle.creator.name, driver.page_source)
-        self.assertIn(f"plays: {len(puzzle.scores)}", driver.page_source)
-        self.assertIn(f"highest_score: {puzzle.highest_score}", driver.page_source)
-        self.assertIn(f"date_created: {str(puzzle.dateCreated)[:10]}", driver.page_source)
-        self.assertIn(f"average_rating: {round(puzzle.average_rating, 2)}", driver.page_source)
+        self.assertIn(puzzle.creator.name, page_text)
+        self.assertIn(f"plays: {len(puzzle.scores)}", page_text)
+        self.assertIn(f"highest_score: {puzzle.highest_score}", page_text)
+        self.assertIn(f"date_created: {str(puzzle.dateCreated)[:10]}", page_text)
+        self.assertIn(f"average_rating: {round(puzzle.average_rating, 2)}", page_text)
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#main-leaderboard > .post-body")), len(puzzle.scores))
 
         #disabled/invisible elements when not logged in

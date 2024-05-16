@@ -181,8 +181,8 @@ def api_search_puzzle(trend=None):
         if not data:
             abort(404)
     else:
-        query, rating, date, completed, play_count, sort_by, order = parse_search_parameters(request)
-        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, sort_by=sort_by, order=order)
+        query, rating, date, completed, play_count, following, sort_by, order = parse_search_parameters(request)
+        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, following=following, sort_by=sort_by, order=order)
     
     page = data.paginate(page=page, per_page=page_size, error_out=True)
     data = [puzzle_utils.pack_puzzle(p) for p in page.items]
@@ -217,6 +217,12 @@ def parse_search_parameters(request):
     else:
         completed = None
 
+    following = request.args.get('following', False)
+    if following and current_user.is_authenticated:
+        following = (current_user, True if following.lower() == 'true' else False)
+    else:
+        following = False
+
     play_count = setdefaults(request.args.get('play_count', '0').split('-'), ['0', '999999'])
     play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
 
@@ -228,7 +234,7 @@ def parse_search_parameters(request):
     if order not in ['desc', 'asc']:
         order = 'desc'
     
-    return query, rating, date, completed, play_count, sort_by, order
+    return query, rating, date, completed, play_count, following, sort_by, order
 
 def standardize(s:str):
     '''Turn a search query into a regex for database search'''

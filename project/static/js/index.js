@@ -6,7 +6,7 @@ if (window.location.pathname === '/'){loadTemplates('/recent');}
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
     
-        togBut.classList.toggle("toggle-button--selected")
+        togBut.classList.toggle("toggle-button--selected", true);
 
         sortBy = togBut.textContent.trim().toLowerCase()
         if(['recent','hot','popular'].includes(sortBy)){
