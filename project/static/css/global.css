@@ -44,6 +44,24 @@
     }
 }
 
+@keyframes InfiniteFlickerEffect {
+    0%,4% {
+        opacity: 100%
+    }
+
+    1% {
+        opacity: 40%
+    }
+
+    2% {
+        opacity: 100%
+    }
+
+    3% {
+        opacity: 40%
+    }
+}
+
 @keyframes CRTShift {
     0%,50% {
         background-size: 4px 4px
@@ -97,7 +115,10 @@
 :root {
     --matrix-primary: rgb(0, 188, 0);
     --matrix-secondary: rgb(238, 214, 62);
-    --matrix-tertiary: rgba(125, 225, 125, .75)
+    --matrix-tertiary: rgba(125, 225, 125, .75);
+    --matrix-number: rgba(220, 220, 220, 1);
+    --matrix-puzzle: rgb(0, 180, 3);
+    --matrix-user: rgb(166, 255, 162);
 }
 
 a,body {
@@ -118,6 +139,23 @@ body {
     text-shadow: 0 0 4px;
     animation: FlickerEffect .15s step-end normal;
     animation-iteration-count: 2
+}
+
+.matrix-number {
+    color: var(--matrix-number);
+    text-shadow: 0 0 2px var(--matrix-number);
+}
+
+.matrix-puzzle {
+    color: var(--matrix-puzzle);
+}
+
+.matrix-user {
+    color: var(--matrix-user);
+}
+
+.matrix-secondary {
+    color: var(--matrix-secondary);
 }
 
 #title-container>pre {
@@ -402,6 +440,8 @@ a {
 }
 
 .play-count:before {
+    color: var(--matrix-primary);
+    animation: none;
     content: "Total Plays: "
 }
 
@@ -411,10 +451,14 @@ a {
 }
 
 .avg-rating:before {
+    color: var(--matrix-primary);
+    animation: none;
     content: "Average rating: "
 }
 
 .highscore:before {
+    color: var(--matrix-primary);
+    animation: none;
     content: "Highscore: "
 }
 
@@ -691,7 +735,8 @@ pre {
     height: 90vh;
     overflow-y: scroll;
     overflow-x: hidden;
-    left: 0
+    left: 0;
+    scrollbar-color: var(--matrix-primary) rgba(0,0,0,0.1);/*var(--matrix-secondary), color-mix(in srgb, var(--matrix-secondary) 70%, black);*/
 }
 
 input[type=checkbox] {
@@ -701,11 +746,66 @@ input[type=checkbox] {
 
 .post-body {
     border: 2px solid #fff;
-    padding: 30px
+    padding: 30px;
 }
+
+#profile-list-container {
+    overflow-x:hidden;
+    width: calc(100% - 15px);
+    padding-bottom: 100px;
+}
+
+#created-list, #completed-list, #rated-list {
+    width: 80%;
+    margin-left: 5%;
+    border: 1px solid var(--matrix-tertiary);
+    padding: 0;
+}
+
+#created-list[data-empty="true"]::after, #completed-list[data-empty="true"]::after, #rated-list[data-empty="true"]::after {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    content: '<no data found>';
+    width: 100%;
+    height: 100%;
+}
+
+#created-list .post-body, #completed-list .post-body, #rated-list .post-body {
+    width: 100%;
+    margin-left: 0%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 
 #following-leaderboard {
     display: none
+}
+
+#leaderboard-container {
+    width: 80%;
+    margin: auto;
+    height: 72%;
+}
+
+#leaderboard-title {
+    font-size: 25px;
+}
+
+#leaderboard-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+}
+
+#switch-leaderboard {
+    position: relative;
+    right: 0%;
 }
 
 #rate-slider {
@@ -869,7 +969,8 @@ h1 {
 #puzzle-info {
     margin: auto auto 5%;
     background: radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px)0 0/3px 3px,radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px) 1px 1px/3px 3px,radial-gradient(rgba(55,70,55,.2) .5px,transparent .5px) 2px 2px/3px 3px;
-    background-color: #000
+    background-color: #000;
+    height: 72%;
 }
 
 #puzzle-info * {
@@ -966,15 +1067,39 @@ h1 {
 }
 
 .leaderboard-body {
+    position: relative;
     display: flex;
     align-items: center;
-    flex-direction: column
+    flex-direction: column;
+    height: 100%;
+}
+
+.leaderboard-body[data-empty="true"]::after {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    content: '<no scores set>';
+    width: 100%;
+    height: 100%;
 }
 
 #following-leaderboard,#main-leaderboard {
     display: flex;
     flex-direction: column;
-    width: 100%
+    width: 100%;
+    border: 1px solid var(--matrix-tertiary);
+    border-radius: 1px;
+}
+
+#following-leaderboard .post-body, #main-leaderboard .post-body {
+    margin: 0;
+    width: auto;
+    height: 40px;
+    text-wrap: nowrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 h2 {

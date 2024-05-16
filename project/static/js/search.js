@@ -18,15 +18,8 @@ storedMap.set('play_count', '0-999999');
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
-let currentParams = new URLSearchParams(window.location.search);
+
 const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'sort_by', 'order']
-for (const keyName of keyNameList){
-    if (currentParams.get(keyName) === null) {
-        setDefault(keyName)
-    } else {
-        searchMap.set(keyName, currentParams.get(keyName));
-    }
-}
 
 function handleSubmit(){
     var urlInjection ='?'
@@ -250,11 +243,28 @@ searchInput.addEventListener("keypress", function(event){
 })
 submitButton.addEventListener("click", handleSubmit)
 
-if (currentParams.size > 0){
-    handleSubmit();
-} else {
-    loadTemplates('/recent');
+function updateSearchWithParams() {
+    let currentParams = new URLSearchParams(window.location.search);
+    for (const keyName of keyNameList){
+        if (currentParams.get(keyName) === null) {
+            setDefault(keyName)
+        } else {
+            searchMap.set(keyName, currentParams.get(keyName));
+        }
+    }
+    if (currentParams.size > 0){
+        handleSubmit();
+    } else {
+        loadTemplates('/recent');
+    }
 }
+
+window.addEventListener('popstate', function () {
+    console.log('history changed');
+    updateSearchWithParams();
+})
+
+updateSearchWithParams();
 
 //event listeners for sort
 document.querySelectorAll(".toggle-button").forEach(togBut=>{

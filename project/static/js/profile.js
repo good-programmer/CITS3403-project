@@ -36,8 +36,8 @@ function createPostBody(puzzle) {
     let userUrl = '/user/'+puzzle['creatorID'] + '/profile';
     let el = document.createElement('div');
     el.className = 'post-body';
-    el.innerHTML = `<a href=${puzzleUrl}><b>${puzzle['title']}</b></a><br>
-                    <a href=${userUrl}>${puzzle['creator']}</a><br>`
+    el.innerHTML = `<a href=${puzzleUrl}><b class="matrix-puzzle">${puzzle['title']}</b></a><br>
+                    <a href=${userUrl} class="matrix-user">${puzzle['creator']}</a><br>`
     return el
 }
 
@@ -57,11 +57,13 @@ function sortCreated(order, lst) {
     for (puzzle of list) {
         let el = createPostBody(puzzle);
         el.innerHTML = el.innerHTML + 
-                        `Total plays: ${puzzle['play_count']}<br>
-                        Average rating: ${puzzle['average_rating'].toFixed(2)}<br>
-                        Highest score: ${puzzle['highscore']}`;
+                        `Total plays: <span class="matrix-number">${puzzle['play_count']}</span><br>
+                        Average rating: <span class="matrix-number">${puzzle['average_rating'].toFixed(2)}</span><br>
+                        Highest score: <span class="matrix-number">${puzzle['highscore']}</span>`;
         createdList.appendChild(el);
     }
+
+    if (list.length == 0) {createdList.dataset.empty = true;}
 }
 
 function sortCompleted(order, lst) {
@@ -80,11 +82,13 @@ function sortCompleted(order, lst) {
     for (puzzle of list) {
         let el = createPostBody(puzzle);
         el.innerHTML = el.innerHTML + 
-                        `Total plays: ${puzzle['play_count']}<br>
-                        Score: ${puzzle['score']}<br>
-                        Date completed: ${puzzle['dateSubmitted'].slice(0,10)}`;
+                        `Total plays: <span class="matrix-number">${puzzle['play_count']}</span><br>
+                        Score: <span class="matrix-number">${puzzle['score']}</span><br>
+                        Date completed: <span class="matrix-number">${puzzle['dateSubmitted'].slice(0,10)}</span>`;
         completedList.appendChild(el);
     }
+
+    if (list.length == 0) {completedList.dataset.empty = true;}
 }
 
 function sortRated(order, lst) {
@@ -103,11 +107,13 @@ function sortRated(order, lst) {
     for (puzzle of list) {
         let el = createPostBody(puzzle);
         el.innerHTML = el.innerHTML + 
-                        `Total plays: ${puzzle['play_count']}<br>
-                        Rating: ${puzzle['rating'].toFixed(1)}<br>
-                        Date rated: ${puzzle['dateRated'].slice(0,10)}`;
+                        `Total plays: <span class="matrix-number">${puzzle['play_count']}</span><br>
+                        Rating: <span class="matrix-number">${puzzle['rating'].toFixed(1)}</span><br>
+                        Date rated: <span class="matrix-number">${puzzle['dateRated'].slice(0,10)}</span>`;
         ratedList.appendChild(el);
     }
+
+    if (list.length == 0) {ratedList.dataset.empty = true;}
 }
 
 async function postFollow() {
