@@ -30,6 +30,11 @@ def page_play_puzzle(puzzleid):
 def page_random_puzzle():
     completed = [s.puzzleID for s in current_user.scores]
     total = Puzzle.query.count()
+    
+    if total == 0:
+        flash("There are no puzzles available at the moment. Please create your own", "warning")
+        return redirect(url_for(route.puzzle.create))
+    
     r = random.randint(1, total)
     while r in completed:
         r = random.randint(1, total)
