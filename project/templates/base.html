@@ -6,7 +6,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
     <script defer src="{{ url_for('static', filename='js/navbar.js') }}"></script>
-    <title>{% block title %} {% endblock %}</title>
+    {% if title %}
+      <title>{{title}}</title>
+    {%else%}
+      <title>word-amble</title>
+    {%endif%}
   </head>
   <body>
     <div id="crt-effect"></div>

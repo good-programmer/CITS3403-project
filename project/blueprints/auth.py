@@ -109,7 +109,7 @@ def page_user_profile(userid):
     user = user_utils.get_user(id=userid)
     if not user:
         abort(404)
-    return render_template('profile.html', route=route, current_user=current_user, user=user_utils.pack_user(user), following=(current_user.is_following(user) if current_user.is_authenticated else True))
+    return render_template('profile.html', route=route, title=f'profile — {user.name}', current_user=current_user, user=user_utils.pack_user(user), following=(current_user.is_following(user) if current_user.is_authenticated else True))
 
 @auth.route('/user/current/profile', methods=["GET"])
 @auth.route('/user/profile', methods=["GET"])

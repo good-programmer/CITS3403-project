@@ -23,7 +23,7 @@ def page_play_puzzle(puzzleid):
         #print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
-        return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
+        return render_template('wordGame.html', title=f'puzzle — {puzzle.title}', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
 
 @game.route('/puzzle/random', methods=['GET'])
 @login_required
@@ -103,8 +103,8 @@ def page_create_puzzle():
             return redirect(url_for(route.puzzle.info, puzzleid=puzzle.id))
         for error in errors:
             flash(error, 'error')
-        return render_template('submitpuzzle.html', route=route, form=form)
-    return render_template('submitpuzzle.html', route=route, form=form)
+        return render_template('submitpuzzle.html', title='word-amble — create', route=route, form=form)
+    return render_template('submitpuzzle.html', title='word-amble — create', route=route, form=form)
     
 @game.route('/puzzle/<int:puzzleid>', methods=['GET'])
 def api_get_puzzle(puzzleid):
@@ -140,7 +140,7 @@ def page_puzzle_info(puzzleid):
             s = puzzle.get_record(current_user)
             data['score'] = {"score": s.score, "dateSubmitted": str(s.dateSubmitted)}
         following = [f.userID for f in current_user.following] + [current_user.id]
-    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data, following=following)
+    return render_template('puzzleinfo.html', title=f'puzzle — {puzzle.title}', route=route, current_user=current_user, puzzle=data, following=following)
 
 @game.route('/puzzle/<int:puzzleid>/rate', methods=['POST'])
 def api_rate_puzzle(puzzleid):
@@ -163,7 +163,7 @@ def api_rate_puzzle(puzzleid):
 
 @game.route('/puzzle/search', methods=['GET'])
 def page_create_search():
-    return render_template('search.html', route=route)
+    return render_template('search.html', title='word-amble — search', route=route)
 
 @game.route('/puzzle/find', methods=['GET'])
 @game.route('/puzzle/find/<string:trend>', methods=['GET'])
