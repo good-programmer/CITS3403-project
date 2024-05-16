@@ -112,13 +112,13 @@ class WebDriverCase(unittest.TestCase):
 
         #not logged in, should only display Home|Login|Register
         driver.get(localhost + url_for(route.user.profile, userid=1))
-        links = [a.text for a in driver.find_elements(By.CSS_SELECTOR, ".header > a")]
+        links = [a.text for a in driver.find_elements(By.CSS_SELECTOR, ".navbar a")]
         self.assertListEqual(['Home', 'Login', 'Register'], links)
 
         #logged in, should display Home|Random|Submit Puzzle|Profile|Logout
         self.emulate_login("$GENERATED_USER_0", "123")
         driver.get(localhost + url_for(route.user.profile, userid=1))
-        links = [a.text for a in driver.find_elements(By.CSS_SELECTOR, ".header > a")]
+        links = [a.text for a in driver.find_elements(By.CSS_SELECTOR, ".navbar a")]
         self.assertListEqual(['Home', 'Random', 'Submit Puzzle', 'Profile', 'Logout'], links)
 
 
@@ -222,23 +222,25 @@ class WebDriverCase(unittest.TestCase):
         driver.get(localhost + url_for(route.puzzle.create))
 
         #invalid content length
+        driver.find_element(By.CSS_SELECTOR, "#puzzle-name-input").click()
         driver.find_element(By.CSS_SELECTOR, "#puzzlename").send_keys("test")
+        driver.find_element(By.CSS_SELECTOR, "#content-box").click()
         driver.find_element(By.CSS_SELECTOR, "#puzzle").send_keys("abcd")
-        driver.find_element(By.CSS_SELECTOR, '#submit').click()
+        driver.find_element(By.CSS_SELECTOR, '#create-puzzle-btn').click()
         self.assertIsNone(puzzle_utils.get_puzzle(title="test"))
 
         #invalid chars
-        driver.find_element(By.CSS_SELECTOR, "#puzzle").clear()
+        driver.find_element(By.CSS_SELECTOR, "#content-box").click()
         driver.find_element(By.CSS_SELECTOR, "#puzzle").send_keys("@#FS329fa5")
-        driver.find_element(By.CSS_SELECTOR, '#submit').click()
+        driver.find_element(By.CSS_SELECTOR, '#create-puzzle-btn').click()
         self.assertIsNone(puzzle_utils.get_puzzle(title="test"))
         
         #valid content
-        driver.find_element(By.CSS_SELECTOR, "#puzzle").clear()
-        driver.find_element(By.CSS_SELECTOR, "#puzzle").send_keys("abcdefghij")
-        driver.find_element(By.CSS_SELECTOR, '#submit').click()
+        driver.find_element(By.CSS_SELECTOR, "#content-box").click()
+        driver.find_element(By.CSS_SELECTOR, "#puzzle").send_keys("abcdef")
+        driver.find_element(By.CSS_SELECTOR, '#create-puzzle-btn').click()
         WebDriverWait(driver, 2).until(expected_conditions.url_changes(localhost + url_for(route.puzzle.create)))
-        self.assertEqual(driver.current_url, localhost + url_for(route.index))
+        self.assertEqual(driver.current_url, localhost + url_for(route.puzzle.info, puzzleid=41))
         self.assertIsNotNone(puzzle_utils.get_puzzle(title="test"))
 
     def test_game(self):

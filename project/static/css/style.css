@@ -129,7 +129,7 @@ input[type="checkbox"] {
     right: 0px;
 }
 
-
+/*
 .profile-board {
     position: absolute;
     right: 0;
@@ -141,7 +141,7 @@ input[type="checkbox"] {
     column-gap: 30px;
     grid-template-columns: repeat(3, 1fr);
 }
-
+*/
 .post-list {
     background-color: rgba(0,0,0,0);
     width: 100%;
@@ -154,26 +154,28 @@ input[type="checkbox"] {
 }
 
 .post-body {
-    width: 100%;
+    width: 80%;
     height: 100px;
     background-color: darkcyan;
     border: 2px solid white;
     padding: 30px;
     margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #following-leaderboard {
     display: none;
 }
 
-#switch-leaderboard-button {
+/*#switch-leaderboard-button {
     top: calc(10% - 30px);
     width: 80px;
     height: 20px;
     position:absolute;
     margin-left: calc(40% - 80px);
     left: 30%;
-}
+}*/
 
 #rate-slider {
     position: relative;
@@ -214,4 +216,28 @@ input[type="checkbox"] {
 
 .disabled {
     pointer-events: none;
+}
+
+.no-indent {
+    margin-left: 0px !important;
+}
+
+.Screen {
+    animation: ScreenEffect 0.3s ease infinite;
+}
+
+@keyframes ScreenEffect {
+    0% { opacity: 0.92 }
+    50% { opacity: 1 }
+    100% { opacity: 0.95}
+}
+
+.MatrixTextYellow {
+    color: rgba(225,225,125,0.75);
+    text-shadow: 0 0 5px rgba(225,225,125,0.5), 0 0 15px rgba(225,250,125,1);
+}
+
+.MatrixTextGreen {
+    color: rgba(125,225,125,0.75);
+    text-shadow: 0 0 5px rgba(125,225,125,0.5), 0 0 15px rgba(125,250,125,1);
 }

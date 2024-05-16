@@ -1,7 +1,7 @@
 const postTemplate = document.querySelector("[post-template]")
 const postContainer = document.querySelector("[data-post-container]")
 
-loadTemplates('/recent')
+if (window.location.pathname === '/'){loadTemplates('/recent');}
 
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
@@ -42,7 +42,7 @@ function loadTemplates(trend){
 
             const puzID = post.querySelector("[data-puz-id]")
             puzID.textContent = puz.id
-            puzID.href = '/puzzle/'+String(puz.id)+'/play'
+            puzID.href = '/puzzle/'+String(puz.id)+'/info'
 
             const authName = post.querySelector("[data-author-name]")
             authName.textContent = puz.creator

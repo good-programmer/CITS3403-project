@@ -11,7 +11,7 @@ let currentURL = ''
 defaultMap.set('query', '');
 defaultMap.set('rating', '0-5');
 defaultMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
-defaultMap.set('completed', 'false');
+defaultMap.set('completed', 'any');
 defaultMap.set('play_count', '0-999999');
 defaultMap.set('sort_by', 'date');
 defaultMap.set('order', 'desc');
@@ -23,10 +23,14 @@ storedMap.set('play_count', '0-999999');
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
-
+let currentParams = new URLSearchParams(window.location.search);
 const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'sort_by', 'order']
 for (const keyName of keyNameList){
-    setDefault(keyName)
+    if (currentParams.get(keyName) === null) {
+        setDefault(keyName)
+    } else {
+        searchMap.set(keyName, currentParams.get(keyName));
+    }
 }
 
 function handleSubmit(){
@@ -233,12 +237,23 @@ orderButton.addEventListener("click", () =>{
     console.log(searchMap.get('order'))
 })
 
+let currentCompletedState = 'any';
 const ignoreCompleted = document.getElementById("ignore-completed")
 ignoreCompleted.addEventListener("click", () =>{
-    const willIgnore = ignoreCompleted.classList.contains('basic-toggle--selected');
-
-    willIgnore ? searchMap.set("completed", true) : searchMap.set("completed", false)
-    console.log(searchMap.get('completed'))
+    if (currentCompletedState === 'any') {
+        ignoreCompleted.classList.add("basic-toggle--selected");
+        currentCompletedState = 'false';
+    } else {
+        if (currentCompletedState === 'false') {
+            currentCompletedState = 'true';
+            ignoreCompleted.textContent = 'Show completed';
+        } else {
+            currentCompletedState = 'any';
+            ignoreCompleted.textContent = 'Ignore completed';
+            ignoreCompleted.classList.remove("basic-toggle--selected");
+        }
+    }
+    searchMap.set('completed', currentCompletedState);
 })
 
 //event listeners for search
@@ -255,6 +270,12 @@ searchInput.addEventListener("keypress", function(event){
     }
 })
 submitButton.addEventListener("click", handleSubmit)
+
+if (currentParams.size > 0){
+    handleSubmit();
+} else {
+    loadTemplates('/recent');
+}
 
 //event listeners for sort
 document.querySelectorAll(".toggle-button").forEach(togBut=>{

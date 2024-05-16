@@ -126,10 +126,10 @@ async function postFollow() {
     if (response.status === 200) {
         if (follow.dataset.targetaction === 'follow') {
             follow.dataset.targetaction = 'unfollow';
-            follow.textContent = 'Unfollow';
+            follow.textContent = '[UNFOLLOW]';
         } else {
             follow.dataset.targetaction = 'follow';
-            follow.textContent = 'Follow';
+            follow.textContent = '[FOLLOW]';
         }
     }
     debounce=false;
