@@ -2,19 +2,6 @@
     outline:none;
 }
 
-#submit{
-    width: 5rem;
-    margin-right: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 1rem;
-    border: solid 1px rgba(125,225,125,0.75);
-    color: rgba(125,225,125,0.75);
-    background-color: #1a0600;
-}
-#submit:hover{
-    background-color: #293102;
-}
-
 #search{
     width: 40%;
     margin-right: 0.5rem;
@@ -33,8 +20,7 @@
 .date,
 .basic-toggle,
 .cycle-label,
-.arrow-button,
-#page-select{
+#submit{
     width: 15rem;
     margin-right: 0.5rem;
     padding: 0.5rem 1rem;
@@ -44,19 +30,14 @@
     background-color: #1a0600;
 }
 
-#page-select{
-    width: 3rem;
-    margin-left: 0.5rem;
-}
-
-.arrow-button{
-    width: 1rem;
-    margin-left: 0.5rem;
+#submit{
+    width: 6rem;
 }
 
 .row-label:not(.row-label--selected):hover,
 .basic-toggle:not(.basic-toggle--selected):hover,
-.arrow-button:hover{
+.arrow-button:hover,
+#submit:hover{
     background-color: #293102;
 }
 .row-label--selected,
@@ -119,4 +100,16 @@ input[type=number]{
     flex-direction: row;
     justify-content: center;
     margin-top: 1rem;
+}
+
+#page-num-container{
+    display: flex;
+    flex-direction: row;
+}
+.page-number-button,
+.arrow-button{
+    padding: 0.5rem 1rem;
+    border: solid 1px rgba(125,225,125,0.75);
+    color: rgba(125,225,125,0.75);
+    background-color: #1a0600;
 }

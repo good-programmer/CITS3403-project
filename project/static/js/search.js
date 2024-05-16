@@ -4,7 +4,8 @@ const defaultMap = new Map()
 const storedMap = new Map()
 
 let pageSize = 10
-let page = 1
+let currentPage = 1
+let totalPages = 1
 
 let currentURL = ''
 
@@ -22,10 +23,21 @@ storedMap.set('after', '0000-01-01')
 storedMap.set('to', '9999-01-01')
 storedMap.set('play_count', '0-999999');
 
+window.addEventListener("load", () =>{
+    clearTemplates()
+    loadTemplates(window.location.search)
+    updatePageNumDisplay()
+})
+window.addEventListener("popstate", ()=>{
+    clearTemplates()
+    loadTemplates(window.location.search)
+    updatePageNumDisplay()
+})
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
 let currentParams = new URLSearchParams(window.location.search);
+
 const keyNameList = ['query', 'rating', 'after', 'to', 'completed', 'play_count', 'sort_by', 'order']
 for (const keyName of keyNameList){
     if (currentParams.get(keyName) === null) {
@@ -36,24 +48,25 @@ for (const keyName of keyNameList){
 }
 
 function handleSubmit(){
-    var urlInjection ='?' + 'page_size=' + pageSize
-    var storedParameters = ''
-        for (const keyName of keyNameList){
-            if (searchMap.get(keyName)==defaultMap.get(keyName)) {
-                continue
-            }
-            storedParameters += '&' + keyName + '=' + searchMap.get(keyName)
+    let urlInjection ='?page=1&page_size=' + pageSize
+    let storedParameters = ''
+    for (const keyName of keyNameList){
+        if (searchMap.get(keyName)==defaultMap.get(keyName)) {
+            continue
         }
-        clearTemplates()
-        loadTemplates(urlInjection + storedParameters)
-        currentURL = storedParameters
-        window.history.pushState({}, null, urlInjection + storedParameters)
+        storedParameters += '&' + keyName + '=' + searchMap.get(keyName)
+    }
+    clearTemplates()
+    loadTemplates(urlInjection + storedParameters)
+    currentURL = storedParameters
+    window.history.pushState({}, null, urlInjection + storedParameters)
 }
 
 function updatePageForSize(){
-    var urlInjection ='?' + 'page_size=' + pageSize
+    let urlInjection ='?page=1&page_size=' + pageSize
     clearTemplates()
     loadTemplates(urlInjection + currentURL)
+    updatePageNumDisplay()
     window.history.pushState({}, null, urlInjection + currentURL)
 }
 
@@ -302,12 +315,6 @@ searchInput.addEventListener("keypress", function(event){
 })
 submitButton.addEventListener("click", handleSubmit)
 
-if (currentParams.size > 0){
-    handleSubmit();
-} else {
-    loadTemplates('/recent');
-}
-
 //event listeners for sort
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
@@ -320,3 +327,33 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
         console.log(searchMap.get('sort_by'))
     })
 })
+function changePage(newPage){
+    currentPage = newPage
+    let urlInjection ='?page=' + currentPage + '&page_size=' + pageSize
+    clearTemplates()
+    currentURL = urlInjection + storedParameters
+    loadTemplates(currentURL)
+    window.history.pushState({}, null, currentURL)
+
+}
+
+//page number event listeners
+function getTotalPages(){
+    fetch('/puzzle/find?page_size=' + pageSize + currentParams)
+    .then(response => response.json())
+    .then(data => {
+        totalPages = data.pages
+    })
+}
+
+const pageNumContainer = document.getElementById("page-num-container")
+const pageNumTemplate = document.querySelector("[page-num-template]")
+function updatePageNumDisplay(){
+    getTotalPages()
+    for (let i = 1; i <= parseInt(totalPages); i++){
+        const pageNumButtonTemp = pageNumTemplate.content.cloneNode(true)
+        const pageNumButton = pageNumButtonTemp.querySelector("[pnButton]")
+        pageNumButton.textContent = i
+        pageNumContainer.appendChild(pageNumButton)
+    }
+}

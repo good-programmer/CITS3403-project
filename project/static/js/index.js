@@ -1,7 +1,9 @@
 const postTemplate = document.querySelector("[post-template]")
 const postContainer = document.querySelector("[data-post-container]")
 
-if (window.location.pathname === '/'){loadTemplates('/recent');}
+if (window.location.pathname === '/'){
+    loadTemplates('/recent')
+}
 
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
@@ -68,5 +70,4 @@ function loadTemplates(trend){
         });
     })
     .catch(error => console.error('Error fetching data:', error));
-
 }

@@ -112,7 +112,11 @@
         </div>
         <div class="page-change-container">
             <button class="arrow-button" id="left-arrow">&lt;</button>
-            <input type="number" id="page-select" value="1"/>
+            <div id="page-num-container">
+                <template page-num-template>
+                    <button class="page-number-button" pnButton></button>
+                </template>
+            </div>
             <button class="arrow-button" id="right-arrow">&gt;</button>
         </div>
     </div>
