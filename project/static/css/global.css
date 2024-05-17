@@ -1,4 +1,12 @@
 @import url(https://fonts.googleapis.com/css?family=VT323);
+/*
+SOURCES:
+    `background` in `.container`, `#user-info`, `#puzzle-info` is based on:
+        https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css
+    `.MatrixText<colour>` is a modified version of:
+        https://codepen.io/freelesio/pen/MWQaGPb
+*/
+
 
 @keyframes QuickBlink {
     0%,30%,50% {

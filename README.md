@@ -100,3 +100,5 @@ Update your current database:
 - Google and Peter Hull  for the [VT323](https://fonts.google.com/specimen/VT323) font.
 - [Flask](https://flask.palletsprojects.com/en/3.0.x/) and its related packages for the web framework.
 - [Selenium](https://www.selenium.dev/documentation/webdriver/) for system testing.
+- Stackoverflow user [Temani Afif](https://stackoverflow.com/users/8620333/temani-afif) for their [CRT/Scanline .css background](https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css)
+- Codepen.io user [freelesio](https://codepen.io/freelesio) for their [Matrix Hacker Text Effect](https://codepen.io/freelesio/pen/MWQaGPb), which was modified for use in this project
