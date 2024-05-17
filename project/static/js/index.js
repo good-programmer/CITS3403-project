@@ -6,6 +6,7 @@ const nextButton = document.getElementById("right-arrow")
 const prevButton = document.getElementById("left-arrow")
 let totalPages = 1;
 let currentPage = 1
+let sortBy = 'recent'
 
 if (window.location.pathname === '/'){
     loadTemplates('/recent')
@@ -19,7 +20,9 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
         sortBy = togBut.textContent.trim().toLowerCase()
         if(['recent','hot','popular'].includes(sortBy)){
             clearTemplates()
-            loadTemplates('/' + sortBy)
+            const newURL = '/' + sortBy + '?page=1'
+            loadTemplates(newURL)
+            window.history.pushState({}, null, newURL)
         }
 
         document.querySelectorAll(".toggle-button").forEach(otherBut => {
@@ -107,7 +110,7 @@ function updatePageNumDisplay(){
         }
         if ((currentPage + 4)>=totalPages){
             rightShowing = totalPages - currentPage
-            leftShowing = totalShowing - rightShowing
+            leftShowing = totalShowing - 1 - rightShowing
         }
         if ((i > (currentPage + rightShowing)) || (i < (currentPage - leftShowing))){
             pageNumButton.disabled = true
@@ -121,9 +124,9 @@ function updatePageNumDisplay(){
 function goToPage(page) {
     currentPage = page;
     clearTemplates()
-    const newURL = '?page=' + page + currentURL
+    const newURL = '/' + sortBy + '?page=' + currentPage
     loadTemplates(newURL);
-    window.history.pushState({}, null, '?page=' + page + currentURL)
+    window.history.pushState({}, null, newURL)
 }
 
 function nextPage() {

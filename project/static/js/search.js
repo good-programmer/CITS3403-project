@@ -24,17 +24,12 @@ storedMap.set('after', '0000-01-01')
 storedMap.set('to', '9999-01-01')
 storedMap.set('play_count', '0-999999');
 
-window.addEventListener("load", () =>{
-    clearTemplates()
-    loadTemplates(window.location.search)
-})
-
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
 
 
-const keyNameList = ['query', 'rating', 'after', 'to', 'completed', 'play_count', 'following', 'sort_by', 'order']
+const keyNameList = ['page', 'page_size', 'query', 'rating', 'after', 'to', 'completed', 'play_count', 'following', 'sort_by', 'order']
 
 function handleSubmit(){
     let urlInjection ='?'
@@ -46,12 +41,18 @@ function handleSubmit(){
     }
     clearTemplates()
     window.history.pushState({}, null, urlInjection)
-    loadTemplates(urlInjection + storedParameters)
+    loadTemplates(urlInjection)
 }
 
 function updatePageForSize(){
     searchMap.set('page', '1')
-    searchMap.set('page_size', pageSize.toString)
+    searchMap.set('page_size', pageSize)
+    handleSubmit()
+}
+
+goToPage = function (page) {
+    currentPage = page
+    searchMap.set('page', currentPage)
     handleSubmit()
 }
 

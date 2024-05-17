@@ -393,6 +393,34 @@ a {
     margin-top: 1rem;
     overflow: hidden
 }
+.page-change-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+#page-num-container{
+    display: flex;
+    flex-direction: row;
+}
+.page-number-button,
+.arrow-button{
+    padding: 0.5rem 1rem;
+    border: solid 1px var(--matrix-tertiary);
+    color: var(--matrix-tertiary);
+    background-color: #1a0600;
+}
+
+.current-page{
+    background-color: var(--matrix-tertiary);
+    color: #1a0600;
+    border: solid 1px var(--matrix-tertiary);
+}
+.page-number-button:disabled,
+.arrow-button:disabled{
+    display:none;
+}
 
 .puzzle-row {
     display: flex;
@@ -968,7 +996,7 @@ input[type=checkbox] {
     margin-bottom: 0
 }
 
-.rating {
+.rating,.dropdown {
     display: none;
     width: 15rem;
     margin-right: .5rem;
@@ -978,8 +1006,11 @@ input[type=checkbox] {
     color: var(--matrix-tertiary);
     background-color: #1a0600
 }
+.dropdown{
+    display: block;
+}
 
-.rating option:first-child {
+.rating option:first-child,.dropdown option:first-child {
     display: none
 }
 
