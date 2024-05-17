@@ -1,9 +1,18 @@
 $(document).ready(function(){
 
-    //Function to slide down the instructions information
-    let instr = document.querySelector("#instructions");
+    //Function to toggle the instructions visibility
+    let instructionsContainer = $("#instructions-container");
+    let instructions = $("#instructions");
     $("#showInstructions").click(function(){
-        instr.dataset.display = instr.dataset.display === "false";
+        let currentDisplay = instructions.attr("data-display");
+        if (currentDisplay === "true") {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        } else {
+            instructions.slideDown();
+            instructions.attr("data-display", "true");
+            instructionsContainer.css("display", "block");
+        }
     });
 });
 
