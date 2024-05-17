@@ -1032,7 +1032,7 @@ h1 {
     margin: auto auto 5%;
     background: radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px)0 0/3px 3px,radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px) 1px 1px/3px 3px,radial-gradient(rgba(55,70,55,.2) .5px,transparent .5px) 2px 2px/3px 3px;
     background-color: #000;
-    height: 72%;
+    height: auto;
 }
 
 #puzzle-info * {
@@ -1234,7 +1234,7 @@ h2 {
     margin-left: 5%
 }
 
-#follow-button:hover,a.hlink:hover {
+#follow-button:hover,.post-body a.hlink:hover {
     color: #000!important;
     background-color: var(--matrix-tertiary)!important
 }

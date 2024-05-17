@@ -32,14 +32,35 @@ async function getUserData() {
 }
 
 function createPostBody(puzzle) {
-    let puzzleUrl = '/puzzle/'+puzzle['id'] + '/info';
-    let userUrl = '/user/'+puzzle['creatorID'] + '/profile';
+    let puzzleUrl = '/puzzle/' + puzzle['id'] + '/info';
+    let userUrl = '/user/' + puzzle['creatorID'] + '/profile';
     let el = document.createElement('div');
     el.className = 'post-body';
-    el.innerHTML = `<a href=${puzzleUrl}><b class="matrix-puzzle">${puzzle['title']}</b></a><br>
-                    <a href=${userUrl} class="matrix-user">${puzzle['creator']}</a><br>`
-    return el
+
+    let puzzleLink = document.createElement('a');
+    puzzleLink.href = puzzleUrl;
+    puzzleLink.innerHTML = `<b>${puzzle['title']}</b>`;
+    puzzleLink.className = 'matrix-puzzle';
+    puzzleLink.onmouseover = function() {
+        this.classList.add('matrix-puzzle');
+    };
+    puzzleLink.onmouseout = function() {
+        this.classList.remove('matrix-puzzle');
+    };
+
+    let creatorLink = document.createElement('a');
+    creatorLink.href = userUrl;
+    creatorLink.className = 'matrix-user';
+    creatorLink.innerHTML = puzzle['creator'];
+
+    el.appendChild(puzzleLink);
+    el.appendChild(document.createElement('br'));
+    el.appendChild(creatorLink);
+    el.appendChild(document.createElement('br'));
+
+    return el;
 }
+
 
 function sortCreated(order, lst) {
     let list = [...lst];
