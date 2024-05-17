@@ -20,18 +20,18 @@
 </div>
 
 <nav id="page-navbar" class="navbar">
-    <ul class = "nav-item-list">
-        <li class = "nav-item"><a href = {{url_for(route.puzzle.random)}}>Random Puzzle</a></li>
-            <li class = "nav-item"><a href = {{url_for(route.puzzle.search)}}>Search</a></li>
+    <div class = "nav-item-list">
+        <div class = "nav-item"><a href = {{url_for(route.puzzle.random)}}>Random Puzzle</a></div>
+            <div class = "nav-item"><a href = {{url_for(route.puzzle.search)}}>Search</a></div>
         {%if  not current_user.is_authenticated%}
-            <li class = "nav-item"></li><a href = "{{ url_for(route.login) }}">Login</a></li>
-            <li class = "nav-item"><a href = "{{ url_for(route.register) }}">Register</a></li>
+            <div class = "nav-item"></div><a href = "{{ url_for(route.login) }}">Login</a></div>
+            <div class = "nav-item"><a href = "{{ url_for(route.register) }}">Register</a></div>
         {%else%}
-            <li class = "nav-item"></li><a href = "{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></li>
-            <li class = "nav-item"></li><a href = "{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></li>
-            <li class = "nav-item"><a href = "{{ url_for(route.logout) }}">Logout</a></li>
+            <div class = "nav-item"></div><a href = "{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></div>
+            <div class = "nav-item"></div><a href = "{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></div>
+            <div class = "nav-item"><a href = "{{ url_for(route.logout) }}">Logout</a></div>
         {%endif%}
-    </ul>
+    </div>
 </nav>
 
 <div class="panel-container">
@@ -41,7 +41,7 @@
         <button class="toggle-button toggle-button--selected" type="button">Recent</button>
     </div>
     <div class="post-container" data-post-container>
-        <template post-template>
+        <template class="post-template">
             <div class="post">
                 <div class="puzzle-row">
                     <a class="puzzle-title" href="" data-puz-title></a>

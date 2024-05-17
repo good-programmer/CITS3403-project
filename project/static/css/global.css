@@ -279,7 +279,7 @@ body {
     background-image: linear-gradient(to bottom,#282828 2px,transparent 1px)
 }
 
-#nav-location[hovered=true]::after,#scanlines,#scanlines::after {
+#nav-location[data-hovered=true]::after,#scanlines,#scanlines::after {
     content: "";
     user-select: none;
     pointer-events: none
@@ -305,7 +305,7 @@ body {
     position: relative
 }
 
-#nav-location[hovered=true]::after {
+#nav-location[data-hovered=true]::after {
     position: absolute;
     top: 0;
     right: -10%;
@@ -555,7 +555,7 @@ pre {
     cursor: pointer
 }
 
-[selected=true] {
+[data-selected=true] {
     outline: 2px solid var(--matrix-primary)
 }
 
@@ -603,12 +603,12 @@ pre {
     font-weight: bolder
 }
 
-#puzzle-name-input[selected=true]::after {
+#puzzle-name-input[data-selected=true]::after {
     content: "|";
     animation: blink 1s step-end infinite
 }
 
-#puzzle-name-input[empty=true][selected=false]::before {
+#puzzle-name-input[data-empty=true][data-selected=false]::before {
     content: "<Puzzle title>"
 }
 

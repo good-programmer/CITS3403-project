@@ -15,19 +15,18 @@
 
 <div id="login">
   <form class="primary" name="login-form" method="POST" action="{{ url_for(route.login) }}">
-    {{ form.csrf_token }}
     <div id="login-inner">
       <h1 class="header">Login</h1>
       {{ form.hidden_tag() }}
-      <label for="username">Username </label>
+      <label for="username-input">Username </label>
       {{ form.username(class="form-control matrix-number", id="username-input") }}
 
-      <label for="password">Password </label>
+      <label for="password-input">Password </label>
       {{ form.password(class="form-control matrix-number", id="password-input") }}
 
       <div id="remember-me">
-        {{ form.remember_me(class="form-check-input") }}
-        <label for="remember" class="form-check-label">Remember me</label>
+        {{ form.remember_me(class="form-check-input", id="remember-me-input") }}
+        <label for="remember-me-input" class="form-check-label">Remember me</label>
       </div>
       
       <br>

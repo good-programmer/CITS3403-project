@@ -29,6 +29,13 @@ window.onload = async function() {
 
     let response = await fetch("/puzzle/" + puzzleid);
     let puzzleInfo = await response.json();
+
+    let playButton = document.getElementById("play-button");
+
+    if (!playButton.getAttribute('disabled')) {
+        playButton.addEventListener('click', function() {window.location.href = playButton.dataset.href;})
+    }
+
     let storedRating = 'rated' in puzzleInfo ? puzzleInfo['rated']['rating'] : 0
     let rateSlider = document.getElementById('rate-slider');
     let x = rateSlider.getBoundingClientRect().left

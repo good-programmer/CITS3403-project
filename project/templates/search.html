@@ -1,18 +1,9 @@
 {%extends 'base.html'%}
 
 {% block content%}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>word-amble</title>
-
+<body>
     <script src = "../static/js/index.js" defer></script>
     <script src = "../static/js/search.js" defer></script>
-</head>
-<body>
     <div class="panel-container">
         <div id="search-filter-container">
             <div class="buttons-container" id="search-container">
@@ -83,7 +74,7 @@
             </div>
         </div>
         <div class="post-container" id="search-results" data-post-container>
-            <template post-template>
+            <template class="post-template">
                 <div class="post">
                     <div class="puzzle-row">
                         <a class="puzzle-title" href="" data-puz-title></a>

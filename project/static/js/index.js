@@ -1,4 +1,4 @@
-const postTemplate = document.querySelector("[post-template]")
+const postTemplate = document.querySelector(".post-template")
 const postContainer = document.querySelector("[data-post-container]")
 
 if (window.location.pathname === '/'){loadTemplates('/recent');}
