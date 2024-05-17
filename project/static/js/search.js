@@ -7,6 +7,8 @@ let pageSize = 10
 
 let currentURL = ''
 
+defaultMap.set('page', '1');
+defaultMap.set('page_size', '10')
 defaultMap.set('query', '');
 defaultMap.set('rating', '0-5');
 defaultMap.set('after', '0000-01-01')
@@ -15,6 +17,7 @@ defaultMap.set('completed', 'any');
 defaultMap.set('play_count', '0-999999');
 defaultMap.set('sort_by', 'date');
 defaultMap.set('order', 'desc');
+defaultMap.set('following', 'false');
 
 storedMap.set('rating', '0-5');
 storedMap.set('after', '0000-01-01')
@@ -25,45 +28,31 @@ window.addEventListener("load", () =>{
     clearTemplates()
     loadTemplates(window.location.search)
 })
-window.addEventListener("popstate", ()=>{
-    clearTemplates()
-    loadTemplates(window.location.search)
-})
 
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
-let currentParams = new URLSearchParams(window.location.search);
 
-const keyNameList = ['query', 'rating', 'after', 'to', 'completed', 'play_count', 'sort_by', 'order']
-for (const keyName of keyNameList){
-    if (currentParams.get(keyName) === null) {
-        setDefault(keyName)
-    } else {
-        searchMap.set(keyName, currentParams.get(keyName));
-    }
-}
+
+const keyNameList = ['query', 'rating', 'after', 'to', 'completed', 'play_count', 'following', 'sort_by', 'order']
 
 function handleSubmit(){
-    let urlInjection ='?page=1&page_size=' + pageSize
-    let storedParameters = ''
+    let urlInjection ='?'
     for (const keyName of keyNameList){
         if (searchMap.get(keyName)==defaultMap.get(keyName)) {
             continue
         }
-        storedParameters += '&' + keyName + '=' + searchMap.get(keyName)
+        urlInjection += '&' + keyName + '=' + searchMap.get(keyName)
     }
     clearTemplates()
-    window.history.pushState({}, null, urlInjection + storedParameters)
+    window.history.pushState({}, null, urlInjection)
     loadTemplates(urlInjection + storedParameters)
-    currentURL = storedParameters
 }
 
 function updatePageForSize(){
-    let urlInjection ='?page=1&page_size=' + pageSize
-    clearTemplates()
-    loadTemplates(urlInjection + currentURL)
-    window.history.pushState({}, null, urlInjection + currentURL)
+    searchMap.set('page', '1')
+    searchMap.set('page_size', pageSize.toString)
+    handleSubmit()
 }
 
 //event listeners for rating
@@ -296,9 +285,22 @@ ignoreCompleted.addEventListener("click", () =>{
     searchMap.set('completed', currentCompletedState);
 })
 
+//event listener for following
+const followButton = document.getElementById("filter-following");
+followButton.addEventListener("click", () =>{
+    const follow = followButton.classList.contains('basic-toggle--selected');
+    if (follow){
+        console.log('set to true');
+        searchMap.set('following', 'true')
+    }
+    else{
+        searchMap.set('following', 'false')
+    }
+})
+
 //event listeners for search
 const searchInput = document.getElementById("search")
-const submitButton = document.getElementById("submit")
+const submitButton = document.getElementById("submit-search")
 searchInput.addEventListener("input", e =>{
     const input = e.target.value
     searchMap.set('query', input)
@@ -311,8 +313,31 @@ searchInput.addEventListener("keypress", function(event){
 })
 submitButton.addEventListener("click", handleSubmit)
 
+function updateSearchWithParams() {
+    let currentParams = new URLSearchParams(window.location.search);
+    for (const keyName of keyNameList){
+        if (currentParams.get(keyName) === null) {
+            setDefault(keyName)
+        } else {
+            searchMap.set(keyName, currentParams.get(keyName));
+        }
+    }
+    if (currentParams.size > 0){
+        handleSubmit();
+    } else {
+        loadTemplates('/recent');
+    }
+}
+
+window.addEventListener('popstate', function () {
+    console.log('history changed');
+    updateSearchWithParams();
+})
+
+updateSearchWithParams();
+
 //event listeners for sort
-document.querySelectorAll(".toggle-button").forEach(togBut=>{
+document.querySelectorAll("#sort-filter-container .toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
         sortBy = togBut.textContent.trim().toLowerCase().replace(' ', '_')
         
@@ -325,10 +350,7 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
 })
 function changePage(newPage){
     currentPage = newPage
-    let urlInjection ='?page=' + currentPage + '&page_size=' + pageSize
-    clearTemplates()
-    currentURL = urlInjection + storedParameters
-    loadTemplates(currentURL)
-    window.history.pushState({}, null, currentURL)
+    searchMap.set('page', currentPage)
+    handleSubmit()
 }
 

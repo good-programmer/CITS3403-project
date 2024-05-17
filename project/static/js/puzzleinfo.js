@@ -9,6 +9,8 @@ document.querySelectorAll(".toggle-button").forEach(togBut => {
 
         togBut.classList.add("toggle-button--selected")
 
+        if (!following) return;
+        
         if (togBut.textContent.trim().toLowerCase() == "all") {
             main.style.display = "flex";
             following.style.display = "none";
@@ -27,6 +29,13 @@ window.onload = async function() {
 
     let response = await fetch("/puzzle/" + puzzleid);
     let puzzleInfo = await response.json();
+
+    let playButton = document.getElementById("play-button");
+
+    if (!playButton.getAttribute('disabled')) {
+        playButton.addEventListener('click', function() {window.location.href = playButton.dataset.href;})
+    }
+
     let storedRating = 'rated' in puzzleInfo ? puzzleInfo['rated']['rating'] : 0
     let rateSlider = document.getElementById('rate-slider');
     let x = rateSlider.getBoundingClientRect().left

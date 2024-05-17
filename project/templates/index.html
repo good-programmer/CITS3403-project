@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block title %} word-amble {% endblock %}
 {% block content %}
-<link rel = "stylesheet" href = "../static/css/index.css">
 <script src = "../static/js/index.js" defer></script>
 <div id = "title-container">
     <pre>
@@ -20,19 +19,19 @@
     </pre>
 </div>
 
-<nav class="navbar">
-    <ul class = "nav-item-list">
-        <li class = "nav-item"><a href = {{url_for(route.puzzle.play, puzzleid=1)}}>Random Puzzle</a></li>
-        <li class = "nav-item"></li><a href = "{{ url_for(route.puzzle.search) }}">Search</a></li>
+<nav id="page-navbar" class="navbar">
+    <div class = "nav-item-list">
+        <div class = "nav-item"><a href = {{url_for(route.puzzle.random)}}>Random Puzzle</a></div>
+            <div class = "nav-item"><a href = {{url_for(route.puzzle.search)}}>Search</a></div>
         {%if  not current_user.is_authenticated%}
-            <li class = "nav-item"></li><a href = "{{ url_for(route.login) }}">Login</a></li>
-            <li class = "nav-item"><a href = "{{ url_for(route.register) }}">Register</a></li>
+            <div class = "nav-item"></div><a href = "{{ url_for(route.login) }}">Login</a></div>
+            <div class = "nav-item"><a href = "{{ url_for(route.register) }}">Register</a></div>
         {%else%}
-            <li class = "nav-item"></li><a href = "{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></li>
-            <li class = "nav-item"></li><a href = "{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></li>
-            <li class = "nav-item"><a href = "{{ url_for(route.logout) }}">Logout</a></li>
+            <div class = "nav-item"></div><a href = "{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></div>
+            <div class = "nav-item"></div><a href = "{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></div>
+            <div class = "nav-item"><a href = "{{ url_for(route.logout) }}">Logout</a></div>
         {%endif%}
-    </ul>
+    </div>
 </nav>
 
 <div class="panel-container">
@@ -42,7 +41,7 @@
         <button class="toggle-button toggle-button--selected" type="button">Recent</button>
     </div>
     <div class="post-container" data-post-container>
-        <template post-template>
+        <template class="post-template">
             <div class="post">
                 <div class="puzzle-row">
                     <a class="puzzle-title" href="" data-puz-title></a>
@@ -54,9 +53,9 @@
                     <div class="date-created" data-date-created></div> 
                 </div>
                 <div class="stats-row">
-                    <div class="play-count" data-playcount></div>
-                    <div class="avg-rating" data-avg-rating></div>
-                    <div class="highscore" data-highscore></div>
+                    <div class="play-count matrix-number" data-playcount></div>
+                    <div class="avg-rating matrix-number" data-avg-rating></div>
+                    <div class="highscore matrix-number" data-highscore></div>
                 </div>
             </div>
         </template>

@@ -80,11 +80,11 @@ class PuzzleUtilCase(unittest.TestCase):
         puzzle = add_puzzle("test", user, "abcdefghij")
 
         #test a puzzle can be retrieved given filters
-        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,99999], sort_by="date", order="desc").first()
+        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,99999], following=False, sort_by="date", order="desc").first()
         self.assertEqual(puzzle.id, result.id)
-        result = search_puzzles(query=".*tes.*", rating=[0,1], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,99999], sort_by="date", order="desc").first()
+        result = search_puzzles(query=".*tes.*", rating=[0,1], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,99999], following=False, sort_by="date", order="desc").first()
         self.assertEqual(puzzle.id, result.id)
-        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['2024-01-01', '2025-12-31'], completed=None, play_count=[0,99999], sort_by="date", order="desc").first()
+        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['2024-01-01', '2025-12-31'], completed=None, play_count=[0,99999], following=False, sort_by="date", order="desc").first()
         self.assertEqual(puzzle.id, result.id)
-        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,0], sort_by="date", order="desc").first()
+        result = search_puzzles(query=".*tes.*", rating=[0,5], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,0], following=False, sort_by="date", order="desc").first()
         self.assertEqual(puzzle.id, result.id)

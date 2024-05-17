@@ -1,9 +1,18 @@
 $(document).ready(function(){
 
-    //Function to slide down the instructions information
-    let instr = document.querySelector("#instructions");
+    //Function to toggle the instructions visibility
+    let instructionsContainer = $("#instructions-container");
+    let instructions = $("#instructions");
     $("#showInstructions").click(function(){
-        instr.dataset.display = instr.dataset.display === "false";
+        let currentDisplay = instructions.attr("data-display");
+        if (currentDisplay === "true") {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        } else {
+            instructions.slideDown();
+            instructions.attr("data-display", "true");
+            instructionsContainer.css("display", "block");
+        }
     });
 });
 
@@ -49,20 +58,20 @@ window.addEventListener('load', function() {
     updateTitle(titleInput.value);
     updateContent(contentInput.value);
 
-    titleFace.setAttribute('selected', false);
+    titleFace.dataset.selected = false;
     titleInput.addEventListener('focus', function(){
-        titleFace.setAttribute('selected', true);
+        titleFace.dataset.selected = true;
     })
     titleInput.addEventListener('focusout', function(){
-        titleFace.setAttribute('selected', false);
+        titleFace.dataset.selected = false;
     })
 
-    contentFace.setAttribute('selected', false);
+    contentFace.dataset.selected = false;
     contentInput.addEventListener('focus', function(){
-        contentFace.setAttribute('selected', true);
+        contentFace.dataset.selected = true;
     })
     contentInput.addEventListener('focusout', function(){
-        contentFace.setAttribute('selected', false);
+        contentFace.dataset.selected = false;
     })
 })
 
@@ -83,9 +92,9 @@ function updateContent(text) {
 
 function updateTitle(title) {
     if (title == '') {
-        titleFace.setAttribute('empty', 'true');
+        titleFace.dataset.empty = true;
     } else {
-        titleFace.setAttribute('empty', 'false');
+        titleFace.dataset.empty = false;
     }
     titleFace.textContent = title;
 }

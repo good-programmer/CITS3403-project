@@ -1,20 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/style.css')}}">
-<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/profile.css')}}">
-
 <h1>user: {{user['username']}}</h1>
 
 <div class="Screen MatrixTextGreen" id="user-info">
   
   <p class="no-indent">user_info {</p>
-  <p>highest_score: {{user['highscore']}}</p>
-  <p>total_completed_puzzles: {{user['scores']|length}}</p>
-  <p>total_ratings: {{user['ratings']|length}}</p>
-  <p>total_created puzzles: {{user['puzzles']|length}}</p>
-  <p>followers: {{user['followers']|length}}</p>
-  <p>following: {{user['following']|length}}</p>
+  <p>highest_score: <span class="matrix-number">{{user['highscore']}}</span></p>
+  <p>total_completed_puzzles: <span class="matrix-number">{{user['scores']|length}}</span></p>
+  <p>total_ratings: <span class="matrix-number">{{user['ratings']|length}}</span></p>
+  <p>total_created puzzles: <span class="matrix-number">{{user['puzzles']|length}}</span></p>
+  <p>followers: <span class="matrix-number">{{user['followers']|length}}</span></p>
+  <p>following: <span class="matrix-number">{{user['following']|length}}</span></p>
   <p class="no-indent">}</p>
   {% if current_user.is_authenticated %}
     {% if current_user.id != user['id'] %}
@@ -29,50 +25,50 @@
   {% endif %}
 </div>
 
-<div class="row">
-<div class="col-md-4">
-<h2>created puzzles</h2><select class="Screen MatrixTextGreen" id="created-puzzles-sort"><option value="rating">sort by rating</option><option value="play_count">sort by plays</option></select>
-  <div id='created-list' class="post-list">
-    {% for puzzle in user['puzzles']|sort(attribute='average_rating', reverse=True) %}
+<div id="profile-list-container" class="row">
+  <div class="col-md-4">
+    <h2>created puzzles</h2><select class="Screen MatrixTextGreen" id="created-puzzles-sort"><option value="rating">sort by rating</option><option value="play_count">sort by plays</option></select>
+    <div id='created-list' class="post-list">
+      {% for puzzle in user['puzzles']|sort(attribute='average_rating', reverse=True) %}
+          <div class="post-body">
+              <a class="hlink" href="{{url_for(route.puzzle.info, puzzleid=puzzle['id'])}}>{{ puzzle['title']}}"></a><br>
+              <a class="hlink" href="{{url_for(route.user.profile, userid=puzzle['creatorID'])}}>{{ puzzle['creator']}}"></a><br>
+              Total plays: <span class="matrix-number">{{ puzzle['play_count'] }}</span><br>
+              Average rating: <span class="matrix-number">{{ puzzle['average_rating']|round(2) }}</span><br>
+              Highest score: <span class="matrix-number">{{ puzzle['highscore'] }}</span>
+          </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-md-4">
+    <h2>completed puzzles</h2> <select class="Screen MatrixTextGreen" id="completed-puzzles-sort"><option value="date">sort by date</option><option value="score">sort by score</option></select>
+    <div id='completed-list' class="post-list">
+      {% for puzzle in user['scores']|sort(attribute='dateSubmitted', reverse=True) %}
         <div class="post-body">
-            <a class="hlink" href="{{url_for(route.puzzle.info, puzzleid=puzzle['id'])}}>{{ puzzle['title']}}"></a><br>
-            <a class="hlink" href="{{url_for(route.user.profile, userid=puzzle['creatorID'])}}>{{ puzzle['creator']}}"></a><br>
-            Total plays: {{ puzzle['play_count'] }}<br>
-            Average rating: {{ puzzle['average_rating']|round(2) }}<br>
-            Highest score: {{ puzzle['highscore'] }}
+            <a class="hlink" href="{{url_for(route.puzzle.info, puzzleid=puzzle['id']) }}>{{ puzzle['title']}}"></a><br>
+            <a class="hlink" href="{{url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator']}}"></a><br>
+            Total plays: <span class="matrix-number"></span>{{ puzzle['play_count'] }}<br>
+            Score: <span class="matrix-number">{{ puzzle['score'] }}</span><br>
+            Date completed: <span class="matrix-number"></span>{{ puzzle['dateSubmitted'][:10] }}<br>
         </div>
-    {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+  <div class="col-md-4">
+    <h2>rated puzzles</h2><select class="Screen MatrixTextGreen" id="rated-puzzles-sort"><option value="date">sort by date</option><option value="rating">sort by rating</option></select>
+    <div id='rated-list' class="post-list">
+      {% for puzzle in user['ratings']|sort(attribute='dateRated', reverse=True) %}
+        <div class="post-body">
+            <a class="hlink" href="{{url_for(route.puzzle.info, puzzleid=puzzle['id']) }}>{{ puzzle['title']}}"></a><br>
+            <a class="hlink" href="{{url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator']}}"></a><br>
+            Total plays: <span class="matrix-number">{{ puzzle['play_count'] }}</span><br>
+            Rating: <span class="matrix-number">{{ puzzle['rating'] }}</span><br>
+            Date rated: <span class="matrix-number">{{ puzzle['dateRated'][:10] }}</span><br>
+        </div>
+      {% endfor %}
+    </div>
   </div>
 </div>
 
-<div class="col-md-4">
-  <h2>completed puzzles</h2> <select class="Screen MatrixTextGreen" id="completed-puzzles-sort"><option value="date">sort by date</option><option value="score">sort by score</option></select>
-  <div id='completed-list' class="post-list">
-    {% for puzzle in user['scores']|sort(attribute='dateSubmitted', reverse=True) %}
-        <div class="post-body">
-            <a class="hlink" href="{{url_for(route.puzzle.info, puzzleid=puzzle['id']) }}>{{ puzzle['title']}}"></a><br>
-            <a class="hlink" href="{{url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator']}}"></a><br>
-            Total plays: {{ puzzle['play_count'] }}<br>
-            Score: {{ puzzle['score'] }}<br>
-            Date completed: {{ puzzle['dateSubmitted'][:10] }}<br>
-        </div>
-    {% endfor %}
-  </div>
-</div>
-<div class="col-md-4">
-  <h2>rated puzzles</h2><select class="Screen MatrixTextGreen" id="rated-puzzles-sort"><option value="date">sort by date</option><option value="rating">sort by rating</option></select>
-  <div id='rated-list' class="post-list">
-    {% for puzzle in user['ratings']|sort(attribute='dateRated', reverse=True) %}
-        <div class="post-body">
-            <a class="hlink" href="{{url_for(route.puzzle.info, puzzleid=puzzle['id']) }}>{{ puzzle['title']}}"></a><br>
-            <a class="hlink" href="{{url_for(route.user.profile, userid=puzzle['creatorID']) }}>{{ puzzle['creator']}}"></a><br>
-            Total plays: {{ puzzle['play_count'] }}<br>
-            Rating: {{ puzzle['rating'] }}<br>
-            Date rated: {{ puzzle['dateRated'][:10] }}<br>
-        </div>
-    {% endfor %}
-  </div>
-</div>
-</div>
 <script src="{{url_for('static', filename='js/profile.js')}}"></script>
 {% endblock %}

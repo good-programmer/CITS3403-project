@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %} About Us {% endblock %}
+{% block content %}
+<div id="title-container">
+  <pre>  
+      ██╗    ██╗ ██████╗ ██████╗ ██████╗        █████╗ ███╗   ███╗██████╗ ██╗     ███████╗
+      ██║    ██║██╔═══██╗██╔══██╗██╔══██╗      ██╔══██╗████╗ ████║██╔══██╗██║     ██╔════╝
+      ██║ █╗ ██║██║   ██║██████╔╝██║  ██║█████╗███████║██╔████╔██║██████╔╝██║     █████╗  
+      ██║███╗██║██║   ██║██╔══██╗██║  ██║╚════╝██╔══██║██║╚██╔╝██║██╔══██╗██║     ██╔══╝  
+      ╚███╔███╔╝╚██████╔╝██║  ██║██████╔╝      ██║  ██║██║ ╚═╝ ██║██████╔╝███████╗███████╗
+       ╚══╝╚══╝  ╚═════╝ ╚═╝  ╚═╝╚═════╝       ╚═╝  ╚═╝╚═╝     ╚═╝╚═════╝ ╚══════╝╚══════╝
+                                                                                            
+  </pre>
+</div>
+
+<div id="about-container" class="table-container">
+    <h3> 
+        What is Word-Amble? 
+    </h3>
+        <p>
+            Word-Amble offers an experience akin to Scrabble, 
+            inviting users to skillfully extract words from a given string of 10 characters in order to earn points! 
+        </p>
+
+    <h3> 
+        Inspirations
+    </h3>
+    <p>
+        This game was inspired by the <a href="https://www.nytimes.com/puzzles/spelling-bee">NYT Spelling Bee</a>. 
+        Our decision to infuse it with a retro theme was sparked by nostalgia for vintage computers, ASCII art, and classic games such as Fallout.
+    </p>
+    <h3> 
+      Credits
+    </h3>
+    <p id="project-credits">
+      This project with made with the help of
+    </p>
+    <ul>
+      <li><a href="https://getbootstrap.com/">Bootstrap</a> and <a href="https://jquery.com/">jQuery</a> for visuals and design.</li>
+      <li>Google and Peter Hull for the <a href="https://fonts.google.com/specimen/VT323">VT323</a> font.</li>
+      <li><a href="https://flask.palletsprojects.com/en/3.0.x/">Flask</a> and its related packages for the web framework.</li>
+      <li><a href="https://www.selenium.dev/documentation/webdriver/">Selenium</a> for system testing.</li>
+    </ul>
+
+    <h3>Creators</h3>
+    <table>
+      <tr>
+        <td class="matrix-user">Jack Donaghy</td>
+        <td class="matrix-number">good-programmer</td>
+      </tr>
+      <tr>
+        <td class="matrix-user">Thomas Nguyen</td>
+        <td class="matrix-number">tnguyen7523</td>
+      </tr>
+      <tr>
+        <td class="matrix-user">Nathan Buluran</td>
+        <td class="matrix-number">naetnaetnaet</td>
+      </tr>
+      <tr>
+        <td class="matrix-user">Jakem Pinchin</td>
+        <td class="matrix-number">JakePinchin</td>
+      </tr>
+    </table>
+</div>
+
+
+{% endblock %}

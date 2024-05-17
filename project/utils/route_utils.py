@@ -6,7 +6,7 @@ index = 'main.index'
 login = 'auth.login'
 logout = 'auth.logout'
 register = 'auth.register'
-profile = 'main.profile'
+about_us = 'main.about_us'
 
 puzzle = Group(
     info = 'game.page_puzzle_info',
