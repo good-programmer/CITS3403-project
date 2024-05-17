@@ -4,8 +4,6 @@ const defaultMap = new Map()
 const storedMap = new Map()
 
 let pageSize = 10
-let currentPage = 1
-let totalPages = 1
 
 let currentURL = ''
 
@@ -26,13 +24,12 @@ storedMap.set('play_count', '0-999999');
 window.addEventListener("load", () =>{
     clearTemplates()
     loadTemplates(window.location.search)
-    updatePageNumDisplay()
 })
 window.addEventListener("popstate", ()=>{
     clearTemplates()
     loadTemplates(window.location.search)
-    updatePageNumDisplay()
 })
+
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
@@ -57,16 +54,15 @@ function handleSubmit(){
         storedParameters += '&' + keyName + '=' + searchMap.get(keyName)
     }
     clearTemplates()
+    window.history.pushState({}, null, urlInjection + storedParameters)
     loadTemplates(urlInjection + storedParameters)
     currentURL = storedParameters
-    window.history.pushState({}, null, urlInjection + storedParameters)
 }
 
 function updatePageForSize(){
     let urlInjection ='?page=1&page_size=' + pageSize
     clearTemplates()
     loadTemplates(urlInjection + currentURL)
-    updatePageNumDisplay()
     window.history.pushState({}, null, urlInjection + currentURL)
 }
 
@@ -334,26 +330,5 @@ function changePage(newPage){
     currentURL = urlInjection + storedParameters
     loadTemplates(currentURL)
     window.history.pushState({}, null, currentURL)
-
 }
 
-//page number event listeners
-function getTotalPages(){
-    fetch('/puzzle/find?page_size=' + pageSize + currentParams)
-    .then(response => response.json())
-    .then(data => {
-        totalPages = data.pages
-    })
-}
-
-const pageNumContainer = document.getElementById("page-num-container")
-const pageNumTemplate = document.querySelector("[page-num-template]")
-function updatePageNumDisplay(){
-    getTotalPages()
-    for (let i = 1; i <= parseInt(totalPages); i++){
-        const pageNumButtonTemp = pageNumTemplate.content.cloneNode(true)
-        const pageNumButton = pageNumButtonTemp.querySelector("[pnButton]")
-        pageNumButton.textContent = i
-        pageNumContainer.appendChild(pageNumButton)
-    }
-}

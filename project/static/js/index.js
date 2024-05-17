@@ -1,5 +1,11 @@
 const postTemplate = document.querySelector("[post-template]")
 const postContainer = document.querySelector("[data-post-container]")
+const pageNumContainer = document.getElementById("page-num-container")
+const pageNumTemplate = document.querySelector("[page-num-template]")
+const nextButton = document.getElementById("right-arrow")
+const prevButton = document.getElementById("left-arrow")
+let totalPages = 1;
+let currentPage = 1
 
 if (window.location.pathname === '/'){
     loadTemplates('/recent')
@@ -28,6 +34,10 @@ function clearTemplates() {
     while (postContainer.firstChild) {
         postContainer.removeChild(postContainer.firstChild)
     }
+    while (pageNumContainer.firstChild) {
+        pageNumContainer.removeChild(pageNumContainer.firstChild)
+    }
+
 }
 
 function loadTemplates(trend){
@@ -67,7 +77,63 @@ function loadTemplates(trend){
             highestScore.textContent = puz.highscore
 
             postContainer.append(post)
-        });
+        })
+        totalPages=data.pages
+        updatePageNumDisplay()
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        console.log(params.get('page'))
     })
     .catch(error => console.error('Error fetching data:', error));
 }
+
+function updatePageNumDisplay(){
+    for (let i = 1; i <= parseInt(totalPages); i++){
+        const pageNumButtonTemp = pageNumTemplate.content.cloneNode(true)
+        const pageNumButton = pageNumButtonTemp.querySelector("[pnButton]")
+        pageNumButton.textContent = i
+        if (i === currentPage){
+            pageNumButton.classList.toggle("current-page")
+        }
+        const totalShowing = 6
+        let rightShowing = 4
+        let leftShowing = 1
+        if (currentPage === 1) {
+            rightShowing = 5
+            leftShowing = 1
+        }
+        if ((currentPage + 4)>=totalPages){
+            rightShowing = totalPages - currentPage
+            leftShowing = totalShowing - rightShowing
+        }
+        if ((i > (currentPage + rightShowing)) || (i < (currentPage - leftShowing))){
+            pageNumButton.disabled = true
+        }
+        pageNumButton.onclick = () => goToPage(i);
+        pageNumContainer.appendChild(pageNumButton)
+    }
+    prevButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage === totalPages;
+}
+function goToPage(page) {
+    currentPage = page;
+    clearTemplates()
+    const newURL = '?page=' + page + currentURL
+    loadTemplates(newURL);
+    window.history.pushState({}, null, '?page=' + page + currentURL)
+}
+
+function nextPage() {
+    if (currentPage < totalPages) {
+        goToPage(currentPage + 1);
+    }
+}
+
+function previousPage() {
+    if (currentPage > 1) {
+        goToPage(currentPage - 1);
+    }
+}
+
+nextButton.addEventListener("click", ()=>{goToPage(currentPage + 1)})
+prevButton.addEventListener("click", ()=>{goToPage(currentPage - 1)})

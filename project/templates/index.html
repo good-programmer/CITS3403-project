@@ -20,6 +20,21 @@
     </pre>
 </div>
 
+<nav class="navbar">
+    <ul class = "nav-item-list">
+        <li class = "nav-item"><a href = {{url_for(route.puzzle.play, puzzleid=1)}}>Random Puzzle</a></li>
+        <li class = "nav-item"></li><a href = "{{ url_for(route.puzzle.search) }}">Search</a></li>
+        {%if  not current_user.is_authenticated%}
+            <li class = "nav-item"></li><a href = "{{ url_for(route.login) }}">Login</a></li>
+            <li class = "nav-item"><a href = "{{ url_for(route.register) }}">Register</a></li>
+        {%else%}
+            <li class = "nav-item"></li><a href = "{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></li>
+            <li class = "nav-item"></li><a href = "{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></li>
+            <li class = "nav-item"><a href = "{{ url_for(route.logout) }}">Logout</a></li>
+        {%endif%}
+    </ul>
+</nav>
+
 <div class="panel-container">
     <div class="buttons-container">
         <button class="toggle-button" type=button>Popular</button>
@@ -45,6 +60,16 @@
                 </div>
             </div>
         </template>
+    </div>
+    <div class="page-change-container">
+        <button class="arrow-button" id="left-arrow">&lt;</button>
+        <div id="page-num-container">
+            <template page-num-template>
+                <button class="page-number-button" pnButton></button>
+            </template>
+        </div>
+        <button class="arrow-button" id="right-arrow">&gt;</button>
+        <div id="dataContainer"></div>
     </div>
 </div>
 {% endblock %}
