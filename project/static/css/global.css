@@ -1544,3 +1544,7 @@ a:hover {
     filter: grayscale() brightness(80%);
     text-decoration: line-through
 }
+
+#about-container a{
+    color: var(--matrix-secondary)
+}

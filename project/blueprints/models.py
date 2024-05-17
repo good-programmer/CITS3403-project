@@ -10,6 +10,7 @@ def commit():
     if not getattr(config.current_config, 'COMMITS_DISABLED', False):
         db.session.commit()
         
+'''Many-to-many relationship between User and Leaderboard that stores User-Puzzle ratings'''
 class Rating(db.Model):
     __tablename__ = "Ratings"
     userID = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
@@ -28,6 +29,7 @@ class Rating(db.Model):
         self.rating = rating
         self.dateRated = datetime.now()
 
+'''Many-to-many relationship between User and Leaderboard that stores User-Puzzle scores'''
 class LeaderboardRecord(db.Model):
     __tablename__ = "Leaderboard"
     userID = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
@@ -46,6 +48,7 @@ class LeaderboardRecord(db.Model):
         self.score = score
         self.dateSubmitted = datetime.now()
 
+'''Many-to-many relationship between Users that stores User-User relationship'''
 class Follow(db.Model):
      __tablename__ = "Followers"
      followerID = db.Column(db.Integer, db.ForeignKey('Users.id'), primary_key=True)
@@ -98,14 +101,13 @@ class Puzzle(db.Model):
         self.play_count = 0
     
     def add_record(self, user, score):
+        '''Adds a new score to the database'''
         score = LeaderboardRecord(user, self, score)
         db.session.add(score)
         self.play_count += 1
         commit()
 
     def has_record(self, user) -> bool:
-        #return user.id in [u.userID for u in self.scores]
-        #print(LeaderboardRecord.query.filter_by(userID=user.id).first())
         return LeaderboardRecord.query.filter_by(userID=user.id, puzzleID=self.id).first() is not None
     
     def get_record(self, user) -> LeaderboardRecord:
@@ -129,6 +131,7 @@ class Puzzle(db.Model):
         return False
     
     def add_rating(self, user, rating):
+        '''Adds a new rating to the database'''
         rating = Rating(user, self, rating)
         db.session.add(rating)
         commit()
@@ -183,6 +186,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password, password)
 
     def follow_user(self, user):
+        '''Adds a new follow relationship to the database'''
         follow = Follow(userID=user.id, followerID=self.id)
         db.session.add(follow)
         commit()    
@@ -198,6 +202,7 @@ class User(UserMixin, db.Model):
                 return True
         return False
     
+    '''User wrappers for related puzzle methods'''
     def get_record(self, puzzle) -> LeaderboardRecord:
         return puzzle.get_record(self)
     

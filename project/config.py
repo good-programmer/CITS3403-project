@@ -22,7 +22,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(DevelopmentConfig):
     COMMITS_DISABLED = False
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.abspath('project/db/:memory:')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.abspath('project/db/temp')
 
 
 configurations = {

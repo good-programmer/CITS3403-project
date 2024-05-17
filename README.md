@@ -92,3 +92,11 @@ Update your current database:
 - Run `flask db stamp <your_version_here>`
 - Now run `flask db upgrade`
 - Repeat previous step until up-to-date (when the upgrade command no longer informs you of a version change)
+
+
+## Credits
+
+- [Bootstrap](https://getbootstrap.com/) and [jQuery](https://jquery.com/) for frontend visuals and design.
+- Google and Peter Hull  for the [VT323](https://fonts.google.com/specimen/VT323) font.
+- [Flask](https://flask.palletsprojects.com/en/3.0.x/) and its related packages for the web framework.
+- [Selenium](https://www.selenium.dev/documentation/webdriver/) for system testing.

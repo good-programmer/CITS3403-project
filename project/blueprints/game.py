@@ -28,6 +28,7 @@ def page_play_puzzle(puzzleid):
 @game.route('/puzzle/random', methods=['GET'])
 @login_required
 def page_random_puzzle():
+    '''Redirects to random uncompleted puzzle'''
     completed = [s.puzzleID for s in current_user.scores]
     total = Puzzle.query.count()
     
@@ -127,6 +128,7 @@ def api_get_puzzle(puzzleid):
 
 @game.route('/puzzle/<int:puzzleid>/info')
 def page_puzzle_info(puzzleid):
+    '''Puzzle view page'''
     puzzle = puzzle_utils.get_puzzle(id=puzzleid)
     if not puzzle:
         abort(404)

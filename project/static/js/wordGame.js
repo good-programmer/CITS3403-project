@@ -60,6 +60,25 @@ let Game = {
 
     // dynamically create elements for user submitted words
     updateSubmittedWords: function() {
+        const submitButton = document.querySelector('#submitButton');
+        const userInputLabel = document.querySelector('#userInputContainer > label[for="userInput"]');
+        const userInput = document.getElementById("userInput");
+        
+        if (this.submittedWords.length === 0) {
+            submitButton.classList.add("greyed");
+        } else {
+            submitButton.classList.remove("greyed");
+        }
+
+        if (this.submittedWords.length >= 5) {
+            userInputLabel.textContent = "|>";
+            userInputLabel.classList.add("greyed");
+            userInput.classList.add("greyed");
+        } else {
+            userInput.classList.remove("greyed");
+            userInputLabel.textContent = "$>";
+            userInputLabel.classList.remove("greyed");
+        }
         if (this.submittedWords.length <= 5) {
             const container = document.getElementById('submittedWords');
             container.innerHTML = '';
@@ -72,18 +91,6 @@ let Game = {
                 p.style.display = 'inline-block';
                 div.appendChild(p);
                 container.appendChild(div);
-                
-                const userInputLabel = document.querySelector('#userInputContainer > label[for="userInput"]');
-                const userInput = document.getElementById("userInput");
-                if (this.submittedWords.length >= 5) {
-                    userInputLabel.textContent = "|>";
-                    userInputLabel.classList.add("greyed");
-                    userInput.classList.add("greyed");
-                } else {
-                    userInput.classList.remove("greyed");
-                    userInputLabel.textContent = "$>";
-                    userInputLabel.classList.remove("greyed");
-                }
     
                 div.addEventListener('click', () => {
                     this.submittedWords.splice(index, 1);
@@ -146,6 +153,7 @@ let Game = {
 
     solve: async function() {
         if (!Game.solved) {
+            if (!(0 < this.submittedWords.length && this.submittedWords.length <= 5)) return;
             let solveData = {
                 submittedWords: this.submittedWords,
                 date: new Date()
@@ -238,6 +246,7 @@ let Game = {
         Game.puzzleString = Game.getPuzzleString();
         Game.displayString = Game.puzzleString;
         Game.updateScore();
+        Game.updateSubmittedWords();
 
         // allocate enough width for double digit score
         let scoreElement = document.getElementById('score');
