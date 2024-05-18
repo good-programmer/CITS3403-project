@@ -12,15 +12,15 @@
             </div>
             <div class="buttons-container row" id="sort-filter-container">
                 <p class="button-label">Sort By</p>
-                <button class="toggle-button toggle-button--selected" type="button">Date</button>
-                <button class="toggle-button" type="button">Play count</button>
-                <button class="toggle-button" type="button">Highscore</button>
-                <button class="toggle-button" type="button">Rating</button>
-                <button class="toggle-button" type="button">Alphabet</button>
+                <button class="toggle-button toggle-button--selected" type="button" id="date">Date</button>
+                <button class="toggle-button" type="button" id="play_count">Play count</button>
+                <button class="toggle-button" type="button" id="highscore">Highscore</button>
+                <button class="toggle-button" type="button" id="rating">Rating</button>
+                <button class="toggle-button" type="button" id="a-z">Alphabet</button>
             </div>
             <div class="buttons-container row">
                 <label class="button-label" for="order">Order by:</label>
-                <button class="basic-toggle basic-toggle--selected" id="order" type="button">Descending</button>
+                <button class="basic-toggle" id="order" type="button">Descending</button>
                 <label for="page-size" class="page-size-label"> Page size:</label>
                 <select class = "dropdown" id="page-size">
                     <option value="10">Select a page size</option>
@@ -31,7 +31,7 @@
                 </select>
             </div>
             <div class="buttons-container row">
-                <button class="row-label" data-toggletarget="rating-filter-container">rating</button>
+                <button class="row-label" data-toggletarget="rating-filter-container" id="rating-row-label">rating</button>
                 <button class="row-label" data-toggletarget="playcount-filter-container">play count</button>
                 <button class="row-label" data-toggletarget="date-filter-container">date</button>
                 <button class="cycle-label" id="ignore-completed" type="button">Ignore completed</button>

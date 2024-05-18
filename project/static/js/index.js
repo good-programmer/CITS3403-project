@@ -4,10 +4,11 @@ const pageNumContainer = document.getElementById("page-num-container")
 const pageNumTemplate = document.querySelector(".page-num-template")
 const nextButton = document.getElementById("right-arrow")
 const prevButton = document.getElementById("left-arrow")
+let currentParams =  new URLSearchParams(window.location.search)
 nextButton.disabled = true;
 prevButton.disabled = true;
 let totalPages = 1;
-let currentPage = 1;
+let currentPage = 1
 let sortBy = 'recent';
 
 if (window.location.pathname === '/'){
@@ -94,18 +95,19 @@ function loadTemplates(trend){
         const params = new URLSearchParams(url.search);
         totalPages = data.pages;
         updatePageNumDisplay();
-        console.log(params.get('page'))
     })
     .catch(error => console.error('Error fetching data:', error));
 }
 
 function updatePageNumDisplay(){
+    currentParams = new URLSearchParams(window.location.search)
+    currentPage = parseInt(currentParams.get('page'))
     for (let i = 1; i <= parseInt(totalPages); i++){
         const pageNumButtonTemp = pageNumTemplate.content.cloneNode(true)
         const pageNumButton = pageNumButtonTemp.querySelector("[data-pnButton]")
         pageNumButton.textContent = i
         if (i === currentPage){
-            console.log('Current page', i);
+            console.log("this is what i see: " + currentPage)
             pageNumButton.classList.toggle("current-page")
         }
         const totalShowing = 6

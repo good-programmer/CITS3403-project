@@ -45,6 +45,7 @@ function handleSubmit(){
     urlInjection = urlInjection.replace(/&$/, '');
     clearTemplates()
     window.history.pushState({}, null, urlInjection)
+    updatePageDisplay()
     loadTemplates(urlInjection)
 }
 
@@ -325,7 +326,7 @@ submitButton.addEventListener("click", function(){
 )
 
 function updateSearchWithParams() {
-    let currentParams = new URLSearchParams(window.location.search);
+    currentParams = new URLSearchParams(window.location.search);
     for (const keyName of keyNameList){
         if (currentParams.get(keyName) === null) {
             setDefault(keyName)
@@ -360,3 +361,55 @@ document.querySelectorAll("#sort-filter-container .toggle-button").forEach(togBu
     })
 })
 
+function updatePageDisplay(){
+    currentParams = new URLSearchParams(window.location.search)
+    keyNameList.forEach(key => {
+        const value = currentParams.get(key);
+      
+        if (value !== null) {
+          switch (key) {
+            case 'page_size':
+                pageSizeMenu.value = value
+                break;
+            case 'query':
+                searchInput.value = value
+                break;
+      
+            case 'rating':
+                const button =  document.getElementById("rating-row-label")
+                button.classList.toggle("row-label--selected")
+                toggleRowLabel(true, '#rating')
+                minRating.value = parseInt(value[0])
+                maxRating.value = parseInt(value[2])
+                break;
+            case 'completed':
+              break;
+      
+            case 'play_count':
+              break;
+      
+            case 'following':
+              break;
+      
+            case 'sort_by':
+                let sorting = value.toString().toLowerCase().trim()
+                const togBut = document.getElementById(sorting)
+                document.querySelectorAll(".toggle-button").forEach(otherBut => {
+                    if (otherBut !== togBut) {
+                        otherBut.classList.remove("toggle-button--selected")
+                    }
+                })
+                togBut.classList.toggle("toggle-button--selected", true)
+                break;
+      
+            case 'order':
+                orderButton.classList.remove("basic-toggle--selected")
+                orderButton.textContent = "Ascending"
+                break;
+            }
+        }
+        else{
+            orderButton.classList.toggle("basic-toggle--selected", true)
+        }
+    })
+}
