@@ -1485,6 +1485,16 @@ a:hover {
     text-align: center
 }
 
+#gameContent {
+    border: 1px solid var(--matrix-tertiary);
+    border-radius: .125rem;
+}
+
+#leaderboard {
+    border: 1px solid var(--matrix-secondary);
+    border-radius: .125rem;    
+}
+
 #leaderboard h2 {
     font-size: 50px;
     padding-top: 5px
