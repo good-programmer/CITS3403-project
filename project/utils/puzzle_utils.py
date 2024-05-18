@@ -83,7 +83,7 @@ def get_following_rated(user):
     user_following = list(Follow.query.filter(Follow.followerID == user.id).with_entities(Follow.userID).all())
     user_following_ids = [i[0] for i in user_following]
 
-    result = result.join(Puzzle.ratings).add_entity(Rating.dateRated)
+    result = result.join(Puzzle.ratings)
     result = result.filter(Rating.userID.in_(user_following_ids))
     result = result.order_by(desc(Rating.dateRated)).limit(10).all()
     
@@ -105,7 +105,7 @@ def get_following_puzzles(user):
 
 def create_feed(user):
     recent_puzzles = [ (p[0], p[0].dateCreated, p[1]) for p in get_following_puzzles(user)]
-    recent_rated_puzzles = [ (p[0][0], p[0][1], p[1]) for p in get_following_rated(user)]
+    recent_rated_puzzles = [ (p[0], p[0].ratings[0].dateRated, p[1]) for p in get_following_rated(user)]
 
     all_puzzles = recent_puzzles + recent_rated_puzzles
 

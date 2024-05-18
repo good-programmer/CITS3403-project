@@ -1080,10 +1080,10 @@ h1 {
     font-size: 25px
 }
 
-#puzzle-info p,#user-info p {
+#puzzle-info p,#user-info p,#feed-container {
     margin-top: 5px;
     margin-bottom: 5px;
-    margin-left: 25px
+    margin-left: 1.5%
 }
 
 #rate-slider {
@@ -1244,18 +1244,37 @@ h2 {
     font-size: 18px
 }
 
-#user-info {
-    margin: auto auto 5%;
+#user-and-feed-container {
+    margin: auto auto;
+    display: flex;
+    flex-direction: row;
+    gap: 3%;
+    width: 90%;
+}
+@media (max-width: 767px) {
+    #user-and-feed-container {
+        flex-direction: column;
+    }
+}
+#user-info, #user-feed {
+    margin-left: auto;
+    margin-bottom: 5%;
     background: radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px)0 0/3px 3px,radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px) 1px 1px/3px 3px,radial-gradient(rgba(55,70,55,.2) .5px,transparent .5px) 2px 2px/3px 3px;
     background-color: #000
 }
-
-#user-info * {
+#user-feed{
+    margin-left: none;
+    margin-right: auto;
+}
+#user-info *, #user-feed * {
     font-family: "VT323",monospace;
-    font-size: 25px
+    font-size: 20px
+}
+#feed-container *{
+    font-size: 12px;
 }
 
-#completed-puzzles-sort,#created-puzzles-sort,#rated-puzzles-sort,#user-info,.post-body {
+#completed-puzzles-sort,#created-puzzles-sort,#rated-puzzles-sort,#user-info,#user-feed,.post-body {
     border: 1px solid var(--matrix-tertiary);
     padding: .5rem;
     border-radius: .125rem;
@@ -1263,6 +1282,9 @@ h2 {
     margin-top: 1rem
 }
 
+#user-info, #user-feed{
+    width: 100%;
+}
 .post-body {
     height: auto;
     margin: 0 0 5px 5%

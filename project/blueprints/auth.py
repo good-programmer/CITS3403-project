@@ -153,19 +153,19 @@ def api_unfollow_user():
 @auth.route('/user/feed', methods=["GET"])
 def api_get_feed():
     user = current_user
-    feed = auth_utils.create_feed(user)
+    feed = puzzle_utils.create_feed(user)
 
 
     feed_data= [{
         'id': puzzle[0].id, 
         'title': puzzle[0].title, 
-        'creatorID' : puzzle[0].creatorID, 
-        'creator': puzzle[0].creator.name,
+        'followedID' : puzzle[0].creatorID if puzzle[2]=='created' else puzzle[0].ratings[0].userID,
+        'followed': puzzle[0].creator.name if puzzle[2]=='created' else puzzle[0].ratings[0].user.name,
         'dateCreated': puzzle[0].dateCreated,
         'dateRated' : puzzle[0].ratings[0].dateRated,
-        'date': puzzle[0].dateCreated if puzzle[1]=='created' else puzzle[0].ratings[0].dateRated,
-        'rated': puzzle[0].ratings[0].rating if puzzle[1] == 'rated' else '',
-        'type': puzzle[1]
+        'date': puzzle[0].dateCreated if puzzle[2]=='created' else puzzle[0].ratings[0].dateRated,
+        'rated': puzzle[0].ratings[0].rating if puzzle[2] == 'rated' else '',
+        'type': puzzle[2]
         } for puzzle in feed]
     '''
     for puzzle_data in feed_data:
@@ -179,5 +179,5 @@ def api_get_feed():
         print("Rated:", puzzle_data['rated'])
         print("Type:", puzzle_data['type'])
         print()
-    '''
-    return feed_data[:10]
+    ''' 
+    return feed_data[:15]
