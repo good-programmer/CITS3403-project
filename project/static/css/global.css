@@ -180,19 +180,19 @@ body {
     line-height: 1.5
 }
 
-#nav-links .nav-link>a {
+#main-nav .nav-link>a {
     color: var(--matrix-primary);
     animation: Pulse 1.5s ease infinite;
     text-decoration: none;
     position: relative
 }
 
-#nav-links .nav-link>a:hover {
+#main-nav .nav-link>a:hover {
     animation: blink 1s step-end infinite;
     color: var(--matrix-secondary)
 }
 
-#nav-links .nav-link:hover::before,#nav-links .nav-link>a:hover::before {
+#main-nav .nav-link:hover::before,#main-nav .nav-link>a:hover::before {
     position: absolute;
     top: 0;
     left: 0;
@@ -202,7 +202,7 @@ body {
     pointer-events: none
 }
 
-#nav-links .nav-link>a:hover::after,#nav-links .nav-link>a:hover::before {
+#main-nav .nav-link>a:hover::after,#main-nav .nav-link>a:hover::before {
     content: "_________________________";
     text-overflow: clip;
     white-space: nowrap;
@@ -210,11 +210,11 @@ body {
     z-index: -1
 }
 
-#nav-links .nav-link>a:hover::before {
+#main-nav .nav-link>a:hover::before {
     text-shadow: 0 0 2px
 }
 
-#nav-links .nav-link>a:hover::after {
+#main-nav .nav-link>a:hover::after {
     position: absolute;
     text-shadow: 0 0 10px;
     bottom: -5px;
@@ -225,11 +225,11 @@ body {
     pointer-events: none
 }
 
-#nav-links .nav-link {
+#main-nav .nav-link {
     position: relative
 }
 
-#nav-links .nav-link:hover::before {
+#main-nav .nav-link:hover::before {
     content: "";
     opacity: 0%;
     background-color: #0a0a0a;
