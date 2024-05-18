@@ -13,7 +13,8 @@ from tests import app, TestObject
 
 from project.blueprints.models import db, Puzzle, User
 
-from project.utils.puzzle_utils import pack_puzzle, add_puzzle, get_puzzle, search_puzzles
+from project.utils.puzzle_utils import pack_puzzle, add_puzzle, get_puzzle, search_puzzles, get_following_puzzles, get_following_rated, create_feed
+from project.utils.user_utils import add_user
 
 class PuzzleUtilCase(unittest.TestCase):
     @classmethod
@@ -28,7 +29,7 @@ class PuzzleUtilCase(unittest.TestCase):
         pass
 
     def tearDown(self):
-        Puzzle.query.filter_by(title="test").delete()
+        self.t.clear_db()
         db.session.commit()
         pass
     
@@ -88,3 +89,101 @@ class PuzzleUtilCase(unittest.TestCase):
         self.assertEqual(puzzle.id, result.id)
         result = search_puzzles(query=".*tes.*", rating=[0,5], date=['0000-01-01', '9999-12-31'], completed=None, play_count=[0,0], following=False, sort_by="date", order="desc").first()
         self.assertEqual(puzzle.id, result.id)
+    
+    def test_get_following_rated(self):
+        #Create users
+        user1 = add_user("user1", "password1")
+        user2 = add_user("user2", "password2")
+        user3 = add_user("user3", "password3")
+
+        #user1 follows user2 and user3
+        user1.follow_user(user2)
+        user1.follow_user(user3)
+
+        #create puzzles
+        puzzle1 = add_puzzle("Puzzle 1", user2, "abcdefghij")
+        puzzle2 = add_puzzle("Puzzle 2", user3, "abcdefghij")
+
+        #adjust creation dates for ordering tests
+        puzzle1.dateCreated = datetime.datetime.now() - datetime.timedelta(days=4)
+        puzzle2.dateCreated = datetime.datetime.now() - datetime.timedelta(days=3)
+        db.session.commit()
+
+        #create ratings for puzzles
+        puzzle1.add_rating(user2, 5)
+        puzzle2.add_rating(user3, 4)
+
+        result = get_following_rated(user1)
+
+        #tests
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0][0][0].title, "Puzzle 2")
+        self.assertEqual(result[1][0][0].title, "Puzzle 1")
+        self.assertEqual(result[0][1], "rated")
+        self.assertEqual(result[1][1], "rated")
+
+    def test_get_following_puzzles(self):
+        #Create users
+        user1 = add_user("user1", "password1")
+        user2 = add_user("user2", "password2")
+        user3 = add_user("user3", "password3")
+
+        #user1 follows user2 and user3
+        user1.follow_user(user2)
+        user1.follow_user(user3)
+
+        #create puzzles
+        puzzle3 = add_puzzle("Puzzle 3", user2, "abcdefghij")
+        puzzle4 = add_puzzle("Puzzle 4", user3, "abcdefghij")
+
+        #adjust creation dates for ordering tests
+        puzzle3.dateCreated = datetime.datetime.now() - datetime.timedelta(days=2)
+        puzzle4.dateCreated = datetime.datetime.now() - datetime.timedelta(days=1)
+        db.session.commit()
+
+        result = get_following_puzzles(user1)
+
+        #tests
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0][0].title, "Puzzle 4")
+        self.assertEqual(result[1][0].title, "Puzzle 3")
+        self.assertEqual(result[0][1], "created")
+        self.assertEqual(result[1][1], "created")
+
+    def test_create_feed(self):
+        #Create users
+        user1 = add_user("user1", "password1")
+        user2 = add_user("user2", "password2")
+        user3 = add_user("user3", "password3")
+
+        #user1 follows user2 and user3
+        user1.follow_user(user2)
+        user1.follow_user(user3)
+
+        #create puzzles
+        puzzle1 = add_puzzle("Puzzle 1", user2, "abcdefghij")
+        puzzle2 = add_puzzle("Puzzle 2", user3, "abcdefghij")
+        puzzle3 = add_puzzle("Puzzle 3", user2, "abcdefghij")
+        puzzle4 = add_puzzle("Puzzle 4", user3, "abcdefghij")
+
+        #adjust creation dates for ordering tests
+        puzzle1.dateCreated = datetime.datetime.now() - datetime.timedelta(days=4)
+        puzzle2.dateCreated = datetime.datetime.now() - datetime.timedelta(days=3)
+        puzzle3.dateCreated = datetime.datetime.now() - datetime.timedelta(days=2)
+        puzzle4.dateCreated = datetime.datetime.now() - datetime.timedelta(days=1)
+        db.session.commit()
+
+        #create ratings for puzzles
+        puzzle1.add_rating(user2, 5)
+        puzzle2.add_rating(user3, 4)
+
+        result = create_feed(user1)
+
+        #tests
+        self.assertEqual(len(result), 6)
+        self.assertEqual(result[0][0].title, "Puzzle 2")
+        self.assertEqual(result[1][0].title, "Puzzle 1")
+        self.assertEqual(result[2][0].title, "Puzzle 4")
+        self.assertEqual(result[3][0].title, "Puzzle 3")
+        self.assertEqual(result[4][0].title, "Puzzle 2")
+        self.assertEqual(result[5][0].title, "Puzzle 1")
