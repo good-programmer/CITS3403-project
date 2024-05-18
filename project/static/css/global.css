@@ -367,7 +367,8 @@ a {
     flex-direction: row;
     margin-bottom: .3rem;
     align-items: baseline;
-    margin-left: 5%
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .toggle-button {
@@ -915,7 +916,7 @@ input[type=checkbox] {
 }
 
 #search {
-    width: 40%
+    width: clamp(40%, calc(94% - 5em), 400px);
 }
 
 #search-results {
