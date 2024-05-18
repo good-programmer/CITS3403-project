@@ -306,6 +306,29 @@ function setEventListeners() {
 window.addEventListener('load', function() {
     Game.init();
     setEventListeners();
+
+    //Function to toggle the instructions visibility
+    let instructionsContainer = $("#instructions-container");
+    let instructions = $("#instructions");
+    $("#showGameInstructions").click(function(){
+        let currentDisplay = instructions.attr("data-display");
+        if (currentDisplay === "true") {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        } else {
+            instructions.slideDown();
+            instructions.attr("data-display", "true");
+            instructionsContainer.css("display", "block");
+        }
+    });
+
+    // Hide instructions when clicked anywhere on the document
+    $(document).click(function(event) {
+        if (instructions.attr("data-display") === "true" && !instructions.is(event.target) && !$("#showGameInstructions").is(event.target)) {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        }
+    });
 });
 
 function displayLeaderboard() {
