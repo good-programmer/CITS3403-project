@@ -35,7 +35,7 @@ class WebDriverCase(unittest.TestCase):
         return self.__class__.driver
 
     def setUp(self):
-        self.server_thread = multiprocessing.Process(target=lambda: app.run(debug=False, use_reloader=False))
+        self.server_thread = multiprocessing.Process(target=app.run, kwargs=dict(debug=False, use_reloader=False))
         self.server_thread.start()
 
     def tearDown(self):
@@ -273,7 +273,7 @@ class WebDriverCase(unittest.TestCase):
         self.assertEqual(inp.text, "")
 
         #test score and submission
-        self.assertIn("act", sub.get_property("innerHTML"))
+        self.assertIn("ACT", sub.text)
         self.assertEqual("3", driver.find_element(By.CSS_SELECTOR, "#scoreValue").text)
         driver.find_element(By.CSS_SELECTOR, "#submitButton").click()
         WebDriverWait(driver, 2).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, "#leaderboard")))
