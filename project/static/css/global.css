@@ -1211,6 +1211,11 @@ h1 {
     color: black;
 }
 
+#following-leaderboard .post-body[data-following="true"], #main-leaderboard .post-body[data-following="true"] {
+    background: linear-gradient(to right, color-mix(in srgb, var(--matrix-tertiary) 60%, black) 0.5%, transparent 4%);
+
+}
+
 h2 {
     text-align: left;
     margin-left: 5%;

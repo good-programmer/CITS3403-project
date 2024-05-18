@@ -39,7 +39,7 @@
       <div class="leaderboard-body" {% if puzzle['scores']|length == 0%} data-empty=true {% endif %}>
         <div id="main-leaderboard" class="leaderboard post-list" style="display: flex;">
           {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
-            <div class="post-body" {% if score['name'] == current_user.name %} data-self=true {% endif %}>
+            <div class="post-body" {% if score['name'] == current_user.name %} data-self=true {% elif score['id'] in following %} data-following=true {% endif %}>
               <div>
                 <b>{{loop.index}}. </b>
                 <a class="user-link" href="{{url_for(route.user.profile, userid=score['id'])}}">{{score['name']}}</a>  |  <span class="matrix-number">{{score['score']}}</span>
@@ -54,7 +54,7 @@
           {% set counter={"position": 1} %}
           {% for score in puzzle['scores']|sort(attribute='score',reverse=True) %}
             {% if score['id'] in following %}
-              <div class="post-body" {% if score['name'] == current_user.name %} data-self=true {% endif %}>
+              <div class="post-body" {% if score['name'] == current_user.name %} data-self=true {% else %} data-following=true {% endif %}>
                 <div>
                   <b>{{counter.position}}. </b>
                   <a class="user-link" href="{{url_for(route.user.profile, userid=score['id'])}}">{{score['name']}}</a>  |  <span class="matrix-number">{{score['score']}}</span>
