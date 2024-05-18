@@ -1613,4 +1613,8 @@ a:hover {
         margin-left: 11% !important;
         max-width: 50%;
     }
+    .buttons-container {
+        margin-left: 0 !important;
+        align-items: left !important;
+    }
 }
