@@ -1524,6 +1524,11 @@ a:hover {
     box-sizing: border-box
 }
 
+#closeButton:hover,#exitButton:hover {
+    background-color: var(--matrix-secondary);
+    color: rgb(0,0,0,1)    
+}
+
 .Screen {
     animation: ScreenEffect .3s ease infinite
 }
