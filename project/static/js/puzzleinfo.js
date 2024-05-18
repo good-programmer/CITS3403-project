@@ -80,8 +80,6 @@ window.onload = async function() {
             debounce=false;
         });
     } else {
-        rateSlider.classList += ' disabled';
-        rateSlider.style.color = 'darkgrey';
-        rateSlider.style.opacity = '0.6';
+        rateSlider.classList += 'disabled';
     }
 }

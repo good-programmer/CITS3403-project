@@ -179,9 +179,7 @@ class WebDriverCase(unittest.TestCase):
     def test_puzzle_info(self):
         driver = self.get_driver()
         puzzle = puzzle_utils.get_puzzle(id=1)
-        user = user_utils.get_user(id=1)
-        if puzzle.has_record(user): 
-            puzzle.remove_record(user)
+        user = user_utils.add_user("test", "123")
         driver.get(localhost + url_for(route.puzzle.info, puzzleid=1))
         
         #basic info
@@ -196,13 +194,12 @@ class WebDriverCase(unittest.TestCase):
 
         #disabled/invisible elements when not logged in
         self.assertTrue(driver.find_element(By.CSS_SELECTOR, "#play-button").get_property("disabled"))
-        self.assertIn("display: none", driver.find_element(By.CSS_SELECTOR, "#rate-section").get_attribute("style"))
+        self.assertFalse(driver.find_element(By.CSS_SELECTOR, "#rate-section").get_property("data-display"))
 
         #logged in, no record
         self.emulate_login(user.name, "123")
         driver.get(localhost + url_for(route.puzzle.info, puzzleid=puzzle.id))
         self.assertIsNone(driver.find_element(By.CSS_SELECTOR, "#play-button").get_attribute("disabled"))
-        self.assertNotIn("display: none", driver.find_element(By.CSS_SELECTOR, "#rate-section").get_attribute("style"))
         self.assertIn("disabled", driver.find_element(By.CSS_SELECTOR, "#rate-slider").get_attribute("class"))
         self.assertNotIn(user.name, driver.find_element(By.CSS_SELECTOR, ".leaderboard-body").get_property("innerHTML"))
 

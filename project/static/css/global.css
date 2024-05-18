@@ -670,6 +670,7 @@ pre {
 }
 
 #instructions {
+    display: block;
     opacity: 0%;
     color: var(--matrix-secondary);
     width: max(20vw,300px);
@@ -795,11 +796,6 @@ input[type=checkbox] {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-
-#following-leaderboard {
-    display: none
 }
 
 #leaderboard-container {
@@ -1067,6 +1063,11 @@ h1 {
     margin: 0 0 0 25px
 }
 
+#rate-slider[class="disabled"] {
+    color: darkgrey;
+    opacity: 0.6
+}
+
 .no-indent {
     margin-left: 0!important
 }
@@ -1169,6 +1170,10 @@ h1 {
     width: 100%;
     border: 1px solid var(--matrix-tertiary);
     border-radius: 1px;
+}
+
+#following-leaderboard[data-display="false"] {
+    display: none
 }
 
 #following-leaderboard .post-body, #main-leaderboard .post-body {
@@ -1579,4 +1584,8 @@ a:hover {
 
 #about-container a{
     color: var(--matrix-secondary)
+}
+
+[data-display=false] {
+    display: none
 }
