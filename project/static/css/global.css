@@ -173,7 +173,7 @@ body {
 }
 
 #main-nav {
-    background-color: #0a0a0a;
+    background-color: #0a0a0a !important;
     position: sticky;
     font-size: 1rem;
     font-weight: 400;
