@@ -824,8 +824,15 @@ input[type=checkbox] {
     #leaderboard-header {
       flex-direction: column;
     }
-  }
-
+    .post-body .user-link {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 10ch;
+        display: inline-block;
+    }
+}
+  
 #switch-leaderboard {
     position: relative;
     right: 0%;

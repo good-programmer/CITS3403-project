@@ -57,7 +57,7 @@
               <div class="post-body" {% if score['name'] == current_user.name %} data-self=true {% else %} data-following=true {% endif %}>
                 <div>
                   <b>{{counter.position}}. </b>
-                  <a class="user-link" href="{{url_for(route.user.profile, userid=score['id'])}}">{{score['name']}}</a>  |  <span class="matrix-number">{{score['score']}}</span>
+                  <a class="user-link truncate" href="{{url_for(route.user.profile, userid=score['id'])}}">{{score['name']}}</a>                  |  <span class="matrix-number">{{score['score']}}</span>
                 </div>
                 <div class="matrix-secondary">
                   {{score['dateSubmitted'][:10]}}
