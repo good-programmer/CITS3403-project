@@ -1384,6 +1384,7 @@ a:hover {
 }
 
 #gameArea {
+    max-width: 90% !important;
     align-items: center;
     margin-top: 50px;
     font-family: "VT323",monospace;
