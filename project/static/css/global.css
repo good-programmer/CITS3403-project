@@ -819,19 +819,6 @@ input[type=checkbox] {
     width: 100%;
     position: relative;
 }
-
-@media screen and (max-width: 600px) {
-    #leaderboard-header {
-      flex-direction: column;
-    }
-    .post-body .user-link {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 10ch;
-        display: inline-block;
-    }
-}
   
 #switch-leaderboard {
     position: relative;
@@ -1401,7 +1388,6 @@ a:hover {
 }
 
 #gameArea {
-    max-width: 90% !important;
     align-items: center;
     margin-top: 50px;
     font-family: "VT323",monospace;
@@ -1422,9 +1408,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 250px;
     margin-top: 0;
-    max-width: 550px
 }
 
 #userSubmission {
@@ -1438,7 +1422,6 @@ a:hover {
     display: grid;
     place-items: center;
     margin-bottom: 0;
-    max-width: 550px
 }
 
 #puzzleString {
@@ -1606,4 +1589,28 @@ a:hover {
 
 [data-display=false] {
     display: none
+}
+
+@media screen and (max-width: 600px) {
+    #leaderboard-header {
+      flex-direction: column;
+    }
+    .post-body .user-link {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 10ch;
+        display: inline-block;
+    }
+    #gameContent,#leaderboard {
+        width: auto !important;
+        min-height: 100vw !important;
+    }
+    #userInputContainer label {
+        margin-left: 5% !important;
+    }
+    #userInput {
+        margin-left: 11% !important;
+        max-width: 50%;
+    }
 }
