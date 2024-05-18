@@ -1,17 +1,17 @@
 const postTemplate = document.querySelector(".post-template")
 const postContainer = document.querySelector("[data-post-container]")
 const pageNumContainer = document.getElementById("page-num-container")
-const pageNumTemplate = document.querySelector("[page-num-template]")
+const pageNumTemplate = document.querySelector(".page-num-template")
 const nextButton = document.getElementById("right-arrow")
 const prevButton = document.getElementById("left-arrow")
-nextButton.disabled = true
-prevButton.disabled = true
+nextButton.disabled = true;
+prevButton.disabled = true;
 let totalPages = 1;
-let currentPage = 1
-let sortBy = 'recent'
+let currentPage = 1;
+let sortBy = 'recent';
 
 if (window.location.pathname === '/'){
-    loadTemplates('/recent')
+    loadTemplates('/recent');
 }
 
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
@@ -23,8 +23,11 @@ document.querySelectorAll(".toggle-button").forEach(togBut=>{
         if(['recent','hot','popular'].includes(sortBy)){
             clearTemplates()
             const newURL = '/' + sortBy + '?page=1'
+            currentPage = 1;
             loadTemplates(newURL)
-            window.history.pushState({}, null, newURL)
+            if (window.location.pathname.includes('search')) {
+                window.history.pushState({}, null, newURL);
+            }
         }
 
         document.querySelectorAll(".toggle-button").forEach(otherBut => {
@@ -45,8 +48,8 @@ function clearTemplates() {
 }
 
 function loadTemplates(trend){
-    nextButton.disabled = true
-    prevButton.disabled = true
+    nextButton.disabled = true;
+    prevButton.disabled = true;
     postContainer.dataset.empty = false;
     postContainer.dataset.loading = true;
     fetch('/puzzle/find' + trend)
@@ -87,10 +90,10 @@ function loadTemplates(trend){
 
             postContainer.append(post)
         })
-        totalPages=data.pages
-        updatePageNumDisplay()
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
+        totalPages = data.pages;
+        updatePageNumDisplay();
         console.log(params.get('page'))
     })
     .catch(error => console.error('Error fetching data:', error));
@@ -99,9 +102,10 @@ function loadTemplates(trend){
 function updatePageNumDisplay(){
     for (let i = 1; i <= parseInt(totalPages); i++){
         const pageNumButtonTemp = pageNumTemplate.content.cloneNode(true)
-        const pageNumButton = pageNumButtonTemp.querySelector("[pnButton]")
+        const pageNumButton = pageNumButtonTemp.querySelector("[data-pnButton]")
         pageNumButton.textContent = i
         if (i === currentPage){
+            console.log('Current page', i);
             pageNumButton.classList.toggle("current-page")
         }
         const totalShowing = 6
@@ -127,9 +131,12 @@ function updatePageNumDisplay(){
 function goToPage(page) {
     currentPage = page;
     clearTemplates()
+    updatePageNumDisplay();
     const newURL = '/' + sortBy + '?page=' + currentPage
     loadTemplates(newURL);
-    window.history.pushState({}, null, newURL)
+    if (window.location.pathname.includes('search')) {
+        window.history.pushState({}, null, newURL);
+    }
 }
 
 function nextPage() {

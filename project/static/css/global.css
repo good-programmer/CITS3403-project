@@ -398,6 +398,7 @@ a {
     flex-direction: row;
     justify-content: center;
     margin-top: 1rem;
+    margin-bottom: 1rem
 }
 
 #page-num-container{
@@ -919,6 +920,7 @@ input[type=checkbox] {
 
 #search-results {
     position: relative;
+    min-height: 200px;
 }
 
 #search-results[data-empty="true"]::after {
@@ -970,6 +972,10 @@ input[type=checkbox] {
     animation: Loading 2s steps(1) infinite;
 }
 
+#rating-filter-container[data-display="false"], #playcount-filter-container[data-display="false"], #date-filter-container[data-display="false"] {
+    display: none;
+}
+
 
 .row-label:before {
     content: ">Browse by "
@@ -987,7 +993,6 @@ input[type=checkbox] {
 
 .panel-container label {
     margin-right: .75rem;
-    display: none
 }
 
 .button-label {
@@ -997,7 +1002,6 @@ input[type=checkbox] {
 }
 
 .rating,.dropdown {
-    display: none;
     width: 15rem;
     margin-right: .5rem;
     padding: .5em 1em;
@@ -1015,7 +1019,6 @@ input[type=checkbox] {
 }
 
 .date,.play_count {
-    display: none;
     width: 15rem;
     margin-right: .5rem;
     padding: .5rem 1rem;

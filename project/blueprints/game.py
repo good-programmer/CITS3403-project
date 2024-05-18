@@ -186,7 +186,7 @@ def api_search_puzzle(trend=None):
         query, rating, date, completed, play_count, following, sort_by, order = parse_search_parameters(request)
         data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, following=following, sort_by=sort_by, order=order)
     
-    page = data.paginate(page=page, per_page=page_size, error_out=True)
+    page = data.paginate(page=page, per_page=page_size, error_out=False)
     data = [puzzle_utils.pack_puzzle(p) for p in page.items]
     
     return {"puzzles": data, "pages": page.pages, "count": page.total}

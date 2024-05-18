@@ -36,12 +36,13 @@ function handleSubmit(){
     for (const keyName of keyNameList){
         if (searchMap.get(keyName)==defaultMap.get(keyName)) {
             if (keyName == 'page'){
-                urlInjection += "&page=1"
+                urlInjection += "page=1&";
             }
-            continue
+            continue;
         }
-        urlInjection += '&' + keyName + '=' + searchMap.get(keyName)
+        urlInjection += keyName + '=' + searchMap.get(keyName) + '&';
     }
+    urlInjection = urlInjection.replace(/&$/, '');
     clearTemplates()
     window.history.pushState({}, null, urlInjection)
     loadTemplates(urlInjection)
@@ -112,15 +113,14 @@ maxRating.addEventListener('change', function() {
 
 //event listeners for button labels
 function toggleRowLabel (isOn, browseClass){
-    const elmnts = document.querySelectorAll(browseClass)
-    const labels = document.querySelectorAll(browseClass + '-label')
+    /*const elmnts = document.querySelectorAll(browseClass + " *");
     elmnts.forEach(elmnt =>{
         elmnt.style['display'] = isOn ? 'block' : 'none'
-    })
-    labels.forEach(label =>{
-        label.style['display'] = isOn ? 'block' : 'none'
-    })
+    })*/
+    const container = document.querySelector(browseClass);
+    container.dataset.display = isOn;
 }
+
 function handleDate(isOn){
     if (!isOn){
         storedMap.set('after', searchMap.get('after'))
@@ -150,7 +150,7 @@ document.querySelectorAll(".row-label").forEach(rowLabel=>{
             searchMap.set(keyName, storedMap.get(keyName))
         }
 
-        const className = '.' + keyName
+        const className = '#' + rowLabel.dataset.toggletarget
         toggleRowLabel(isOn, className)
         if (keyName == 'date'){
             console.log(searchMap.get('after'))
