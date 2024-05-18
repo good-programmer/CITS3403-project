@@ -1,6 +1,8 @@
 from flask import session, flash, redirect, url_for
 from ..config import PATH
 import re
+from ..blueprints.models import db, User, Puzzle, Rating, LeaderboardRecord, Follow
+from sqlalchemy import func, desc
 
 from . import route_utils as route
 
@@ -67,3 +69,38 @@ def validate_puzzle_title(title):
 
     # If input passes all checks, return True
     return valid, errors
+
+def get_following_rated(user):
+    result = Puzzle.query
+    
+    user_following = list(Follow.query.filter(Follow.followerID == user.id).with_entities(Follow.userID).all())
+    user_following_ids = [i[0] for i in user_following]
+
+    result = result.join(Rating)
+    result = result.filter(Rating.userID.in_(user_following_ids))
+    result = result.order_by(desc(Puzzle.dateCreated)).limit(10).all()
+    result_with_type = [(puzzle, 'created') for puzzle in result]
+    return result_with_type
+
+def get_following_puzzles(user):
+    result = Puzzle.query
+    
+    user_following = list(Follow.query.filter(Follow.followerID == user.id).with_entities(Follow.userID).all())
+    user_following_ids = [i[0] for i in user_following]
+
+    result = result.filter(Puzzle.creatorID.in_(user_following_ids))
+    
+    result = result.order_by(desc(Puzzle.dateCreated)).limit(10).all()
+    result_with_type = [(puzzle, 'rated') for puzzle in result]
+
+    return result_with_type
+
+def create_feed(user):
+    recent_puzzles = get_following_puzzles(user)
+    recent_rated_puzzles = get_following_rated(user)
+
+    all_puzzles = recent_puzzles + recent_rated_puzzles
+
+    feed = sorted(all_puzzles, key=lambda x: (x[0].dateCreated if x[1] == 'created' else x[0].ratings[0].dateRated), reverse=True)
+    
+    return feed

@@ -4,6 +4,8 @@ const pageNumContainer = document.getElementById("page-num-container")
 const pageNumTemplate = document.querySelector("[page-num-template]")
 const nextButton = document.getElementById("right-arrow")
 const prevButton = document.getElementById("left-arrow")
+nextButton.disabled = true
+prevButton.disabled = true
 let totalPages = 1;
 let currentPage = 1
 let sortBy = 'recent'
@@ -40,10 +42,11 @@ function clearTemplates() {
     while (pageNumContainer.firstChild) {
         pageNumContainer.removeChild(pageNumContainer.firstChild)
     }
-
 }
 
 function loadTemplates(trend){
+    nextButton.disabled = true
+    prevButton.disabled = true
     postContainer.dataset.empty = false;
     postContainer.dataset.loading = true;
     fetch('/puzzle/find' + trend)
@@ -118,8 +121,8 @@ function updatePageNumDisplay(){
         pageNumButton.onclick = () => goToPage(i);
         pageNumContainer.appendChild(pageNumButton)
     }
-    prevButton.disabled = currentPage === 1;
-    nextButton.disabled = currentPage === totalPages;
+    prevButton.disabled = currentPage === 1 || totalPages == 0;
+    nextButton.disabled = currentPage === totalPages || totalPages == 0;
 }
 function goToPage(page) {
     currentPage = page;

@@ -35,6 +35,9 @@ function handleSubmit(){
     let urlInjection ='?'
     for (const keyName of keyNameList){
         if (searchMap.get(keyName)==defaultMap.get(keyName)) {
+            if (keyName == 'page'){
+                urlInjection += "&page=1"
+            }
             continue
         }
         urlInjection += '&' + keyName + '=' + searchMap.get(keyName)
@@ -309,10 +312,17 @@ searchInput.addEventListener("input", e =>{
 })
 searchInput.addEventListener("keypress", function(event){
     if (event.key === 'Enter'){
+        setDefault('page')
+        currentPage = 1
         handleSubmit()
     }
 })
-submitButton.addEventListener("click", handleSubmit)
+submitButton.addEventListener("click", function(){
+    setDefault('page')
+    currentPage = 1
+    handleSubmit()
+}
+)
 
 function updateSearchWithParams() {
     let currentParams = new URLSearchParams(window.location.search);
@@ -324,7 +334,7 @@ function updateSearchWithParams() {
         }
     }
     if (currentParams.size > 0){
-        handleSubmit();
+        handleSubmit()
     } else {
         loadTemplates('/recent');
     }
@@ -349,9 +359,4 @@ document.querySelectorAll("#sort-filter-container .toggle-button").forEach(togBu
         console.log(searchMap.get('sort_by'))
     })
 })
-function changePage(newPage){
-    currentPage = newPage
-    searchMap.set('page', currentPage)
-    handleSubmit()
-}
 

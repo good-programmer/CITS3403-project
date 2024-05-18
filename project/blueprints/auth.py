@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_user, login_required, logout_user, current_user
 from project.blueprints.forms import LoginForm, RegistrationForm
 
-from ..utils import auth_utils, user_utils, route_utils as route
+from ..utils import puzzle_utils, auth_utils, user_utils, route_utils as route
 
 import json
 
@@ -149,3 +149,35 @@ def api_unfollow_user():
         else:
             current_user.unfollow_user(user)
             return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200
+
+@auth.route('/user/feed', methods=["GET"])
+def api_get_feed():
+    user = current_user
+    feed = auth_utils.create_feed(user)
+
+
+    feed_data= [{
+        'id': puzzle[0].id, 
+        'title': puzzle[0].title, 
+        'creatorID' : puzzle[0].creatorID, 
+        'creator': puzzle[0].creator.name,
+        'dateCreated': puzzle[0].dateCreated,
+        'dateRated' : puzzle[0].ratings[0].dateRated,
+        'date': puzzle[0].dateCreated if puzzle[1]=='created' else puzzle[0].ratings[0].dateRated,
+        'rated': puzzle[0].ratings[0].rating if puzzle[1] == 'rated' else '',
+        'type': puzzle[1]
+        } for puzzle in feed]
+    '''
+    for puzzle_data in feed_data:
+        print("ID:", puzzle_data['id'])
+        print("Title:", puzzle_data['title'])
+        print("Creator ID:", puzzle_data['creatorID'])
+        print("Creator:", puzzle_data['creator'])
+        print("Date Created:", puzzle_data['dateCreated'])
+        print("Date Rated:", puzzle_data['dateRated'])
+        print("Date:", puzzle_data['date'])
+        print("Rated:", puzzle_data['rated'])
+        print("Type:", puzzle_data['type'])
+        print()
+    '''
+    return feed_data[:10]
