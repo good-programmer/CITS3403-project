@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <body id="body">
-
+    <script src="{{url_for('static', filename='js/wordGame.js')}}"></script>
     <div id="instructions-container">
         <div id="instructions" data-display="false"><b>&ltComplete a puzzle!&gt</b>
             <ul>
@@ -43,9 +43,6 @@
             </div>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="{{url_for('static', filename='js/wordGame.js')}}"></script>
 </body>
 {% endblock %}
 </html>
