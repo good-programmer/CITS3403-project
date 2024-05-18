@@ -665,6 +665,10 @@ pre {
     left: calc(max(50%,700px)/2 - max(30%,700px)/4 - max(20vw,300px)/2)
 }
 
+#body #instructions-container {
+    margin-top: 25vh;
+}
+
 #instructions {
     opacity: 0%;
     color: var(--matrix-secondary);
@@ -1424,7 +1428,7 @@ a:hover {
     padding-right: 10px
 }
 
-#closeButton,#exitButton,#submitButton,#userButtons button {
+#closeButton,#exitButton,#submitButton,#userButtons button,#showGameInstructions {
     text-align: center;
     margin-top: 0;
     background-color: transparent;
@@ -1446,7 +1450,7 @@ a:hover {
     min-width: fit-content
 }
 
-#closeButton,#exitButton,#submitButton,#userButtons,#userInput,#userInputContainer label,.wordTile {
+#closeButton,#exitButton,#submitButton,#showGameInstructions,#userButtons,#userInput,#userInputContainer label,.wordTile {
     font-size: 30px
 }
 
