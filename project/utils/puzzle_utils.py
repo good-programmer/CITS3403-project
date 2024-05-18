@@ -42,13 +42,18 @@ def get_puzzle(title=None, id=None) -> Puzzle:
         puzzle = Puzzle.query.filter_by(id=id).first()
     return puzzle
 
-def search_puzzles(query, rating, date, completed, play_count, following, sort_by, order):
+def search_puzzles(query=None, rating=None, date=None, completed=None, play_count=None, following=None, sort_by='date', order='desc'):
     '''Retrieves puzzles given filters. In particular, returns the query that will result in the list of puzzles matching the filters.'''
     result = Puzzle.query
-    result = result.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query))
-    result = result.outerjoin(Rating, Puzzle.id==Rating.puzzleID).group_by(Puzzle.id).having(func.coalesce(func.avg(Rating.rating), 0).between(rating[0],rating[1]))
-    result = result.filter(Puzzle.dateCreated.between(date[0], date[1]))
-    result = result.filter(Puzzle.play_count.between(play_count[0], play_count[1]))
+    if query:
+        result = result.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query))
+    result = result.outerjoin(Rating, Puzzle.id==Rating.puzzleID).group_by(Puzzle.id)
+    if rating:
+        result = result.having(func.coalesce(func.avg(Rating.rating), 0).between(rating[0],rating[1]))
+    if date:
+        result = result.filter(Puzzle.dateCreated.between(date[0], date[1]))
+    if play_count:
+        result = result.filter(Puzzle.play_count.between(play_count[0], play_count[1]))
     result = result.outerjoin(LeaderboardRecord, LeaderboardRecord.puzzleID==Puzzle.id)
     if completed:
         if completed[1] is True:
@@ -57,7 +62,7 @@ def search_puzzles(query, rating, date, completed, play_count, following, sort_b
             exclude = list(result.filter(LeaderboardRecord.userID==completed[0].id).with_entities(Puzzle.id).all())
             exclude = [i[0] for i in exclude]
             result = result.filter(Puzzle.id.not_in(exclude))
-    if following:
+    if following and following[1]:
         include = list(Follow.query.filter(Follow.followerID == following[0].id).with_entities(Follow.userID).all())
         include = [i[0] for i in include]
         result = result.filter(Puzzle.creatorID.in_(include))
