@@ -312,15 +312,15 @@ searchInput.addEventListener("input", e =>{
 })
 searchInput.addEventListener("keypress", function(event){
     if (event.key === 'Enter'){
-        setDefault('page')
-        currentPage = 1
+        setDefault('page');
+        currentPage = 1;
         handleSubmit()
     }
 })
 submitButton.addEventListener("click", function(){
-    setDefault('page')
-    currentPage = 1
-    handleSubmit()
+    setDefault('page');
+    currentPage = 1;
+    handleSubmit();
 }
 )
 

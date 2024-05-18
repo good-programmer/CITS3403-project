@@ -131,7 +131,6 @@ function updatePageNumDisplay(){
 function goToPage(page) {
     currentPage = page;
     clearTemplates()
-    updatePageNumDisplay();
     const newURL = '/' + sortBy + '?page=' + currentPage
     loadTemplates(newURL);
     if (window.location.pathname.includes('search')) {
