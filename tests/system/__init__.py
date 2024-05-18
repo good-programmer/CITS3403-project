@@ -313,6 +313,7 @@ class WebDriverCase(unittest.TestCase):
         self.assertEqual(inp.text, "")
 
         #test score and submission
+        time.sleep(1)
         self.assertIn("act", sub.get_property("innerHTML"))
         self.assertEqual("3", driver.find_element(By.CSS_SELECTOR, "#scoreValue").text)
         driver.find_element(By.CSS_SELECTOR, "#submitButton").click()
