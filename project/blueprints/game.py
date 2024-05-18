@@ -206,12 +206,20 @@ def get_trend_data(trend):
 
 def parse_search_parameters(request):
     query = standardize(request.args.get('query', '.*'))
+    if 'query' not in request.args:
+        query = None
 
     rating = setdefaults(request.args.get('rating', '0-5').split('-'), ['0', '5'])
-    rating = [(float(i) if isfloat(i) else 0) for i in rating]
+    if 'rating' in request.args:
+        rating = [(float(i) if isfloat(i) else 0) for i in rating]
+    else:
+        rating = None
 
     date = request.args.get('after', '0000-01-01'), request.args.get('to', '9999-01-01')
-    date = [(i if isdate(i) else '0000-01-01') for i in date]
+    if 'after' in request.args or 'to' in request.args:
+        date = [(i if isdate(i) else '0000-01-01') for i in date]
+    else:
+        date = None
 
     completed = request.args.get('completed', None)
     if completed and current_user.is_authenticated:
@@ -226,9 +234,12 @@ def parse_search_parameters(request):
         following = False
 
     play_count = setdefaults(request.args.get('play_count', '0').split('-'), ['0', '999999'])
-    play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
+    if 'play_count' in request.args:
+        play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
+    else:
+        play_count = None
 
-    sort_by = request.args.get('sort_by', 'date').lower()
+    sort_by = request.args.get('sort_by', None)
     if sort_by not in ['date', 'play_count', 'highscore', 'rating', 'a-z']:
         sort_by = 'date'
     
