@@ -23,11 +23,12 @@ def page_play_puzzle(puzzleid):
         #print(f"'{user_input}': {is_valid}")    
         return jsonify(is_valid=is_valid)
     else:
-        return render_template('wordGame.html', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
+        return render_template('wordGame.html', title=f'puzzle — {puzzle.title}', route=route, puzzle=puzzle_utils.pack_puzzle(puzzle, detail=3), completed=puzzle.has_record(current_user))
 
 @game.route('/puzzle/random', methods=['GET'])
 @login_required
 def page_random_puzzle():
+    '''Redirects to random uncompleted puzzle'''
     completed = [s.puzzleID for s in current_user.scores]
     total = Puzzle.query.count()
     
@@ -103,8 +104,8 @@ def page_create_puzzle():
             return redirect(url_for(route.puzzle.info, puzzleid=puzzle.id))
         for error in errors:
             flash(error, 'error')
-        return render_template('submitpuzzle.html', route=route, form=form)
-    return render_template('submitpuzzle.html', route=route, form=form)
+        return render_template('submitpuzzle.html', title='word-amble — create', route=route, form=form)
+    return render_template('submitpuzzle.html', title='word-amble — create', route=route, form=form)
     
 @game.route('/puzzle/<int:puzzleid>', methods=['GET'])
 def api_get_puzzle(puzzleid):
@@ -127,6 +128,7 @@ def api_get_puzzle(puzzleid):
 
 @game.route('/puzzle/<int:puzzleid>/info')
 def page_puzzle_info(puzzleid):
+    '''Puzzle view page'''
     puzzle = puzzle_utils.get_puzzle(id=puzzleid)
     if not puzzle:
         abort(404)
@@ -140,7 +142,7 @@ def page_puzzle_info(puzzleid):
             s = puzzle.get_record(current_user)
             data['score'] = {"score": s.score, "dateSubmitted": str(s.dateSubmitted)}
         following = [f.userID for f in current_user.following] + [current_user.id]
-    return render_template('puzzleinfo.html', route=route, current_user=current_user, puzzle=data, following=following)
+    return render_template('puzzleinfo.html', title=f'puzzle — {puzzle.title}', route=route, current_user=current_user, puzzle=data, following=following)
 
 @game.route('/puzzle/<int:puzzleid>/rate', methods=['POST'])
 def api_rate_puzzle(puzzleid):
@@ -163,7 +165,7 @@ def api_rate_puzzle(puzzleid):
 
 @game.route('/puzzle/search', methods=['GET'])
 def page_create_search():
-    return render_template('search.html', route=route)
+    return render_template('search.html', title='word-amble — search', route=route)
 
 @game.route('/puzzle/find', methods=['GET'])
 @game.route('/puzzle/find/<string:trend>', methods=['GET'])
@@ -181,8 +183,8 @@ def api_search_puzzle(trend=None):
         if not data:
             abort(404)
     else:
-        query, rating, date, completed, play_count, sort_by, order = parse_search_parameters(request)
-        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, sort_by=sort_by, order=order)
+        query, rating, date, completed, play_count, following, sort_by, order = parse_search_parameters(request)
+        data = puzzle_utils.search_puzzles(query=query, rating=rating, date=date, completed=completed, play_count=play_count, following=following, sort_by=sort_by, order=order)
     
     page = data.paginate(page=page, per_page=page_size, error_out=True)
     data = [puzzle_utils.pack_puzzle(p) for p in page.items]
@@ -217,6 +219,12 @@ def parse_search_parameters(request):
     else:
         completed = None
 
+    following = request.args.get('following', False)
+    if following and current_user.is_authenticated:
+        following = (current_user, True if following.lower() == 'true' else False)
+    else:
+        following = False
+
     play_count = setdefaults(request.args.get('play_count', '0').split('-'), ['0', '999999'])
     play_count = [(float(i) if isfloat(i) else 0) for i in play_count]
 
@@ -228,7 +236,7 @@ def parse_search_parameters(request):
     if order not in ['desc', 'asc']:
         order = 'desc'
     
-    return query, rating, date, completed, play_count, sort_by, order
+    return query, rating, date, completed, play_count, following, sort_by, order
 
 def standardize(s:str):
     '''Turn a search query into a regex for database search'''

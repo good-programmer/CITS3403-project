@@ -1,6 +1,6 @@
 import re
 from sqlalchemy import func, desc, asc
-from ..blueprints.models import db, User, Puzzle, Rating, LeaderboardRecord
+from ..blueprints.models import db, User, Puzzle, Rating, LeaderboardRecord, Follow
 
 from project import config
 
@@ -42,7 +42,7 @@ def get_puzzle(title=None, id=None) -> Puzzle:
         puzzle = Puzzle.query.filter_by(id=id).first()
     return puzzle
 
-def search_puzzles(query, rating, date, completed, play_count, sort_by, order):
+def search_puzzles(query, rating, date, completed, play_count, following, sort_by, order):
     '''Retrieves puzzles given filters. In particular, returns the query that will result in the list of puzzles matching the filters.'''
     result = Puzzle.query
     result = result.join(User, Puzzle.creatorID==User.id).filter(Puzzle.title.regexp_match(query) | User.name.regexp_match(query))
@@ -57,6 +57,10 @@ def search_puzzles(query, rating, date, completed, play_count, sort_by, order):
             exclude = list(result.filter(LeaderboardRecord.userID==completed[0].id).with_entities(Puzzle.id).all())
             exclude = [i[0] for i in exclude]
             result = result.filter(Puzzle.id.not_in(exclude))
+    if following:
+        include = list(Follow.query.filter(Follow.followerID == following[0].id).with_entities(Follow.userID).all())
+        include = [i[0] for i in include]
+        result = result.filter(Puzzle.creatorID.in_(include))
 
     order = asc if order == 'asc' else desc
     match sort_by:

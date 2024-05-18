@@ -1,257 +1,1591 @@
-:root {
-    --matrix-primary: rgb(0, 188, 0);
-    --matrix-secondary: rgb(238, 214, 62);
-}
+@import url(https://fonts.googleapis.com/css?family=VT323);
+/*
+SOURCES:
+    `background` in `.container`, `#user-info`, `#puzzle-info` is based on:
+        https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css
+    `.MatrixText<colour>` is a modified version of:
+        https://codepen.io/freelesio/pen/MWQaGPb
+*/
 
-body {
-    background-color: 	rgba(10, 10, 10, 1);
-    color: rgba(125,225,125,0.75);
-    font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New;
-}
-
-@keyframes blink {
-    from, to { opacity: 100% }
-    85% { opacity: 0%; }
-}
 
 @keyframes QuickBlink {
-    0% {opacity: 100%;}
-    20% {opacity: 0%;}
-    30% {opacity: 100%;}
-    40% {opacity: 0%;}
-    50% {opacity: 100%;}
-    60% {opacity: 0%;}
-}
+    0%,30%,50% {
+        opacity: 100%
+    }
 
-@keyframes ScreenEffect {
-    0% { opacity: 0.92 }
-    50% { opacity: 1 }
-    100% { opacity: 0.95}
+    20%,40%,60% {
+        opacity: 0%
+    }
 }
 
 @keyframes Pulse {
-    0% { text-shadow: 0 0 2px }
-    50% { text-shadow: 0 0 4px }
-    100% { text-shadow: 0 0 0px }
+    0% {
+        text-shadow: 0 0 2px
+    }
+
+    50% {
+        text-shadow: 0 0 4px
+    }
+
+    to {
+        text-shadow: 0 0 0
+    }
 }
 
 @keyframes FlickerGlowEffect {
-    0% { text-shadow: 0px 0px 2px; }
-    50% { text-shadow: 0px 0px 0px;}
-    100% { text-shadow: 0px 0px 2px;}
+    0%,to {
+        text-shadow: 0 0 2px
+    }
+
+    50% {
+        text-shadow: 0 0 0
+    }
 }
 
 @keyframes FlickerEffect {
-    0% { opacity: 100%; }
-    50% { opacity: 40%;}
-    90% { opacity: 100%;}
+    0%,90% {
+        opacity: 100%
+    }
+
+    50% {
+        opacity: 40%
+    }
+}
+
+@keyframes InfiniteFlickerEffect {
+    0%,4% {
+        opacity: 100%
+    }
+
+    1% {
+        opacity: 40%
+    }
+
+    2% {
+        opacity: 100%
+    }
+
+    3% {
+        opacity: 40%
+    }
+}
+
+@keyframes CRTShift {
+    0%,50% {
+        background-size: 4px 4px
+    }
+}
+
+@keyframes Scanlines {
+    0% {
+        background-position-y: 0
+    }
+
+    to {
+        background-position-y: 100px
+    }
+}
+
+@keyframes reveal {
+    0% {
+        width: 110%
+    }
+
+    to {
+        width: 0%
+    }
+}
+
+@keyframes blink {
+    0%,to {
+        opacity: 1
+    }
+
+    50% {
+        opacity: 5%
+    }
+}
+
+@keyframes ScreenEffect {
+    0% {
+        opacity: .92
+    }
+
+    50% {
+        opacity: 1
+    }
+
+    to {
+        opacity: .95
+    }
+}
+
+:root {
+    --matrix-primary: rgb(0, 188, 0);
+    --matrix-secondary: rgb(238, 214, 62);
+    --matrix-tertiary: rgba(125, 225, 125, .75);
+    --matrix-number: rgba(220, 220, 220, 1);
+    --matrix-puzzle: rgb(0, 180, 3);
+    --matrix-user: rgb(166, 255, 162);
+}
+
+a,body {
+    color: var(--matrix-tertiary)
+}
+
+body {
+    font-family: "Consolas", "Monaco", "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New";
+    background-color: color-mix(in srgb, var(--matrix-primary) 1.5%, black);
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0
 }
 
 .error-message {
     color: red;
-    text-shadow: 0px 0px 4px;
-    animation: ScreenEffect 0.3s ease infinite;
-    animation: FlickerEffect 0.15s step-end normal;
-    animation-iteration-count: 2;
+    text-shadow: 0 0 4px;
+    animation: FlickerEffect .15s step-end normal;
+    animation-iteration-count: 2
 }
 
-.Screen {
-    animation: ScreenEffect 0.3s ease infinite;
+.matrix-number {
+    color: var(--matrix-number);
+    text-shadow: 0 0 2px var(--matrix-number);
 }
 
-#title-container > pre{
-    animation: ScreenEffect 0.3s ease infinite;
-    animation: Pulse .9s ease infinite;
-    color: var(--matrix-primary);
-    font-size: max(0.9vw, 6px);
+.matrix-puzzle {
+    color: var(--matrix-puzzle);
+}
+
+.matrix-user {
+    color: var(--matrix-user);
+}
+
+.matrix-secondary {
+    color: var(--matrix-secondary);
+}
+
+#title-container>pre {
+    font-size: max(.9vw,6px);
     width: 100vw;
-    text-align: center;
+    text-align: center
 }
 
 #main-nav {
-    background-color: rgba(10,10,10,1);
+    background-color: #0a0a0a;
     position: sticky;
     font-size: 1rem;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.5
 }
 
-#nav-links .nav-link > a{
+#nav-links .nav-link>a {
     color: var(--matrix-primary);
     animation: Pulse 1.5s ease infinite;
     text-decoration: none;
-    position: relative;
+    position: relative
 }
 
-#nav-links .nav-link > a:hover {
+#nav-links .nav-link>a:hover {
     animation: blink 1s step-end infinite;
-    color: var(--matrix-secondary);
+    color: var(--matrix-secondary)
 }
-#nav-links .nav-link > a:hover::before {
+
+#nav-links .nav-link:hover::before,#nav-links .nav-link>a:hover::before {
     position: absolute;
-    content: '_________________________';
-    text-overflow: clip;
-    white-space: nowrap;
-    overflow: hidden; 
-    text-shadow: 0 0 2px;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
     user-select: none;
-    pointer-events: none;
+    pointer-events: none
 }
-#nav-links .nav-link > a:hover::after {
-    position: absolute;
-    content: '_________________________';
+
+#nav-links .nav-link>a:hover::after,#nav-links .nav-link>a:hover::before {
+    content: "_________________________";
     text-overflow: clip;
     white-space: nowrap;
-    overflow: hidden; 
+    overflow: hidden;
+    z-index: -1
+}
+
+#nav-links .nav-link>a:hover::before {
+    text-shadow: 0 0 2px
+}
+
+#nav-links .nav-link>a:hover::after {
+    position: absolute;
     text-shadow: 0 0 10px;
     bottom: -5px;
     left: 10%;
     width: 80%;
     height: 100%;
-    z-index: -1;
     user-select: none;
-    pointer-events: none;
+    pointer-events: none
 }
 
 #nav-links .nav-link {
-    position: relative;
+    position: relative
 }
 
 #nav-links .nav-link:hover::before {
-    position: absolute;
-    content: '';
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    content: "";
     opacity: 0%;
-    background-color: rgba(10,10,10,1);
+    background-color: #0a0a0a;
     z-index: 2;
-    user-select: none;
-    pointer-events: none;
-    animation: QuickBlink 0.5s step-end normal;
+    animation: QuickBlink .5s step-end normal
+}
+
+#nav-hint,#title-container>pre {
+    color: var(--matrix-primary);
+    animation: Pulse .9s ease infinite
 }
 
 #nav-hint {
     width: 25%;
-    color: var(--matrix-primary);
-    animation: Pulse .9s ease infinite;
-    user-select: none;
+    user-select: none
 }
-
-@keyframes CRTShift {
-    0% { background-size: 4px 4px;}
-    50% { background-size: 4px 4px; }
-}
-
-@keyframes Scanlines {
-    0% { background-position-y: 0px;}
-    100% { background-position-y: 100px;}
-}
-
 
 #crt-effect {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: 4px 4px;
-    background-image: radial-gradient(circle, rgba(255, 0, 0, .15) 1px, rgba(0, 0, 0, 0) 1px);
-    z-index: 1000;
-    user-select: none;
-    pointer-events: none;
-    animation: CRTShift 7s steps(60) infinite;
+    background-image: radial-gradient(circle,rgba(255,0,0,.15) 1px,transparent 1px);
+    animation: CRTShift 7s steps(60) infinite
 }
 
-#crt-effect:before {
-    content: '';
+#crt-effect,#crt-effect:after,#crt-effect:before {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-size: 4px 4px;
-    background-image: radial-gradient(circle, rgba(0, 255, 0, .15) 1px, rgba(0, 0, 0, 0) 1px);
-    background-position: 2px 0px;
     z-index: 1000;
     user-select: none;
-    pointer-events: none;
-    animation: CRTShift 7s steps(30) infinite;
+    pointer-events: none
 }
 
 #crt-effect:after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: 4px 4px;
-    background-image: radial-gradient(circle, rgba(0, 0, 255, .15) 1px, rgba(0, 0, 0, 0) 1px);
+    content: ""
+}
+
+#crt-effect:before {
+    content: "";
+    background-image: radial-gradient(circle,rgba(0,255,0,.15) 1px,transparent 1px);
+    background-position: 2px 0;
+    animation: CRTShift 7s steps(30) infinite
+}
+
+#crt-effect:after {
+    background-image: radial-gradient(circle,rgba(0,0,255,.15) 1px,transparent 1px);
     background-position: 1px 2px;
-    z-index: 1000;
-    user-select: none;
-    pointer-events: none;
-    animation: CRTShift 7s steps(70) infinite;
+    animation: CRTShift 7s steps(70) infinite
 }
 
 #scanlines::after {
-    z-index: 200;
-    user-select: none;
-    pointer-events: none;
-    content: '';
-    position: fixed;
     top: 0;
+    opacity: 20%;
+    background-image: linear-gradient(to bottom,#282828 2px,transparent 1px)
+}
+
+#nav-location[data-hovered=true]::after,#scanlines,#scanlines::after {
+    content: "";
+    user-select: none;
+    pointer-events: none
+}
+
+#scanlines,#scanlines::after {
+    z-index: 200;
+    position: fixed;
     left: 0;
     width: 100%;
     height: 100vh;
-    opacity: 20%;
     background-size: 40px 100px;
-    background-image: linear-gradient(to bottom, rgba(40,40,40,1) 2px, transparent 1px);
-    animation: Scanlines 1.5s steps(450) infinite;
+    animation: Scanlines 1.5s steps(450) infinite
 }
 
 #scanlines {
-    z-index: 200;
-    user-select: none;
-    pointer-events: none;
-    content: '';
-    position: fixed;
     top: -2px;
-    left: 0;
-    width: 100%;
-    height: 100vh;
     opacity: 40%;
-    background-size: 40px 100px;
-    background-image: linear-gradient(to bottom, rgb(10, 10, 10) 2px, transparent 1px);
-    animation: Scanlines 1.5s steps(450) infinite;
+    background-image: linear-gradient(to bottom,#0a0a0a 2px,transparent 1px)
 }
 
 #nav-location {
-    position: relative;
+    position: relative
 }
 
-@keyframes reveal {
-    0% {width: 110%;}
-    100% {width: 0%;}
-}
-#nav-location[hovered="true"]::after {
+#nav-location[data-hovered=true]::after {
     position: absolute;
-    content: '';
     top: 0;
     right: -10%;
     width: 0%;
     height: 100%;
     opacity: 100%;
-    background-color: rgba(10,10,10,1);
+    background-color: #0a0a0a;
     z-index: 1000;
-    user-select: none;
+    animation: reveal .3s steps(10) normal
+}
+
+a {
+    text-decoration: none;
+    color: rgba(125,225,125,.75)
+}
+
+#page-navbar,#page-navbar .nav-item-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: center
+}
+
+#page-navbar {
+    width: 100vw;
+    max-width: 100%;
+    padding-left: 1%;
+    overflow: hidden
+}
+
+#page-navbar .nav-item-list {
+    width: 90%;
+    list-style: none;
+    padding: 0;
+    margin: 0
+}
+
+#page-navbar .nav-item:before {
+    content: ">"
+}
+
+#page-navbar .nav-item {
+    font-size: 16px;
+    margin-left: 20px
+}
+
+#page-navbar .nav-item:first-child {
+    margin-left: 0;
+    margin-right: auto
+}
+
+.panel-container {
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: .3rem;
+    align-items: baseline;
+    margin-left: 5%
+}
+
+.toggle-button {
+    padding: .5rem 1rem;
+    border-radius: 1rem
+}
+
+.basic-toggle:not(.basic-toggle--selected):hover,.row-label:not(.row-label--selected):hover,.toggle-button:not(.toggle-button--selected):hover {
+    background-color: #293102
+}
+
+.post-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center
+}
+
+.post {
+    border: 1px solid var(--matrix-tertiary);
+    padding: .5rem;
+    border-radius: .25rem;
+    width: 80%;
+    margin-top: 1rem;
+    overflow: hidden
+}
+
+.puzzle-row {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline
+}
+
+.puzzle-title {
+    font-size: 1.25rem;
+    margin-right: .5rem
+}
+
+.author-id:before,.puzzle-id:before {
+    content: "#"
+}
+
+.puzzle-id {
+    font-size: .75rem;
+    color: gray
+}
+
+.author-row {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline
+}
+
+.author-name {
+    font-size: .9rem
+}
+
+.author-id,.author-name {
+    margin-right: .5rem
+}
+
+.author-id,.date-created {
+    font-size: .75rem;
+    color: gray
+}
+
+.stats-row {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline
+}
+
+.play-count:before {
+    color: var(--matrix-primary);
+    animation: none;
+    content: "Total Plays: "
+}
+
+.avg-rating,.highscore,.play-count {
+    font-size: .75rem;
+    margin-right: 2rem
+}
+
+.avg-rating:before {
+    color: var(--matrix-primary);
+    animation: none;
+    content: "Average rating: "
+}
+
+.highscore:before {
+    color: var(--matrix-primary);
+    animation: none;
+    content: "Highscore: "
+}
+
+#body {
+    background-color: #000;
+    cursor: default
+}
+
+pre {
+    font-size: calc(8px + .15vw);
+    margin: 0
+}
+
+.post-container a:hover,.post-list a:hover {
+    text-decoration: none;
+    animation: none;
+    background-color: var(--matrix-tertiary);
+    color: #000
+}
+
+.post-container .author-id:hover,.post-container .puzzle-id:hover {
+    background: 0 0;
+    color: var(--matrix-secondary);
+    text-decoration: underline
+}
+
+#puzzleFormContainer {
+    position: absolute;
+    top: 35%;
+    left: 30%;
+    width: 40%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 2px solid var(--matrix-tertiary);
+    box-shadow: 0 0 30px rgba(2,213,55,.307);
+    opacity: 0%;
+    pointer-events: none
+}
+
+#innerForm {
+    display: flex;
+    flex-direction: column
+}
+
+#innerForm>* {
+    margin-bottom: 10px
+}
+
+.form-control:hover {
+    animation: blink 1s ease
+}
+
+.submitbutton {
+    position: relative;
+    margin: 0
+}
+
+.submitbutton:hover {
+    animation: blink 1s ease infinite
+}
+
+#content-box,.background-square,.letter-square {
+    background-color: color-mix(in srgb,var(--matrix-primary) 10%, black)
+}
+
+.background-square,.letter-square {
+    outline: 2px solid color-mix(in srgb,var(--matrix-primary) 20%, black);
+    margin: 3%;
+    border-radius: 0;
+    aspect-ratio: 1/1;
+    position: inherit;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: max(3vw,40px);
+    font-weight: 400;
+    padding: 0;
+    color: transparent;
+    transition: background-color 120ms ease,border 50ms ease,color 75ms ease-in-out;
+    user-select: none
+}
+
+#content-box {
+    z-index: 1;
+    position: relative;
+    top: 0;
+    width: max(30%,350px);
+    margin: auto;
+    aspect-ratio: 10/1;
+    border-radius: 2px;
+    display: grid;
+    grid-template-columns: repeat(5,minmax(30px,1fr));
+    padding: .5%;
+    cursor: pointer
+}
+
+[data-selected=true] {
+    outline: 2px solid var(--matrix-primary)
+}
+
+#content-box::after {
+    content: "";
+    height: 100%;
+    width: 100%;
+    left: 1%;
+    top: 1%;
+    position: absolute;
+    z-index: -1;
+    background-color: var(--matrix-primary);
+    opacity: 15%
+}
+
+#puzzle-name-input,.has-text {
+    background-color: color-mix(in srgb,var(--matrix-primary) 25%, black);
+    filter: saturate(150%)
+}
+
+.has-text {
+    border: 3px solid #0a0a0a;
+    color: var(--matrix-primary);
+    outline: 2px solid var(--matrix-primary);
+    box-shadow: 0 0 5px var(--matrix-primary),0 0 7px var(--matrix-primary),0 0 9px var(--matrix-primary);
+    animation: QuickBlink .08s step-end normal,Pulse 1s ease infinite
+}
+
+#puzzle-name-input {
+    margin: auto;
+    position: relative;
+    width: max(20vw,350px);
+    height: max(5.5vh,55px);
+    font-size: max(.8vw,12px);
+    cursor: pointer;
+    border: 2px dotted green;
+    text-align: center;
+    display: flex;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    white-space: pre;
+    font-weight: bolder
+}
+
+#puzzle-name-input[data-selected=true]::after {
+    content: "|";
+    animation: blink 1s step-end infinite
+}
+
+#puzzle-name-input[data-empty=true][data-selected=false]::before {
+    content: "<Puzzle title>"
+}
+
+#error-box {
+    width: 100%;
+    padding: 1%;
+    text-align: center
+}
+
+#create-puzzle-container {
+    width: max(20vw,200px);
+    height: max(5.5vh,30px);
+    left: calc(50vw - max(20vw,200px)/2);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+#showInstructions {
+    border-radius: 2px;
+    color: var(--matrix-primary);
+    background-color: transparent;
+    border: 2px solid var(--matrix-primary);
+    height: 100%;
+    aspect-ratio: 1/1;
+    width: auto;
+    text-align: center;
+    padding: 0;
+    display: block;
+}
+
+#showInstructions:hover {
+    background-color: var(--matrix-primary);
+    color: rgb(0,0,0,1)
+}
+
+#instructions-container {
+    z-index: 2;
+    display: none;
+    background-color: rgba(0,0,0,0.2);
+    backdrop-filter: blur(10px);
+    position: absolute;
+    margin-top: -10vh;
+    left: calc(max(50%,700px)/2 - max(30%,700px)/4 - max(20vw,300px)/2)
+}
+
+#body #instructions-container {
+    margin-top: 25vh;
+}
+
+#instructions {
+    display: block;
+    opacity: 0%;
+    color: var(--matrix-secondary);
+    width: max(20vw,300px);
+    height: auto;
     pointer-events: none;
-    animation: reveal 0.3s steps(10) normal;
+    font-size: min(min(3.5vw,3.5vh),16px);
+    padding: 20px;
+}
+
+#instructions[data-display="true"] {
+    opacity: 100%;
+    z-index: 1000;
+    position: relative
+}
+
+#instructions[data-display="true"]::after {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: 4px 4px;
+    background-image: radial-gradient(circle,var(--matrix-primary) 1px,transparent 1px);
+    mask: linear-gradient(to right, #000 0% 2%,transparent 2% 98%,#000 98%), linear-gradient(to bottom,#000 0% 2%,transparent 2% 98%,#000 98%);
+    animation: FlickerEffect .15s step-end normal;
+    animation-iteration-count: 2
+}
+
+#create-puzzle-btn {
+    margin-right: 10px;
+    position: relative;
+    left: 0;
+    width: max(10vw,150px);
+    height: 100%;
+    font-size: max(.8vw,12px);
+    cursor: pointer;
+    background-color: transparent;
+    border: 2px solid var(--matrix-primary);
+    border-radius: 2px;
+    filter: saturate(100%);
+    text-align: center;
+    color: var(--matrix-primary);
+    border-radius: 1px;
+    animation: ScreenEffect .3s ease infinite;
+    font-weight: bolder
+}
+
+#create-puzzle-btn:hover {
+    background-color: var(--matrix-primary);
+    color: rgb(0,0,0,1);
+    animation: ScreenEffect .3s ease infinite,FlickerEffect .1s step-end normal;
+    animation-iteration-count: 2
+}
+
+:root {
+    --error-color: rgb(247, 72, 72);
+    --one-fourth: calc(max(25vw, 400px))
+}
+
+#login-inner .error-message {
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+.one-fourth {
+    width: var(--one-fourth)
+}
+
+.one-eighth {
+    width: calc(var(--one-fourth)*.5)
+}
+
+.post-list {
+    position: relative;
+    background-color: transparent;
+    width: 100%;
+    top: 0;
+    height: 90vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    left: 0;
+    scrollbar-color: var(--matrix-primary) rgba(0,0,0,0.1);/*var(--matrix-secondary), color-mix(in srgb, var(--matrix-secondary) 70%, black);*/
+}
+
+input[type=checkbox] {
+    position: relative;
+    top: 2px
+}
+
+.post-body {
+    border: 2px solid #fff;
+    padding: 30px;
+}
+
+#profile-list-container {
+    overflow-x:hidden;
+    width: calc(100% - 15px);
+    padding-bottom: 100px;
+}
+
+#created-list, #completed-list, #rated-list {
+    width: 80%;
+    margin-left: 5%;
+    border: 1px solid var(--matrix-tertiary);
+    padding: 0;
+}
+
+#created-list[data-empty="true"]::after, #completed-list[data-empty="true"]::after, #rated-list[data-empty="true"]::after {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    content: '<no data found>';
+    width: 100%;
+    height: 100%;
+}
+
+#created-list .post-body, #completed-list .post-body, #rated-list .post-body {
+    width: 100%;
+    margin-left: 0%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#leaderboard-container {
+    width: 80%;
+    margin: auto;
+    height: 72%;
+}
+
+#leaderboard-title {
+    font-size: 25px;
+}
+
+#leaderboard-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+}
+
+#switch-leaderboard {
+    position: relative;
+    right: 0%;
+}
+
+#rate-slider {
+    position: relative;
+    font-family: monospace;
+    font-size: 30px;
+    text-align: center;
+    user-select: none;
+    color: orange;
+    width: fit-content;
+    height: 30px;
+    padding: 0;
+    margin-bottom: 0px;
+}
+
+#rate-slider:hover {
+    text-shadow: 0 0 .5px,0 0 .5px,0 0 .5px;
+    cursor: pointer
+}
+
+#rate-back,#rate-current {
+    margin: 0;
+    height: fit-content;
+    position: absolute;
+    width: auto;
+    overflow: hidden;
+    top: 0
+}
+
+#rate-current {
+    width: 0
+}
+
+.disabled {
+    pointer-events: none
+}
+
+.MatrixTextGreen {
+    color: var(--matrix-tertiary)
+}
+
+:focus {
+    outline: 0
+}
+
+#search-filter-container {
+    margin-left: 5%;
+    background-color: rgba(255,255,255,0.08);
+    margin-right: 5%;
+    padding: 25px 0px;
+    border-radius: 2px;
+}
+
+#search-container {
+    margin-left: 5%
+}
+
+#submit-search {
+    width: 5rem
+}
+
+#submit:hover {
+    background-color: #293102
+}
+
+#search,#submit-search,.row-label {
+    margin-right: .5rem;
+    padding: .5rem .5rem;
+    border-radius: 1rem;
+    border: solid 1px var(--matrix-tertiary);
+    color: var(--matrix-tertiary);
+    background-color: #1a0600
+}
+
+#search {
+    width: 40%
+}
+
+#search-results {
+    position: relative;
+}
+
+#search-results[data-empty="true"]::after {
+    position: absolute;
+    text-align: center;
+    padding-top: 50px;
+    content: '<no results found>';
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    font-size: 1.25em;
+}
+
+@keyframes Loading {
+    0% {
+        width: 0em
+    }
+    20% {
+        width: 1em
+    }
+    40% {
+        width: 2em
+    }
+    60% {
+        width: 3em
+    }
+    80% {
+        width: 4em
+    }
+    100% {
+        width: 0em
+    }
+}
+
+#search-results[data-loading="true"]::after {
+    content: '■ ■ ■ ■';
+    position: absolute;
+    text-align: left;
+    padding: 0px;
+    margin-top: 50px;
+    width: 6.25em;
+    height: 100px;
+    pointer-events: none;
+    font-size: 1.25em;
+    left: calc(50vw - 6.25em/2);
+    overflow: hidden;
+    text-overflow: clip;
+    text-wrap: nowrap;
+    animation: Loading 2s steps(1) infinite;
+}
+
+
+.row-label:before {
+    content: ">Browse by "
+}
+
+.row-label {
+    width: 15rem
+}
+
+.row-label--selected {
+    background-color: var(--matrix-tertiary);
+    color: #1a0600;
+    border: solid 1px #1a0600
+}
+
+.panel-container label {
+    margin-right: .75rem;
+    display: none
+}
+
+.button-label {
+    margin-right: .75rem;
+    margin-top: 0;
+    margin-bottom: 0
+}
+
+.rating {
+    display: none;
+    width: 15rem;
+    margin-right: .5rem;
+    padding: .5em 1em;
+    border-radius: 1rem;
+    border: solid 1px var(--matrix-tertiary);
+    color: var(--matrix-tertiary);
+    background-color: #1a0600
+}
+
+.rating option:first-child {
+    display: none
+}
+
+.date,.play_count {
+    display: none;
+    width: 15rem;
+    margin-right: .5rem;
+    padding: .5rem 1rem;
+    border-radius: 1rem;
+    border: solid 1px var(--matrix-tertiary);
+    color: var(--matrix-tertiary);
+    background-color: #1a0600
+}
+
+.play_count::placeholder {
+    color: var(--matrix-tertiary)
+}
+
+input {
+    color-scheme: dark
+}
+
+input[type=date]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: .6
+}
+
+input[type=date]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1
+}
+
+.basic-toggle,.cycle-label {
+    width: 15rem;
+    margin-right: .5rem;
+    padding: .5rem 1rem;
+    border-radius: 1rem;
+    border: solid 1px var(--matrix-tertiary);
+    color: var(--matrix-tertiary);
+    background-color: #1a0600
+}
+
+.basic-toggle--selected {
+    background-color: var(--matrix-tertiary);
+    color: #1a0600;
+    border: solid 1px #1a0600
+}
+
+h1 {
+    text-align: left;
+    margin-left: 2.5%;
+    font-size: 25px
+}
+
+#puzzle-info {
+    margin: auto auto 5%;
+    background: radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px)0 0/3px 3px,radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px) 1px 1px/3px 3px,radial-gradient(rgba(55,70,55,.2) .5px,transparent .5px) 2px 2px/3px 3px;
+    background-color: #000;
+    height: auto;
+}
+
+#puzzle-info * {
+    font-family: "VT323",monospace;
+    font-size: 25px
+}
+
+#puzzle-info p,#user-info p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 25px
+}
+
+#rate-slider {
+    margin: 0 0 0 25px
+}
+
+#rate-slider[class="disabled"] {
+    color: darkgrey;
+    opacity: 0.6
+}
+
+.no-indent {
+    margin-left: 0!important
+}
+
+#puzzle-info p:nth-of-type(1) {
+    margin-left: 0;
+    margin-top: 5px;
+    margin-bottom: 25px
+}
+
+#puzzle-info p:nth-of-type(2) {
+    margin-left: 0;
+    margin-top: 5px
+}
+
+#puzzle-info p:last-of-type {
+    margin-left: 0;
+    margin-bottom: 5px
+}
+
+#puzzle-info {
+    border: 1px solid var(--matrix-tertiary);
+    padding: .5rem;
+    border-radius: .125rem;
+    width: 80%;
+    margin-top: 1rem
+}
+
+#rate-section > #rate-text {
+    margin-bottom: 0
+}
+
+.user-link,a.hlink {
+    color: inherit
+}
+
+#play-button:not(:disabled):hover,#switch-leaderboard-button:hover,.user-link:hover {
+    color: #000;
+    background-color: var(--matrix-tertiary)
+}
+
+#follow-button.MatrixTextGreen:disabled,#play-button.MatrixTextGreen:disabled {
+    color: #a9a9a9;
+    text-shadow: none;
+    opacity: .6;
+    text-decoration: line-through
+}
+
+#play-button,#switch-leaderboard-button {
+    text-align: center;
+    background-color: transparent;
+    border: 0
+}
+
+#play-button {
+    margin-top: 25px;
+    margin-bottom: 25px
+}
+
+.buttons-container:first-child {
+    margin-left: 10%
+}
+
+.toggle-button {
+    margin-right: .5rem;
+    padding: .5em 1em;
+    border-radius: 1em;
+    border: solid 1px var(--matrix-tertiary);
+    color: var(--matrix-tertiary);
+    background-color: #1a0600
+}
+
+.toggle-button--selected {
+    background-color: var(--matrix-tertiary);
+    color: #1a0600;
+    border: solid 1px #1a0600
+}
+
+.leaderboard-body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+}
+
+.leaderboard-body[data-empty="true"]::after {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    content: '<no scores set>';
+    width: 100%;
+    height: 100%;
+}
+
+#following-leaderboard,#main-leaderboard {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border: 1px solid var(--matrix-tertiary);
+    border-radius: 1px;
+}
+
+#following-leaderboard[data-display="false"] {
+    display: none
+}
+
+#following-leaderboard .post-body, #main-leaderboard .post-body {
+    margin: 0;
+    width: auto;
+    height: 40px;
+    text-wrap: nowrap;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+}
+
+#created-list .post-body, #completed-list .post-body, #rated-list .post-body {
+    position: relative;
+}
+
+#created-list .post-body:hover::before, #completed-list .post-body:hover::before, #rated-list .post-body:hover::before, #following-leaderboard .post-body:hover::before, #main-leaderboard .post-body:hover::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--matrix-primary);
+    top: 0;
+    left: 0;
+    opacity: 8%;
+    pointer-events: none;
+}
+
+#following-leaderboard .post-body:hover::after, #main-leaderboard .post-body:hover::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 100%;
+    background-color: var(--matrix-primary);
+    top: 0;
+    left: -5px;
+    opacity: 100%;
+    pointer-events: none;
+}
+
+#following-leaderboard .post-body[data-self="true"], #main-leaderboard .post-body[data-self="true"] {
+    background-color: color-mix(in srgb, var(--matrix-tertiary) 90%, black);
+    color: black;
+}
+
+#following-leaderboard .post-body[data-following="true"], #main-leaderboard .post-body[data-following="true"] {
+    background: linear-gradient(to right, color-mix(in srgb, var(--matrix-tertiary) 60%, black) 0.5%, transparent 4%);
+
+}
+
+h2 {
+    text-align: left;
+    margin-left: 5%;
+    font-size: 18px
+}
+
+#user-info {
+    margin: auto auto 5%;
+    background: radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px)0 0/3px 3px,radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px) 1px 1px/3px 3px,radial-gradient(rgba(55,70,55,.2) .5px,transparent .5px) 2px 2px/3px 3px;
+    background-color: #000
+}
+
+#user-info * {
+    font-family: "VT323",monospace;
+    font-size: 25px
+}
+
+#completed-puzzles-sort,#created-puzzles-sort,#rated-puzzles-sort,#user-info,.post-body {
+    border: 1px solid var(--matrix-tertiary);
+    padding: .5rem;
+    border-radius: .125rem;
+    width: 80%;
+    margin-top: 1rem
+}
+
+.post-body {
+    height: auto;
+    margin: 0 0 5px 5%
+}
+
+#completed-puzzles-sort,#created-puzzles-sort,#rated-puzzles-sort {
+    background-color: transparent;
+    text-align: center;
+    margin-left: 5%
+}
+
+#follow-button:hover,.post-body a.hlink:hover {
+    color: #000!important;
+    background-color: var(--matrix-tertiary)!important
+}
+
+#follow-button,.post-body {
+    background-color: transparent
+}
+
+#follow-button {
+    text-align: center;
+    border: 0
+}
+
+#title-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    pointer-events: none;
+    user-select: none;
+    animation: ScreenEffect .3s ease infinite
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--matrix-secondary);
+    text-decoration-color: var(--matrix-secondary);
+    animation: blink 1s steps(4) infinite
+}
+
+.form-control {
+    border: 1px solid var(--matrix-tertiary);
+    padding: 8px;
+    background-color: #000;
+    color: var(--matrix-tertiary)
+}
+
+#login .form-control:hover,.form-control:hover {
+    animation: blink 1s steps(4)
+}
+
+#login .form-control:focus,.form-control:focus {
+    animation: none
+}
+
+.submitbutton {
+    background-color: var(--matrix-tertiary);
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer
+}
+
+#login .submitbutton:hover,.submitbutton:hover {
+    animation: blink 1s steps(4) infinite
+}
+
+#login table,table {
+    border-collapse: collapse;
+    width: 40%
+}
+
+#login td,#login th, #login td,#login th {
+    text-align: left;
+    padding: 8px
+}
+
+#login td {
+    width: 10%;
+    box-sizing: border-box
+}
+
+#login,.table-container {
+    padding: 20px
+}
+
+#login {
+    width: 300px;
+    margin: 0 auto;
+    border: 2px solid rgba(125,225,125,.75);
+    box-shadow: 0 0 30px rgba(2,213,55,.307)
+}
+
+#login-inner {
+    display: flex;
+    flex-direction: column
+}
+
+#login-inner>* {
+    margin-bottom: 10px
+}
+
+#remember-me {
+    position: relative;
+    left: 10%
+}
+
+#login h1 {
+    margin-left: 0
+}
+
+#login .form-control {
+    border: 1px solid rgba(125,225,125,.75);
+    padding: 8px;
+    background-color: #000;
+    color: rgba(125,225,125,.75)
+}
+
+#login .submitbutton {
+    background-color: rgba(125,225,125,.75);
+    color: #fff;
+    border: 0;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer
+}
+
+#login .table-container {
+    padding: 20px
+}
+
+#gameArea {
+    align-items: center;
+    margin-top: 50px;
+    font-family: "VT323",monospace;
+    user-select: none
+}
+
+#gameArea a {
+    animation: none;
+}
+
+.container {
+    margin: 5px;
+    background-color: #0a0f0a;
+    background: radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px)0 0/3px 3px,radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px) 1px 1px/3px 3px,radial-gradient(rgba(55,70,55,.2) .5px,transparent .5px) 2px 2px/3px 3px
+}
+
+#userInputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 250px;
+    margin-top: 0;
+    max-width: 550px
+}
+
+#userSubmission {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-start
+}
+
+#puzzleStringContainer {
+    display: grid;
+    place-items: center;
+    margin-bottom: 0;
+    max-width: 550px
+}
+
+#puzzleString {
+    text-align: center;
+    font-size: 50px;
+    letter-spacing: 10px;
+    min-height: 75px;
+    margin-bottom: 0;
+    padding-left: 25px;
+    padding-right: 10px
+}
+
+#closeButton,#exitButton,#submitButton,#userButtons button,#showGameInstructions {
+    text-align: center;
+    margin-top: 0;
+    background-color: transparent;
+    border: 0
+}
+
+#resetButton {
+    margin-left: 40px;
+    margin-right: 40px
+}
+
+#submitButton {
+    margin-left: 0;
+    margin-right: 0
+}
+
+#score {
+    display: inline-block;
+    min-width: fit-content
+}
+
+#closeButton,#exitButton,#submitButton,#showGameInstructions,#userButtons,#userInput,#userInputContainer label,.wordTile {
+    font-size: 30px
+}
+
+#userInputContainer label {
+    position: absolute;
+    margin-left: 10px;
+    line-height: 30px
+}
+
+#userInput,.wordTile {
+    text-transform: uppercase
+}
+
+#userInput {
+    flex-grow: 1;
+    border: 0;
+    outline: 0;
+    background: 0 0;
+    text-align: left;
+    caret-color: rgba(225,225,125,.75);
+    margin-left: 45px
+}
+
+.wordTile {
+    align-items: center;
+    max-height: 35px;
+    width: fit-content;
+    padding: 0;
+    margin-left: 46px
+}
+
+#gameContent,#leaderboard {
+    box-sizing: border-box;
+    margin: 5px auto;
+    width: 550px;
+    height: 388px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center
+}
+
+#gameContent {
+    border: 1px solid var(--matrix-tertiary);
+    border-radius: .125rem;
+}
+
+#leaderboard {
+    border: 1px solid var(--matrix-secondary);
+    border-radius: .125rem;    
+}
+
+#leaderboard h2 {
+    font-size: 50px;
+    padding-top: 5px
+}
+
+.leaderboard-table {
+    font-size: 25px;
+    margin: auto
+}
+
+.leaderboard-table a,.leaderboard-table a:hover {
+    color: inherit
+}
+
+.leaderboard-table a.MatrixTextYellow:hover {
+    color: #000;
+    background-color: rgba(225,225,125,.75)
+}
+
+.leaderboard-table td,.leaderboard-table th {
+    padding: 0
+}
+
+.leaderboard-table td:nth-child(2) {
+    text-align: left
+}
+
+#buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%
+}
+
+#closeButton,#exitButton {
+    width: 100%;
+    box-sizing: border-box
+}
+
+#closeButton:hover,#exitButton:hover {
+    background-color: var(--matrix-secondary);
+    color: rgb(0,0,0,1)    
+}
+
+.Screen {
+    animation: ScreenEffect .3s ease infinite
+}
+
+.MatrixTextGreen {
+    color: rgba(125,225,125,.75);
+    text-shadow: 0 0 5px rgba(125,225,125,.5),0 0 15px #7dfa7d
+}
+
+.MatrixTextYellow {
+    color: rgba(225,225,125,.75);
+    text-shadow: 0 0 5px rgba(225,225,125,.5),0 0 15px #e1fa7d
+}
+
+.MatrixTextRed {
+    color: rgba(225,125,125,.75);
+    text-shadow: 0 0 5px rgba(225,125,125,.5),0 0 15px #e17d7d
+}
+
+.puzzleFormContainer {
+    margin: 0 auto;
+    text-align: center
+}
+
+.greyed {
+    filter: grayscale() brightness(80%);
+    text-decoration: line-through
+}
+
+#about-container a{
+    color: var(--matrix-secondary)
+}
+
+[data-display=false] {
+    display: none
 }

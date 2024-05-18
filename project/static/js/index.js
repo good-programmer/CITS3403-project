@@ -1,4 +1,4 @@
-const postTemplate = document.querySelector("[post-template]")
+const postTemplate = document.querySelector(".post-template")
 const postContainer = document.querySelector("[data-post-container]")
 
 if (window.location.pathname === '/'){loadTemplates('/recent');}
@@ -6,7 +6,7 @@ if (window.location.pathname === '/'){loadTemplates('/recent');}
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
     
-        togBut.classList.toggle("toggle-button--selected")
+        togBut.classList.toggle("toggle-button--selected", true);
 
         sortBy = togBut.textContent.trim().toLowerCase()
         if(['recent','hot','popular'].includes(sortBy)){
@@ -29,10 +29,13 @@ function clearTemplates() {
 }
 
 function loadTemplates(trend){
-
+    postContainer.dataset.empty = false;
+    postContainer.dataset.loading = true;
     fetch('/puzzle/find' + trend)
     .then(response => response.json())
     .then(data => {
+        postContainer.dataset.loading = false;
+        postContainer.dataset.empty = (data.puzzles.length === 0);
         data.puzzles.forEach(puz => {
             const post = postTemplate.content.cloneNode(true)
 

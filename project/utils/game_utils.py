@@ -32,7 +32,7 @@ def sanitise_input(user_input):
 def verify_score(submittedWords, puzzleString):
     sanitised_words = [sanitise_input(word) for word in submittedWords]
 
-    if len(submittedWords) <=5:
+    if 0 < len(submittedWords) and len(submittedWords) <= 5:
         if all(validate_input(word) for word in sanitised_words):
             if words_in_puzzle_string(sanitised_words, puzzleString.lower()):
                 if len(sanitised_words) == len(set(sanitised_words)):

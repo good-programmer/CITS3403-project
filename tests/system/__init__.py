@@ -35,7 +35,7 @@ class WebDriverCase(unittest.TestCase):
         return self.__class__.driver
 
     def setUp(self):
-        self.server_thread = multiprocessing.Process(target=lambda: app.run(debug=False, use_reloader=False))
+        self.server_thread = multiprocessing.Process(target=app.run, kwargs=dict(debug=False, use_reloader=False))
         self.server_thread.start()
 
     def tearDown(self):
@@ -113,13 +113,13 @@ class WebDriverCase(unittest.TestCase):
         #not logged in, should only display Home|Login|Register
         driver.get(localhost + url_for(route.user.profile, userid=1))
         links = [a.text for a in driver.find_elements(By.CSS_SELECTOR, ".navbar a")]
-        self.assertListEqual(['Home', 'Login', 'Register'], links)
+        self.assertListEqual(['Home', 'About', 'Login', 'Register'], links)
 
         #logged in, should display Home|Random|Submit Puzzle|Profile|Logout
         self.emulate_login("$GENERATED_USER_0", "123")
         driver.get(localhost + url_for(route.user.profile, userid=1))
         links = [a.text for a in driver.find_elements(By.CSS_SELECTOR, ".navbar a")]
-        self.assertListEqual(['Home', 'Random', 'Submit Puzzle', 'Profile', 'Logout'], links)
+        self.assertListEqual(['Home', 'About', 'Random', 'Search', 'Create', 'Profile', 'Logout'], links)
 
 
     def test_landing(self):
@@ -149,12 +149,13 @@ class WebDriverCase(unittest.TestCase):
         self.assertIn("Log in to follow", driver.page_source)
         self.assertRaises(NoSuchElementException, driver.find_element, By.CSS_SELECTOR, "#follow-button")
         #basic info
-        self.assertIn(user.name, driver.page_source)
-        self.assertIn(f"Total completed puzzles: {len(user.scores)}", driver.page_source)
-        self.assertIn(f"Total ratings: {len(user.ratings)}", driver.page_source)
-        self.assertIn(f"Total created puzzles: {len(user.puzzles)}", driver.page_source)
-        self.assertIn(f"Following: {len(user.following)}", driver.page_source)
-        self.assertIn(f"Followers: {len(user.followers)}", driver.page_source)
+        page_text = driver.find_element(By.CSS_SELECTOR, "body").text
+        self.assertIn(user.name, page_text)
+        self.assertIn(f"total_completed_puzzles: {len(user.scores)}", page_text)
+        self.assertIn(f"total_ratings: {len(user.ratings)}", page_text)
+        self.assertIn(f"total_created puzzles: {len(user.puzzles)}", page_text)
+        self.assertIn(f"following: {len(user.following)}", page_text)
+        self.assertIn(f"followers: {len(user.followers)}", page_text)
         #list lengths match number of puzzles/scores/ratings
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#created-list > .post-body")), len(user.puzzles))
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#completed-list > .post-body")), len(user.scores))
@@ -165,45 +166,40 @@ class WebDriverCase(unittest.TestCase):
         self.emulate_login(user2.name, "123")
         driver.get(localhost + url_for(route.user.profile, userid=1))
         follow = driver.find_element(By.CSS_SELECTOR, "#follow-button")
-        self.assertEqual(follow.text, "Follow")
+        self.assertEqual(follow.text, "[FOLLOW]")
         follow.click()
-        WebDriverWait(driver, 2).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "#follow-button"), "Unfollow"))
+        WebDriverWait(driver, 2).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "#follow-button"), "[UNFOLLOW]"))
         self.assertTrue(user2.is_following(user))
-        self.assertEqual(follow.text, "Unfollow")
+        self.assertEqual(follow.text, "[UNFOLLOW]")
         follow.click()
-        WebDriverWait(driver, 2).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "#follow-button"), "Follow"))
+        WebDriverWait(driver, 2).until(expected_conditions.text_to_be_present_in_element((By.CSS_SELECTOR, "#follow-button"), "[FOLLOW]"))
         self.assertFalse(user2.is_following(user))
-        self.assertEqual(follow.text, "Follow")
+        self.assertEqual(follow.text, "[FOLLOW]")
 
     def test_puzzle_info(self):
         driver = self.get_driver()
         puzzle = puzzle_utils.get_puzzle(id=1)
-        user = user_utils.get_user(id=1)
-        if puzzle.has_record(user): 
-            puzzle.remove_record(user)
+        user = user_utils.add_user("test", "123")
         driver.get(localhost + url_for(route.puzzle.info, puzzleid=1))
         
         #basic info
+        page_text = driver.find_element(By.CSS_SELECTOR, "body").text
         self.assertIn(puzzle.title, driver.page_source)
-        self.assertIn(puzzle.creator.name, driver.page_source)
-        self.assertIn(f"Plays: {len(puzzle.scores)}", driver.page_source)
-        self.assertIn(f"Highest score: {puzzle.highest_score}", driver.page_source)
-        self.assertIn(f"Date created: {str(puzzle.dateCreated)[:10]}", driver.page_source)
-        self.assertIn(f"Average rating: {round(puzzle.average_rating, 2)}", driver.page_source)
+        self.assertIn(puzzle.creator.name, page_text)
+        self.assertIn(f"plays: {len(puzzle.scores)}", page_text)
+        self.assertIn(f"highest_score: {puzzle.highest_score}", page_text)
+        self.assertIn(f"date_created: {str(puzzle.dateCreated)[:10]}", page_text)
+        self.assertIn(f"average_rating: {round(puzzle.average_rating, 2)}", page_text)
         self.assertEqual(len(driver.find_elements(By.CSS_SELECTOR, "#main-leaderboard > .post-body")), len(puzzle.scores))
 
         #disabled/invisible elements when not logged in
-        self.assertTrue(driver.find_element(By.CSS_SELECTOR, "#play-button").get_attribute("disabled"))
-        WebDriverWait(driver, 2).until(expected_conditions.invisibility_of_element(driver.find_element(By.CSS_SELECTOR, "#switch-leaderboard-button")))
-        self.assertIn("display: none", driver.find_element(By.CSS_SELECTOR, "#switch-leaderboard-button").get_attribute("style"))
-        self.assertIn("display: none", driver.find_element(By.CSS_SELECTOR, "#rate-section").get_attribute("style"))
+        self.assertTrue(driver.find_element(By.CSS_SELECTOR, "#play-button").get_property("disabled"))
+        self.assertFalse(driver.find_element(By.CSS_SELECTOR, "#rate-section").get_property("data-display"))
 
         #logged in, no record
         self.emulate_login(user.name, "123")
         driver.get(localhost + url_for(route.puzzle.info, puzzleid=puzzle.id))
         self.assertIsNone(driver.find_element(By.CSS_SELECTOR, "#play-button").get_attribute("disabled"))
-        self.assertNotIn("display: none", driver.find_element(By.CSS_SELECTOR, "#switch-leaderboard-button").get_attribute("style"))
-        self.assertNotIn("display: none", driver.find_element(By.CSS_SELECTOR, "#rate-section").get_attribute("style"))
         self.assertIn("disabled", driver.find_element(By.CSS_SELECTOR, "#rate-slider").get_attribute("class"))
         self.assertNotIn(user.name, driver.find_element(By.CSS_SELECTOR, ".leaderboard-body").get_property("innerHTML"))
 
@@ -274,7 +270,7 @@ class WebDriverCase(unittest.TestCase):
         self.assertEqual(inp.text, "")
 
         #test score and submission
-        self.assertIn("act", sub.get_property("innerHTML"))
+        self.assertIn("ACT", sub.text)
         self.assertEqual("3", driver.find_element(By.CSS_SELECTOR, "#scoreValue").text)
         driver.find_element(By.CSS_SELECTOR, "#submitButton").click()
         WebDriverWait(driver, 2).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, "#leaderboard")))

@@ -60,6 +60,25 @@ let Game = {
 
     // dynamically create elements for user submitted words
     updateSubmittedWords: function() {
+        const submitButton = document.querySelector('#submitButton');
+        const userInputLabel = document.querySelector('#userInputContainer > label[for="userInput"]');
+        const userInput = document.getElementById("userInput");
+        
+        if (this.submittedWords.length === 0) {
+            submitButton.classList.add("greyed");
+        } else {
+            submitButton.classList.remove("greyed");
+        }
+
+        if (this.submittedWords.length >= 5) {
+            userInputLabel.textContent = "|>";
+            userInputLabel.classList.add("greyed");
+            userInput.classList.add("greyed");
+        } else {
+            userInput.classList.remove("greyed");
+            userInputLabel.textContent = "$>";
+            userInputLabel.classList.remove("greyed");
+        }
         if (this.submittedWords.length <= 5) {
             const container = document.getElementById('submittedWords');
             container.innerHTML = '';
@@ -72,18 +91,6 @@ let Game = {
                 p.style.display = 'inline-block';
                 div.appendChild(p);
                 container.appendChild(div);
-                
-                const userInputLabel = document.querySelector('#userInputContainer > label[for="userInput"]');
-                const userInput = document.getElementById("userInput");
-                if (this.submittedWords.length >= 5) {
-                    userInputLabel.textContent = "|>";
-                    userInputLabel.classList.add("greyed");
-                    userInput.classList.add("greyed");
-                } else {
-                    userInput.classList.remove("greyed");
-                    userInputLabel.textContent = "$>";
-                    userInputLabel.classList.remove("greyed");
-                }
     
                 div.addEventListener('click', () => {
                     this.submittedWords.splice(index, 1);
@@ -146,6 +153,7 @@ let Game = {
 
     solve: async function() {
         if (!Game.solved) {
+            if (!(0 < this.submittedWords.length && this.submittedWords.length <= 5)) return;
             let solveData = {
                 submittedWords: this.submittedWords,
                 date: new Date()
@@ -238,6 +246,7 @@ let Game = {
         Game.puzzleString = Game.getPuzzleString();
         Game.displayString = Game.puzzleString;
         Game.updateScore();
+        Game.updateSubmittedWords();
 
         // allocate enough width for double digit score
         let scoreElement = document.getElementById('score');
@@ -262,6 +271,23 @@ function setEventListeners() {
         // stop shuffling when the button is released
         clearInterval(Game.shuffleInterval);
     });
+
+    document.getElementById('shuffleButton').addEventListener('click', function() {
+        Game.shuffleString();
+    });
+    
+    document.getElementById('resetButton').addEventListener('click', function() {
+        Game.reset();
+    });
+    
+    document.getElementById('submitButton').addEventListener('click', function() {
+        Game.solve();
+    });
+
+    document.getElementById('userInput').addEventListener('input', function() {
+        Game.updateString();
+    });
+    
 
     // highlight shuffleButton on hover
     document.getElementById('shuffleButton').addEventListener('mouseover', function() {
@@ -292,11 +318,45 @@ function setEventListeners() {
         this.classList.remove('MatrixTextGreen')
         this.classList.add('MatrixTextYellow')
     });
+
+    // highlight showGameInstructions on hover
+    document.getElementById('showGameInstructions').addEventListener('mouseover', function() {
+        this.classList.remove('MatrixTextYellow')
+        this.classList.add('MatrixTextGreen')
+    });
+
+    document.getElementById('showGameInstructions').addEventListener('mouseout', function() {
+        this.classList.remove('MatrixTextGreen')
+        this.classList.add('MatrixTextYellow')
+    });
 }
 
 window.addEventListener('load', function() {
     Game.init();
     setEventListeners();
+
+    //Function to toggle the instructions visibility
+    let instructionsContainer = $("#instructions-container");
+    let instructions = $("#instructions");
+    $("#showGameInstructions").click(function(){
+        let currentDisplay = instructions.attr("data-display");
+        if (currentDisplay === "true") {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        } else {
+            instructions.slideDown();
+            instructions.attr("data-display", "true");
+            instructionsContainer.css("display", "block");
+        }
+    });
+
+    // Hide instructions when clicked anywhere on the document
+    $(document).click(function(event) {
+        if (instructions.attr("data-display") === "true" && !instructions.is(event.target) && !$("#showGameInstructions").is(event.target)) {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        }
+    });
 });
 
 function displayLeaderboard() {

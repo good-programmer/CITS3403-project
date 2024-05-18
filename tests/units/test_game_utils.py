@@ -25,6 +25,7 @@ class GameUtilCase(unittest.TestCase):
         self.assertEqual(expected, sanitise_input('a b c__d e  f\ng'))
         self.assertEqual(expected, sanitise_input('abcdefg'))
         #order after filter is incorrect
+        self.assertNotEqual(expected, sanitise_input(''))
         self.assertNotEqual(expected, sanitise_input('ABcFGed'))
     
     def test_validate_input(self):
@@ -34,6 +35,7 @@ class GameUtilCase(unittest.TestCase):
         self.assertTrue(validate_input('c A t'))
         self.assertTrue(validate_input('c$$##A__#@^t'))
         #incorrect after filter
+        self.assertFalse(validate_input(''))
         self.assertFalse(validate_input('cxt'))
         self.assertFalse(validate_input('c$##$x__t'))
     

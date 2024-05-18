@@ -6,7 +6,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
     <script defer src="{{ url_for('static', filename='js/navbar.js') }}"></script>
-    <title>{% block title %} {% endblock %}</title>
+    {% if title %}
+      <title>{{title}}</title>
+    {%else%}
+      <title>word-amble</title>
+    {%endif%}
   </head>
   <body>
     <div id="crt-effect"></div>
@@ -15,14 +19,14 @@
       <div class="container-fluid">
         <ul id="nav-links" class="navbar-nav mr-auto">
           <li class="nav-link"><a href="{{ url_for(route.index) }}">Home</a></li>
-          <li class="nav-link"><a href="{{ url_for(route.about_us) }}">About the Creators</a></li>
+          <li class="nav-link"><a href="{{ url_for(route.about_us) }}">About</a></li>
           {% if current_user.is_anonymous %}
           <li class="nav-link"><a href="{{ url_for(route.login) }}">Login</a></li>
           <li class="nav-link"><a href="{{ url_for(route.register) }}">Register</a></li>
           {% else %}
           <li class="nav-link"><a href="{{ url_for(route.puzzle.random)}}">Random</a></li>
           <li class="nav-link"><a href="{{ url_for(route.puzzle.search)}}">Search</a></li>
-          <li class="nav-link"><a href="{{ url_for(route.puzzle.create) }}">Submit Puzzle</a></li>
+          <li class="nav-link"><a href="{{ url_for(route.puzzle.create) }}">Create</a></li>
           <li class="nav-link"><a href="{{ url_for(route.user.profile, userid=current_user.id) }}">Profile</a></li>
           <li class="nav-link"><a href="{{ url_for(route.logout) }}">Logout</a></li>
           {% endif %}

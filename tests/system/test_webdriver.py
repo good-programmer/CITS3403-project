@@ -19,7 +19,7 @@ class ChromeWebDriverCase(tests.system.WebDriverCase):
 
 #---------------------------------Other browsers---------------------------------
 '''
-class EdgeWebDriverCase(WebDriverCase):
+class EdgeWebDriverCase(tests.system.WebDriverCase):
     @classmethod
     def setUpClass(cls) -> None:
         options = webdriver.EdgeOptions()
@@ -35,7 +35,7 @@ class EdgeWebDriverCase(WebDriverCase):
         
         super().tearDownClass()
 
-class FirefoxWebDriverCase(WebDriverCase):
+class FirefoxWebDriverCase(tests.system.WebDriverCase):
     @classmethod
     def setUpClass(cls) -> None:
         options = webdriver.FirefoxOptions()

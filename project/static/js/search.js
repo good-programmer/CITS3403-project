@@ -10,6 +10,7 @@ defaultMap.set('completed', 'any');
 defaultMap.set('play_count', '0-999999');
 defaultMap.set('sort_by', 'date');
 defaultMap.set('order', 'desc');
+defaultMap.set('following', 'false');
 
 storedMap.set('rating', '0-5');
 storedMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
@@ -18,15 +19,8 @@ storedMap.set('play_count', '0-999999');
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
-let currentParams = new URLSearchParams(window.location.search);
-const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'sort_by', 'order']
-for (const keyName of keyNameList){
-    if (currentParams.get(keyName) === null) {
-        setDefault(keyName)
-    } else {
-        searchMap.set(keyName, currentParams.get(keyName));
-    }
-}
+
+const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'following', 'sort_by', 'order']
 
 function handleSubmit(){
     var urlInjection ='?'
@@ -235,9 +229,22 @@ ignoreCompleted.addEventListener("click", () =>{
     searchMap.set('completed', currentCompletedState);
 })
 
+//event listener for following
+const followButton = document.getElementById("filter-following");
+followButton.addEventListener("click", () =>{
+    const follow = followButton.classList.contains('basic-toggle--selected');
+    if (follow){
+        console.log('set to true');
+        searchMap.set('following', 'true')
+    }
+    else{
+        searchMap.set('following', 'false')
+    }
+})
+
 //event listeners for search
 const searchInput = document.getElementById("search")
-const submitButton = document.getElementById("submit")
+const submitButton = document.getElementById("submit-search")
 searchInput.addEventListener("input", e =>{
     const input = e.target.value
     searchMap.set('query', input)
@@ -250,14 +257,31 @@ searchInput.addEventListener("keypress", function(event){
 })
 submitButton.addEventListener("click", handleSubmit)
 
-if (currentParams.size > 0){
-    handleSubmit();
-} else {
-    loadTemplates('/recent');
+function updateSearchWithParams() {
+    let currentParams = new URLSearchParams(window.location.search);
+    for (const keyName of keyNameList){
+        if (currentParams.get(keyName) === null) {
+            setDefault(keyName)
+        } else {
+            searchMap.set(keyName, currentParams.get(keyName));
+        }
+    }
+    if (currentParams.size > 0){
+        handleSubmit();
+    } else {
+        loadTemplates('/recent');
+    }
 }
 
+window.addEventListener('popstate', function () {
+    console.log('history changed');
+    updateSearchWithParams();
+})
+
+updateSearchWithParams();
+
 //event listeners for sort
-document.querySelectorAll(".toggle-button").forEach(togBut=>{
+document.querySelectorAll("#sort-filter-container .toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
         sortBy = togBut.textContent.trim().toLowerCase().replace(' ', '_')
         
