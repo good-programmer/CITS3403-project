@@ -21,21 +21,21 @@
             <div class="container" id="puzzleStringContainer" data-puzzlestring="{{puzzle['content']}}">
                 <p class="Screen MatrixTextGreen" id="puzzleString"></p>
                 <div id="userButtons">
-                <button class="Screen MatrixTextGreen Button" onclick="Game.shuffleString()" id="shuffleButton">
-                    [SHUFFLE]
-                </button>
-                <button class="Screen MatrixTextGreen Button" onclick="Game.reset()" id="resetButton">
-                    [RESET]
-                </button>
-                <p class="Screen MatrixTextGreen" id="score">SCORE: <span id="scoreValue"></span></p>
+                    <button class="Screen MatrixTextGreen Button" id="shuffleButton">
+                        [SHUFFLE]
+                    </button>
+                    <button class="Screen MatrixTextGreen Button" id="resetButton">
+                        [RESET]
+                    </button>
+                    <p class="Screen MatrixTextGreen" id="score">SCORE: <span id="scoreValue"></span></p>
                 </div>
             </div>
             <div class="container" id="userInputContainer">
                 <div id="submittedWords"></div>
                 <label for="userInput" class="Screen MatrixTextYellow">$></label>
                 <div id="userSubmission">
-                    <input class="Screen MatrixTextYellow" type="text" id="userInput" oninput="Game.updateString()" autofocus>
-                    <button class="Screen MatrixTextYellow Button {% if completed %}greyed{% endif %}" onclick="Game.solve()" id="submitButton">
+                    <input class="Screen MatrixTextYellow" type="text" id="userInput" autofocus>
+                    <button class="Screen MatrixTextYellow Button {% if completed %}greyed{% endif %}" id="submitButton">
                         [FINISH]
                     </button>
                     <button class="Screen MatrixTextYellow Button" id="showGameInstructions">[?]</button>

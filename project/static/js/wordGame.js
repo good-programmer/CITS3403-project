@@ -272,6 +272,23 @@ function setEventListeners() {
         clearInterval(Game.shuffleInterval);
     });
 
+    document.getElementById('shuffleButton').addEventListener('click', function() {
+        Game.shuffleString();
+    });
+    
+    document.getElementById('resetButton').addEventListener('click', function() {
+        Game.reset();
+    });
+    
+    document.getElementById('submitButton').addEventListener('click', function() {
+        Game.solve();
+    });
+
+    document.getElementById('userInput').addEventListener('input', function() {
+        Game.updateString();
+    });
+    
+
     // highlight shuffleButton on hover
     document.getElementById('shuffleButton').addEventListener('mouseover', function() {
         this.classList.add('MatrixTextYellow')
@@ -298,6 +315,17 @@ function setEventListeners() {
     });
 
     document.getElementById('submitButton').addEventListener('mouseout', function() {
+        this.classList.remove('MatrixTextGreen')
+        this.classList.add('MatrixTextYellow')
+    });
+
+    // highlight showGameInstructions on hover
+    document.getElementById('showGameInstructions').addEventListener('mouseover', function() {
+        this.classList.remove('MatrixTextYellow')
+        this.classList.add('MatrixTextGreen')
+    });
+
+    document.getElementById('showGameInstructions').addEventListener('mouseout', function() {
         this.classList.remove('MatrixTextGreen')
         this.classList.add('MatrixTextYellow')
     });
