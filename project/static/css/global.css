@@ -371,7 +371,9 @@ a {
 }
 
 .buttons-container {
+    flex: 1 1 100%;
     display: flex;
+    justify-content: flex-end;
     flex-direction: row;
     margin-bottom: .3rem;
     align-items: baseline;
@@ -805,6 +807,8 @@ input[type=checkbox] {
 }
 
 #leaderboard-title {
+    flex: 1 1 100%;
+    margin-bottom: 5px;
     font-size: 25px;
 }
 
@@ -815,6 +819,12 @@ input[type=checkbox] {
     width: 100%;
     position: relative;
 }
+
+@media screen and (max-width: 600px) {
+    #leaderboard-header {
+      flex-direction: column;
+    }
+  }
 
 #switch-leaderboard {
     position: relative;
