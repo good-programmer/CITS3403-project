@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
+<br>
 <h1>user: {{user['username']}}</h1>
 <div id="user-and-feed-container">
   <div class="Screen MatrixTextGreen" id="user-info">
-  
     <p class="no-indent">user_info {</p>
     <p>highest_score: <span class="matrix-number">{{user['highscore']}}</span></p>
     <p>total_completed_puzzles: <span class="matrix-number">{{user['scores']|length}}</span></p>

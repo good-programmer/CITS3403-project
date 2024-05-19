@@ -38,22 +38,22 @@ function formatDate(date) {
     let weeks = days / 7;
     let months = weeks / 4.35;
     let years = months / 12;
-    if (secs < 90) {
+    if (secs < 120) {
         return Math.floor(secs) + ' seconds ago'
     }
-    if (mins < 60) {
+    if (mins < 120) {
         return Math.floor(mins) + ' minutes ago'
     }
-    if (hours < 24) {
+    if (hours < 48) {
         return Math.floor(hours) + ' hours ago'
     }
     if (days < 14) {
         return Math.floor(days) + ' days ago'
     }
-    if (weeks < 5) {
+    if (weeks < 9) {
         return Math.floor(weeks) + ' weeks ago'
     }
-    if (months < 12) {
+    if (months < 24) {
         return Math.floor(months) + ' months ago'
     }
     return Math.floor(years) + ' years ago'
@@ -69,14 +69,13 @@ async function createUserFeed() {
     fetch('/user/feed')
     .then(response => response.json())
     .then(data => {
-        data.slice().forEach(post => {
+        data.forEach(post => {
             if (post.type == 'created'){
                 //console.log("entered")
                 const createdPost = createdPostTemplate.content.cloneNode(true)
                 const puzzle = createdPost.querySelector(".followed-creator-puzzle-title")
                 const followed = createdPost.querySelector(".followed-creator-name")
                 const date = createdPost.querySelector(".followed-date-created")
-                console.log(post.date);
                 const dateAsDate = new Date(post.date + '+08:00');
 
                 puzzle.textContent = post.title
@@ -96,7 +95,6 @@ async function createUserFeed() {
                 const followed = ratedPost.querySelector(".followed-name")
                 const date = ratedPost.querySelector(".followed-date-rated")
                 const rating = ratedPost.querySelector(".followed-given-rating")
-                console.log(post.date);
                 const dateAsDate = new Date(post.date + '+08:00');
 
                 puzzle.textContent = post.title
