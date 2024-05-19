@@ -2,36 +2,44 @@
 
 {% block content%}
 <body>
-    <script src = "../static/js/index.js" defer></script>
-    <script src = "../static/js/search.js" defer></script>
+    <script src = "{{ url_for('static', filename='js/index.js')}}" defer></script>
+    <script src = "{{ url_for('static', filename='js/search.js')}}" defer></script>
     <div class="panel-container">
         <div id="search-filter-container">
-            <div class="buttons-container" id="search-container">
+            <div class="buttons-container row" id="search-container">
                 <input type="text" id="search" placeholder="Search"/>
                 <button id="submit-search">Submit</button>
             </div>
-            <div class="buttons-container" id="sort-filter-container">
+            <div class="buttons-container row" id="sort-filter-container">
                 <p class="button-label">Sort By</p>
-                <button class="toggle-button toggle-button--selected" type="button">Date</button>
-                <button class="toggle-button" type="button">Play count</button>
-                <button class="toggle-button" type="button">Highscore</button>
-                <button class="toggle-button" type="button">Rating</button>
-                <button class="toggle-button" type="button">Alphabet</button>
+                <button class="toggle-button toggle-button--selected" type="button" id="date">Date</button>
+                <button class="toggle-button" type="button" id="play_count">Play count</button>
+                <button class="toggle-button" type="button" id="highscore">Highscore</button>
+                <button class="toggle-button" type="button" id="rating">Rating</button>
+                <button class="toggle-button" type="button" id="a-z">Alphabet</button>
             </div>
-            <div class="buttons-container">
-                <p class="button-label">Order by:</p>
+            <div class="buttons-container row">
+                <label class="button-label" for="order">Order by:</label>
                 <button class="basic-toggle basic-toggle--selected" id="order" type="button">Descending</button>
+                <label for="page-size" class="page-size-label"> Page size:</label>
+                <select class = "dropdown" id="page-size">
+                    <option value="10">Select a page size</option>
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
             </div>
-            <div class="buttons-container">
-                <button class="row-label">rating</button>
-                <button class="row-label">play count</button>
-                <button class="row-label">date</button>
+            <div class="buttons-container row">
+                <button class="row-label" data-toggletarget="rating-filter-container" id="rating-row-label">rating</button>
+                <button class="row-label" data-toggletarget="playcount-filter-container" id="playcount-row-label">play count</button>
+                <button class="row-label" data-toggletarget="date-filter-container" id="date-row-label">date</button>
                 <button class="cycle-label" id="ignore-completed" type="button">Ignore completed</button>
                 <button class="basic-toggle" id="filter-following">By following</button>
             </div>
-            <div class="buttons-container">
+            <div class="buttons-container row" id="rating-filter-container" data-display="false">
                 <label for="min-rating" class="rating-label"> Browse by rating from</label>
-                <select class = "rating" id="min-rating">
+                <select class = "dropdown" id="min-rating">
                     <option value="0">Minimum Rating:</option>
                     <option value="0">0</option>
                     <option value="1">1</option>
@@ -42,7 +50,7 @@
                 </select>
 
                 <label for="max-rating" class="rating-label">to</label>
-                <select class = "rating" id="max-rating">
+                <select class = "dropdown" id="max-rating">
                     <option value="5">Maximum Rating:</option>
                     <option value="0">0</option>
                     <option value="1">1</option>
@@ -52,25 +60,17 @@
                     <option value="5">5</option>
                 </select>
             </div>
-            <div class="buttons-container">
+            <div class="buttons-container row" id="playcount-filter-container" data-display="false">
                 <label for="min-playcount" class="play_count-label">Browse by playcount from</label>
-                <form onkeydown="return event.key != 'Enter';">
-                    <input type="number" class="play_count" id="min-playcount" placeholder="Minimum playcount:" value="0"/>
-                </form>
+                <input type="number" class="play_count" id="min-playcount" placeholder="Minimum playcount:" value="0"/>
                 <label for="max-playcount" class="play_count-label">to</label>
-                <form onkeydown="return event.key != 'Enter';">
-                    <input type="number" class="play_count" id="max-playcount" placeholder="Maximum playcount:" value="999999"/>
-                </form>
+                <input type="number" class="play_count" id="max-playcount" placeholder="Maximum playcount:" value="999999"/>
             </div>
-            <div class="buttons-container">
+            <div class="buttons-container row" id="date-filter-container" data-display="false">
                 <label for="min-date" class="date-label">Browse by date from</label>
-                <form onkeydown="return event.key != 'Enter';">
-                    <input type="date" id="min-date" class="date">
-                </form>
+                <input type="date" id="min-date" class="date">
                 <label for="max-date" class="date-label">to</label>
-                <form onkeydown="return event.key != 'Enter';">
-                    <input type="date" id="max-date" class="date">
-                </form>
+                <input type="date" id="max-date" class="date">
             </div>
         </div>
         <div class="post-container" id="search-results" data-post-container>
@@ -92,6 +92,16 @@
                     </div>
                 </div>
             </template>
+        </div>
+        <div class="page-change-container">
+            <button class="arrow-button" id="left-arrow">&lt;</button>
+            <div id="page-num-container">
+                <template class="page-num-template">
+                    <button class="page-number-button" data-pnButton></button>
+                </template>
+            </div>
+            <button class="arrow-button" id="right-arrow">&gt;</button>
+            <div id="dataContainer"></div>
         </div>
     </div>
 

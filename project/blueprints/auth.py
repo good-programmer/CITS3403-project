@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash,
 from flask_login import login_user, login_required, logout_user, current_user
 from project.blueprints.forms import LoginForm, RegistrationForm
 
-from ..utils import auth_utils, user_utils, route_utils as route
+from ..utils import puzzle_utils, auth_utils, user_utils, route_utils as route
 
 import json
 
@@ -149,3 +149,22 @@ def api_unfollow_user():
         else:
             current_user.unfollow_user(user)
             return [{"id": u.userID, "name": u.user.name} for u in current_user.following], 200
+
+@auth.route('/user/feed', methods=["GET"])
+def api_get_feed():
+    user = current_user
+    if not current_user.is_authenticated:
+        abort(401)
+    feed = puzzle_utils.create_feed(user)
+
+    feed_data= [{
+        'id': puzzle[0].id, 
+        'title': puzzle[0].title, 
+        'followedID' : puzzle[3].id,
+        'followed': puzzle[3].name,
+        'date': puzzle[1],
+        'rated': puzzle[0].ratings[0].rating if puzzle[2] == 'rated' else '',
+        'type': puzzle[2]
+        } for puzzle in feed]
+
+    return feed_data[:10]
