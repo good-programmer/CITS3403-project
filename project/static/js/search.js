@@ -86,7 +86,7 @@ minRating.addEventListener('change', function() {
     }
     const newValue = String(minRating.value) + '-' + String(maxRating.value)
     searchMap.set('rating', newValue)
-    console.log(searchMap.get('rating')) 
+    //console.log(searchMap.get('rating')) 
 });
 maxRating.addEventListener('change', function() {
     const previousMinValue = minRating.value;
@@ -109,7 +109,7 @@ maxRating.addEventListener('change', function() {
     }
     const newValue = String(minRating.value) + '-' + String(maxRating.value)
     searchMap.set('rating', newValue)
-    console.log(searchMap.get('rating'))
+    //console.log(searchMap.get('rating'))
 })
 
 //event listeners for button labels
@@ -154,11 +154,11 @@ document.querySelectorAll(".row-label").forEach(rowLabel=>{
         const className = '#' + rowLabel.dataset.toggletarget
         toggleRowLabel(isOn, className)
         if (keyName == 'date'){
-            console.log(searchMap.get('after'))
-            console.log(searchMap.get('to'))
+            //console.log(searchMap.get('after'))
+            //console.log(searchMap.get('to'))
         }
         else{
-            console.log(searchMap.get(keyName))
+            //console.log(searchMap.get(keyName))
         }
     })
 })
@@ -194,7 +194,7 @@ minPlaycount.addEventListener('blur', function(){
 
     const newValue = String(minPlaycount.value) + '-' + String(maxPlaycount.value)
     searchMap.set('play_count', newValue)
-    console.log(searchMap.get('play_count'))
+    //console.log(searchMap.get('play_count'))
 })
 maxPlaycount.addEventListener('blur', function(){
     const minimumCount = parseFloat(minPlaycount.value)
@@ -206,7 +206,7 @@ maxPlaycount.addEventListener('blur', function(){
 
     const newValue = String(minPlaycount.value) + '-' + String(maxPlaycount.value)
     searchMap.set('play_count', newValue)
-    console.log(searchMap.get('play_count'))
+    //console.log(searchMap.get('play_count'))
 })
 //event listeners for date
 function formatDate(date) {
@@ -230,8 +230,8 @@ minDate.addEventListener('input', function() {
 
     searchMap.set('after', formatDate(minDateVal))
     searchMap.set('to', formatDate(maxDateVal))
-    console.log(searchMap.get('after'))
-    console.log(searchMap.get('to'))
+    //console.log(searchMap.get('after'))
+    //console.log(searchMap.get('to'))
 });
 maxDate.addEventListener('input', function() {
     const minDateVal = new Date(minDate.value);
@@ -246,8 +246,8 @@ maxDate.addEventListener('input', function() {
 
     searchMap.set('after', formatDate(minDateVal))
     searchMap.set('to', formatDate(maxDateVal))
-    console.log(searchMap.get('after'))
-    console.log(searchMap.get('to'))
+    //console.log(searchMap.get('after'))
+    //console.log(searchMap.get('to'))
 });
 
 //event listers for basic-toggle
@@ -268,7 +268,7 @@ orderButton.addEventListener("click", () =>{
         orderButton.textContent = 'Ascending'
         searchMap.set('order', 'asc')
     }
-    console.log(searchMap.get('order'))
+    //console.log(searchMap.get('order'))
 })
 
 let currentCompletedState = 'any';
@@ -295,7 +295,7 @@ const followButton = document.getElementById("filter-following");
 followButton.addEventListener("click", () =>{
     const follow = followButton.classList.contains('basic-toggle--selected');
     if (follow){
-        console.log('set to true');
+        //console.log('set to true');
         searchMap.set('following', 'true')
     }
     else{
@@ -309,7 +309,7 @@ const submitButton = document.getElementById("submit-search")
 searchInput.addEventListener("input", e =>{
     const input = e.target.value
     searchMap.set('query', input)
-    console.log(searchMap.get("query"))
+    //console.log(searchMap.get("query"))
 })
 searchInput.addEventListener("keypress", function(event){
     if (event.key === 'Enter'){
@@ -343,7 +343,7 @@ function updateSearchWithParams() {
 }
 
 window.addEventListener('popstate', function () {
-    console.log('history changed');
+    //console.log('history changed');
     updateSearchWithParams();
 })
 
@@ -358,7 +358,7 @@ document.querySelectorAll("#sort-filter-container .toggle-button").forEach(togBu
 
         searchMap.set('sort_by', sortBy)
 
-        console.log(searchMap.get('sort_by'))
+        //console.log(searchMap.get('sort_by'))
     })
 })
 

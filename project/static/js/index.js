@@ -106,10 +106,10 @@ function updatePageNumDisplay(){
         const pageNumButtonTemp = pageNumTemplate.content.cloneNode(true)
         const pageNumButton = pageNumButtonTemp.querySelector("[data-pnButton]")
         pageNumButton.textContent = i
-        console.log(i, currentPage)
+        //console.log(i, currentPage)
         if (i === currentPage){
             
-            console.log("this is what i see: " + currentPage)
+            //console.log("this is what i see: " + currentPage)
             pageNumButton.classList.toggle("current-page")
         }
         const totalShowing = 6

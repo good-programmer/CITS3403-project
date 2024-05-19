@@ -14,7 +14,7 @@ window.addEventListener('load', async function() {
         userid = follow.dataset.targetuser;
         follow.addEventListener('click', postFollow);
     }
-    console.log(data);
+    //console.log(data);
     let sortCreatedSelect = document.getElementById('created-puzzles-sort');
     sortCreated(sortCreatedSelect.value, data['puzzles'])
     sortCreatedSelect.onchange = function() {sortCreated(sortCreatedSelect.value, data['puzzles']);}
@@ -31,7 +31,7 @@ window.addEventListener('load', async function() {
 function formatDate(date) {
     let now = new Date();
     let secs = Math.abs(now.getTime() - date.getTime()) / 1000;
-    console.log(secs)
+    //console.log(secs)
     let mins = secs / 60
     let hours = mins / 60;
     let days = hours / 24;
@@ -71,7 +71,7 @@ async function createUserFeed() {
     .then(data => {
         data.forEach(post => {
             if (post.type == 'created'){
-                console.log("entered")
+                //console.log("entered")
                 const createdPost = createdPostTemplate.content.cloneNode(true)
                 const puzzle = createdPost.querySelector(".followed-creator-puzzle-title")
                 const followed = createdPost.querySelector(".followed-creator-name")
@@ -89,7 +89,7 @@ async function createUserFeed() {
                 feedContainer.append(createdPost)
             }
             if (post.type == 'rated'){
-                console.log("entered")
+                //console.log("entered")
                 const ratedPost = ratedPostTemplate.content.cloneNode(true)
                 const puzzle = ratedPost.querySelector(".followed-creator-puzzle-title")
                 const followed = ratedPost.querySelector(".followed-name")
@@ -116,7 +116,7 @@ async function createUserFeed() {
 
 async function getUserData() {
     let userid = window.location.pathname.split('/')[2];
-    console.log(userid)
+    //console.log(userid)
     const response = await fetch('/user/' + userid);
     const data = await response.json();
     return data;
