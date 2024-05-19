@@ -85,12 +85,12 @@ def search_puzzles(query=None, rating=None, date=None, completed=None, play_coun
 def get_following_rated(user):
     result = Puzzle.query
     
-    user_following = list(Follow.query.filter(Follow.followerID == user.id).with_entities(Follow.userID).all())
-    user_following_ids = [i[0] for i in user_following]
+    user_following_ids = [i.userID for i in user.following]
 
-    result = result.join(Puzzle.ratings)
+    result = result.join(Rating, Puzzle.id==Rating.puzzleID).join(User, User.id==Rating.userID)
     result = result.filter(Rating.userID.in_(user_following_ids))
-    result = result.order_by(desc(Rating.dateRated)).limit(10).all()
+    result = result.order_by(desc(Rating.dateRated)).limit(10).add_entity(Rating.dateRated).add_entity(User)
+    result = result.all()
     
     result_with_type = [(puzzle, 'rated') for puzzle in result]
     return result_with_type
@@ -98,19 +98,19 @@ def get_following_rated(user):
 def get_following_puzzles(user):
     result = Puzzle.query
     
-    user_following = list(Follow.query.filter(Follow.followerID == user.id).with_entities(Follow.userID).all())
-    user_following_ids = [i[0] for i in user_following]
+    user_following_ids = [i.userID for i in user.following]
 
     result = result.filter(Puzzle.creatorID.in_(user_following_ids))
-    
     result = result.order_by(desc(Puzzle.dateCreated)).limit(10).all()
     result_with_type = [(puzzle, 'created') for puzzle in result]
 
     return result_with_type
 
 def create_feed(user):
-    recent_puzzles = [ (p[0], p[0].dateCreated, p[1]) for p in get_following_puzzles(user)]
-    recent_rated_puzzles = [ (p[0], p[0].ratings[0].dateRated, p[1]) for p in get_following_rated(user)]
+    recent_puzzles = [ (p[0], p[0].dateCreated, p[1], p[0].creator) for p in get_following_puzzles(user)]
+    recent_rated_puzzles = [ (p[0][0], p[0][1], p[1], p[0][2]) for p in get_following_rated(user)]
+
+    print(recent_rated_puzzles)
 
     all_puzzles = recent_puzzles + recent_rated_puzzles
 

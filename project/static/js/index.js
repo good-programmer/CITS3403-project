@@ -18,7 +18,7 @@ if (window.location.pathname === '/'){
 document.querySelectorAll(".toggle-button").forEach(togBut=>{
     togBut.addEventListener("click", () => {
     
-        togBut.classList.toggle("toggle-button--selected", true);
+        togBut.classList.toggle("toggle-button--selected", true)
 
         sortBy = togBut.textContent.trim().toLowerCase()
         if(['recent','hot','popular'].includes(sortBy)){

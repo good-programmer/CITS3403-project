@@ -365,7 +365,6 @@ function updatePageDisplay(){
     currentParams = new URLSearchParams(window.location.search)
     keyNameList.forEach(key => {
         const value = currentParams.get(key);
-      
         if (value !== null) {
           switch (key) {
             case 'page_size':
@@ -374,23 +373,24 @@ function updatePageDisplay(){
             case 'query':
                 searchInput.value = value
                 break;
-      
             case 'rating':
-                const button =  document.getElementById("rating-row-label")
-                button.classList.toggle("row-label--selected")
-                toggleRowLabel(true, '#rating')
+                const ratingButton =  document.getElementById("rating-row-label")
+                ratingButton.classList.add("row-label--selected")
+                toggleRowLabel(true, '#rating-filter-container')
                 minRating.value = parseInt(value[0])
                 maxRating.value = parseInt(value[2])
                 break;
             case 'completed':
               break;
-      
             case 'play_count':
-              break;
-      
+                const playcountButton =  document.getElementById("playcount-row-label")
+                playcountButton.classList.add("row-label--selected")
+                toggleRowLabel(true, '#playcount-filter-container')
+                minPlaycount.value = parseInt(value[0])
+                maxPlaycount.value = parseInt(value[2])
+                break;
             case 'following':
               break;
-      
             case 'sort_by':
                 let sorting = value.toString().toLowerCase().trim()
                 const togBut = document.getElementById(sorting)
@@ -401,15 +401,37 @@ function updatePageDisplay(){
                 })
                 togBut.classList.toggle("toggle-button--selected", true)
                 break;
-      
             case 'order':
                 orderButton.classList.remove("basic-toggle--selected")
                 orderButton.textContent = "Ascending"
                 break;
             }
         }
-        else{
-            orderButton.classList.toggle("basic-toggle--selected", true)
+        else if (key == 'order'){
+            orderButton.classList.add("basic-toggle--selected")
+        }
+        else if (key == 'rating'){
+            const button =  document.getElementById("rating-row-label")
+            button.classList.remove("row-label--selected")
+            toggleRowLabel(false, '#rating-filter-container')
+        }
+        else if (key == 'play_count'){
+            const button =  document.getElementById("rating-row-label")
+            button.classList.remove("row-label--selected")
+            toggleRowLabel(false, '#rating-filter-container')
         }
     })
+    if (currentParams.get('after')!=null || currentParams.get('to')!=null){
+        const dateButton =  document.getElementById("date-row-label")
+        dateButton.classList.add("row-label--selected")
+        toggleRowLabel(true, '#date-filter-container')
+        minDate.value = currentParams.get('after')
+        maxDate.value = currentParams.get('to')
+    }
+    else{
+        const dateButton =  document.getElementById("date-row-label")
+        dateButton.classList.remove("row-label--selected")
+        toggleRowLabel(false, '#date-filter-container')
+    }
+
 }

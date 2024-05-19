@@ -2,8 +2,8 @@
 
 {% block content%}
 <body>
-    <script src = "../static/js/index.js" defer></script>
-    <script src = "../static/js/search.js" defer></script>
+    <script src = "{{ url_for('static', filename='js/index.js')}}" defer></script>
+    <script src = "{{ url_for('static', filename='js/search.js')}}" defer></script>
     <div class="panel-container">
         <div id="search-filter-container">
             <div class="buttons-container row" id="search-container">
@@ -20,7 +20,7 @@
             </div>
             <div class="buttons-container row">
                 <label class="button-label" for="order">Order by:</label>
-                <button class="basic-toggle" id="order" type="button">Descending</button>
+                <button class="basic-toggle basic-toggle--selected" id="order" type="button">Descending</button>
                 <label for="page-size" class="page-size-label"> Page size:</label>
                 <select class = "dropdown" id="page-size">
                     <option value="10">Select a page size</option>
@@ -32,8 +32,8 @@
             </div>
             <div class="buttons-container row">
                 <button class="row-label" data-toggletarget="rating-filter-container" id="rating-row-label">rating</button>
-                <button class="row-label" data-toggletarget="playcount-filter-container">play count</button>
-                <button class="row-label" data-toggletarget="date-filter-container">date</button>
+                <button class="row-label" data-toggletarget="playcount-filter-container" id="playcount-row-label">play count</button>
+                <button class="row-label" data-toggletarget="date-filter-container" id="date-row-label">date</button>
                 <button class="cycle-label" id="ignore-completed" type="button">Ignore completed</button>
                 <button class="basic-toggle" id="filter-following">By following</button>
             </div>

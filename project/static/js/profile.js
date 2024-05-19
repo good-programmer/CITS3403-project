@@ -5,7 +5,9 @@ let userid;
 const createdPostTemplate = document.querySelector(".created-feed-template")
 const ratedPostTemplate = document.querySelector(".rated-feed-template")
 window.addEventListener('load', async function() {
-    await createUserFeed()
+    if (createdPostTemplate && ratedPostTemplate){
+        await createUserFeed()
+    }
     follow = document.getElementById("follow-button");
     data = await getUserData();
     if (follow) {

@@ -153,31 +153,18 @@ def api_unfollow_user():
 @auth.route('/user/feed', methods=["GET"])
 def api_get_feed():
     user = current_user
+    if not current_user.is_authenticated:
+        abort(401)
     feed = puzzle_utils.create_feed(user)
-
 
     feed_data= [{
         'id': puzzle[0].id, 
         'title': puzzle[0].title, 
-        'followedID' : puzzle[0].creatorID if puzzle[2]=='created' else puzzle[0].ratings[0].userID,
-        'followed': puzzle[0].creator.name if puzzle[2]=='created' else puzzle[0].ratings[0].user.name,
-        'dateCreated': puzzle[0].dateCreated,
-        'dateRated' : puzzle[0].ratings[0].dateRated,
-        'date': puzzle[0].dateCreated if puzzle[2]=='created' else puzzle[0].ratings[0].dateRated,
+        'followedID' : puzzle[3].id,
+        'followed': puzzle[3].name,
+        'date': puzzle[1],
         'rated': puzzle[0].ratings[0].rating if puzzle[2] == 'rated' else '',
         'type': puzzle[2]
         } for puzzle in feed]
-    '''
-    for puzzle_data in feed_data:
-        print("ID:", puzzle_data['id'])
-        print("Title:", puzzle_data['title'])
-        print("Creator ID:", puzzle_data['creatorID'])
-        print("Creator:", puzzle_data['creator'])
-        print("Date Created:", puzzle_data['dateCreated'])
-        print("Date Rated:", puzzle_data['dateRated'])
-        print("Date:", puzzle_data['date'])
-        print("Rated:", puzzle_data['rated'])
-        print("Type:", puzzle_data['type'])
-        print()
-    ''' 
-    return feed_data[:15]
+
+    return feed_data[:10]
