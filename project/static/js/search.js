@@ -381,6 +381,14 @@ function updatePageDisplay(){
                 maxRating.value = parseInt(value[2])
                 break;
             case 'completed':
+                if (value){
+                    ignoreCompleted.classList.add("basic-toggle--selected")
+                    ignoreCompleted.textContent = "Show completed"
+                }
+                else{
+                    ignoreCompleted.classList.add("basic-toggle--selected")
+                    ignoreCompleted.textContent = "Ignore completed"
+                }
               break;
             case 'play_count':
                 const playcountButton =  document.getElementById("playcount-row-label")
@@ -390,7 +398,8 @@ function updatePageDisplay(){
                 maxPlaycount.value = parseInt(value[2])
                 break;
             case 'following':
-              break;
+                followButton.classList.add("basic-toggle--selected")
+                break;
             case 'sort_by':
                 let sorting = value.toString().toLowerCase().trim()
                 const togBut = document.getElementById(sorting)
@@ -419,6 +428,13 @@ function updatePageDisplay(){
             const button =  document.getElementById("rating-row-label")
             button.classList.remove("row-label--selected")
             toggleRowLabel(false, '#rating-filter-container')
+        }
+        else if (key == 'following'){
+            followButton.classList.remove("basic-toggle--selected")
+        }
+        else if (key == 'completed'){
+            ignoreCompleted.classList.remove("basic-toggle--selected")
+            ignoreCompleted.textContent = "Ignore completed"
         }
     })
     if (currentParams.get('after')!=null || currentParams.get('to')!=null){
