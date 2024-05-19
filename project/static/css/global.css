@@ -1181,8 +1181,9 @@ h1 {
     border-radius: 1px;
 }
 
+#main-leaderboard[data-display="false"],
 #following-leaderboard[data-display="false"] {
-    display: none
+    display: none;
 }
 
 #following-leaderboard .post-body, #main-leaderboard .post-body {

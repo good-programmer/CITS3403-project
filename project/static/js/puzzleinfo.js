@@ -4,22 +4,22 @@ document.querySelectorAll(".toggle-button").forEach(togBut => {
         let following = document.getElementById("following-leaderboard");
 
         document.querySelectorAll(".toggle-button").forEach(otherBut => {
-            otherBut.classList.remove("toggle-button--selected")
-        })
+            otherBut.classList.remove("toggle-button--selected");
+        });
 
-        togBut.classList.add("toggle-button--selected")
+        togBut.classList.add("toggle-button--selected");
 
         if (!following) return;
-        
+
         if (togBut.textContent.trim().toLowerCase() == "all") {
-            main.style.display = "flex";
-            following.style.display = "none";
+            main.setAttribute("data-display", "true");
+            following.setAttribute("data-display", "false");
         } else {
-            main.style.display = "none";
-            following.style.display = "flex";
+            main.setAttribute("data-display", "false");
+            following.setAttribute("data-display", "true");
         }
-    })
-})
+    });
+});
 document.querySelector(".toggle-button").click();
 
 
