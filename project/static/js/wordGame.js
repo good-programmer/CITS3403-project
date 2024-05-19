@@ -79,37 +79,36 @@ let Game = {
             userInputLabel.textContent = "$>";
             userInputLabel.classList.remove("greyed");
         }
-        if (this.submittedWords.length <= 5) {
-            const container = document.getElementById('submittedWords');
-            container.innerHTML = '';
-            this.submittedWords.forEach((word, index) => {
-                let div = document.createElement('div');
-                div.className = 'wordTile Screen MatrixTextGreen';
-                div.style.cursor = 'pointer';
-                let p = document.createElement('p');
-                p.innerText = word;
-                p.style.display = 'inline-block';
-                div.appendChild(p);
-                container.appendChild(div);
-    
-                div.addEventListener('click', () => {
-                    this.submittedWords.splice(index, 1);
-                    this.updateSubmittedWords();
-                    this.updateScore();
-                });
-    
-                div.addEventListener('mouseover', function() {
-                    p.innerText = word + ' [DELETE?]';
-                    div.classList.add('MatrixTextRed');
-                });
-    
-                div.addEventListener('mouseout', function() {
-                    p.innerText = word;
-                    div.classList.remove('MatrixTextRed');
-                });
+        const container = document.getElementById('submittedWords');
+        container.innerHTML = '';
+        this.submittedWords.forEach((word, index) => {
+            let div = document.createElement('div');
+            div.className = 'wordTile Screen MatrixTextGreen';
+
+            let p = document.createElement('p');
+            p.innerText = word;
+            p.classList.add('inline-block');
+            div.appendChild(p);
+            container.appendChild(div);
+
+            div.addEventListener('click', () => {
+                this.submittedWords.splice(index, 1);
+                this.updateSubmittedWords();
+                this.updateScore();
             });
-        }
+
+            div.addEventListener('mouseover', function() {
+                p.innerText = word + ' [DELETE?]';
+                div.classList.add('MatrixTextRed');
+            });
+
+            div.addEventListener('mouseout', function() {
+                p.innerText = word;
+                div.classList.remove('MatrixTextRed');
+            });
+        });
     },
+
 
     // remove chars from displayString as the user types their word
     updateString: function() {
@@ -247,11 +246,6 @@ let Game = {
         Game.displayString = Game.puzzleString;
         Game.updateScore();
         Game.updateSubmittedWords();
-
-        // allocate enough width for double digit score
-        let scoreElement = document.getElementById('score');
-        let oneCharWidth = scoreElement.offsetWidth / 8;
-        scoreElement.style.width = (oneCharWidth * 9) + 'px';
 
         // keep userInput in focus
         document.getElementById('userInput').addEventListener('blur', function() {

@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
-    <script defer src="{{ url_for('static', filename='js/navbar.js') }}"></script>
-    {% if title %}
-      <title>{{title}}</title>
-    {%else%}
-      <title>word-amble</title>
-    {%endif%}
-  </head>
-  <body>
-    <div id="crt-effect"></div>
-    <div id="scanlines"></div>
-    <nav id="main-nav" class="sticky-top navbar navbar-expand-sm navbar-dark text-primary">
-      <div class="container-fluid">
-        <ul id="nav-links" class="navbar-nav mr-auto">
+<head>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
+  
+  {% if title %}
+    <title>{{ title }}</title>
+  {% else %}
+    <title>word-amble</title>
+  {% endif %}
+</head>
+<body>
+  <div id="crt-effect"></div>
+  <div id="scanlines"></div>
+  <nav id="main-nav" class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav mr-auto">
           <li class="nav-link"><a href="{{ url_for(route.index) }}">Home</a></li>
           <li class="nav-link"><a href="{{ url_for(route.about_us) }}">About</a></li>
           {% if current_user.is_anonymous %}
@@ -35,7 +44,9 @@
           <span id="nav-location" class="nav-item">>>><span>
         </div>
       </div>
-    </nav>
-    {% block content %} {% endblock %}
-  </body>
+    </div>
+  </nav>
+  {% block content %}
+  {% endblock %}
+</body>
 </html>

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
 <body id="body">
-
+    <script src="{{url_for('static', filename='js/wordGame.js')}}"></script>
     <div id="instructions-container">
         <div id="instructions" data-display="false"><b>&ltComplete a puzzle!&gt</b>
             <ul>
                 <li>Create up to five unique words using the puzzle letters</li>
                 <li>To submit a word, type it in and press enter</li>
                 <li>Click on a submitted word to delete it</li>
-                <li>Press [FINISH] when you are ready to submit your score</li>
+                <li>Click [FINISH] when you are ready to submit your score</li>
             </ul>
             The longer the words you can come up with, the higher your score.
             You only have one attempt - so give it your best shot!
@@ -17,8 +17,8 @@
     </div>
     
     <div class="col-sm-12" id="gameArea">
-        <div id="gameContent">
-            <div class="container" id="puzzleStringContainer" data-puzzlestring="{{puzzle['content']}}">
+        <div class="container" id="gameContent">
+            <div id="puzzleStringContainer" data-puzzlestring="{{puzzle['content']}}">
                 <p class="Screen MatrixTextGreen" id="puzzleString"></p>
                 <div id="userButtons">
                     <button class="Screen MatrixTextGreen Button" id="shuffleButton">
@@ -30,7 +30,7 @@
                     <p class="Screen MatrixTextGreen" id="score">SCORE: <span id="scoreValue"></span></p>
                 </div>
             </div>
-            <div class="container" id="userInputContainer">
+            <div id="userInputContainer">
                 <div id="submittedWords"></div>
                 <label for="userInput" class="Screen MatrixTextYellow">$></label>
                 <div id="userSubmission">
@@ -43,9 +43,6 @@
             </div>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="{{url_for('static', filename='js/wordGame.js')}}"></script>
 </body>
 {% endblock %}
 </html>

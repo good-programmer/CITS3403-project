@@ -106,3 +106,4 @@ Update your current database:
 - [Selenium](https://www.selenium.dev/documentation/webdriver/) for system testing.
 - Stackoverflow user [Temani Afif](https://stackoverflow.com/users/8620333/temani-afif) for their [CRT/Scanline .css background](https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css)
 - Codepen.io user [freelesio](https://codepen.io/freelesio) for their [Matrix Hacker Text Effect](https://codepen.io/freelesio/pen/MWQaGPb), which was modified for use in this project
+- Microsoft and Bing for their [image generator](https://www.bing.com/images/create), used to create the site icon.

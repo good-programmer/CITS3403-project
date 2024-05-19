@@ -25,6 +25,7 @@ window.addEventListener('load', function() {
     contentFace = document.getElementById("content-box");
     submitInput = document.getElementById("submit");
     submitFace = document.getElementById("create-puzzle-btn");
+    instructions = $("#instructions");
 
     submitFace.addEventListener('click', function() {
         submitInput.click();
@@ -73,6 +74,13 @@ window.addEventListener('load', function() {
     contentInput.addEventListener('focusout', function(){
         contentFace.dataset.selected = false;
     })
+
+    $(document).click(function(event) {
+        if (instructions.attr("data-display") === "true" && !instructions.is(event.target) && !$("#showInstructions").is(event.target)) {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        }
+    });
 })
 
 function updateContent(text) {
