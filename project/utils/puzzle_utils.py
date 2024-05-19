@@ -110,8 +110,8 @@ def create_feed(user):
     recent_puzzles = [ (p[0], p[0].dateCreated, p[1], p[0].creator) for p in get_following_puzzles(user)]
     recent_rated_puzzles = [ (p[0][0], p[0][1], p[1], p[0][2]) for p in get_following_rated(user)]
 
-    print(recent_rated_puzzles)
-
+    print(recent_puzzles)
+    
     all_puzzles = recent_puzzles + recent_rated_puzzles
 
     feed = sorted(all_puzzles, key=lambda x: x[1], reverse=True)

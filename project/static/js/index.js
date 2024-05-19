@@ -101,12 +101,14 @@ function loadTemplates(trend){
 
 function updatePageNumDisplay(){
     currentParams = new URLSearchParams(window.location.search)
-    currentPage = parseInt(currentParams.get('page'))
+    //currentPage = parseInt(currentParams.get('page'))
     for (let i = 1; i <= parseInt(totalPages); i++){
         const pageNumButtonTemp = pageNumTemplate.content.cloneNode(true)
         const pageNumButton = pageNumButtonTemp.querySelector("[data-pnButton]")
         pageNumButton.textContent = i
+        console.log(i, currentPage)
         if (i === currentPage){
+            
             console.log("this is what i see: " + currentPage)
             pageNumButton.classList.toggle("current-page")
         }

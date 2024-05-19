@@ -334,8 +334,9 @@ function updateSearchWithParams() {
             searchMap.set(keyName, currentParams.get(keyName));
         }
     }
+    currentPage = parseInt(searchMap.get('page')) || currentPage;
     if (currentParams.size > 0){
-        handleSubmit()
+        handleSubmit();
     } else {
         loadTemplates('/recent');
     }
@@ -381,21 +382,24 @@ function updatePageDisplay(){
                 maxRating.value = parseInt(value[2])
                 break;
             case 'completed':
-                if (value){
-                    ignoreCompleted.classList.add("basic-toggle--selected")
-                    ignoreCompleted.textContent = "Show completed"
+                if (value === 'true'){
+                    ignoreCompleted.classList.add("basic-toggle--selected");
+                    ignoreCompleted.textContent = "Show completed";
+                    currentCompletedState = 'true';
                 }
                 else{
-                    ignoreCompleted.classList.add("basic-toggle--selected")
-                    ignoreCompleted.textContent = "Ignore completed"
+                    ignoreCompleted.classList.add("basic-toggle--selected");
+                    ignoreCompleted.textContent = "Ignore completed";
+                    currentCompletedState = 'false';
                 }
               break;
             case 'play_count':
                 const playcountButton =  document.getElementById("playcount-row-label")
-                playcountButton.classList.add("row-label--selected")
-                toggleRowLabel(true, '#playcount-filter-container')
-                minPlaycount.value = parseInt(value[0])
-                maxPlaycount.value = parseInt(value[2])
+                playcountButton.classList.add("row-label--selected");
+                toggleRowLabel(true, '#playcount-filter-container');
+                const divs = value.split('-');
+                minPlaycount.value = parseInt(divs[0]);
+                maxPlaycount.value = parseInt(divs[1]);
                 break;
             case 'following':
                 followButton.classList.add("basic-toggle--selected")

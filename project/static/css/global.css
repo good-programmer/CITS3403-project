@@ -1271,7 +1271,21 @@ h2 {
     font-size: 20px
 }
 #feed-container *{
-    font-size: 12px;
+    font-size: 1.2rem;
+    padding-bottom: 2px;
+}
+
+#feed-container > div {
+    max-width: 90%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#feed-container > div > .followed-creator-puzzle-title {
+    vertical-align:top;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    max-width: 4ch;
 }
 
 #completed-puzzles-sort,#created-puzzles-sort,#rated-puzzles-sort,#user-info,#user-feed,.post-body {
@@ -1319,7 +1333,7 @@ h2 {
     animation: ScreenEffect .3s ease infinite
 }
 
-a:hover {
+#login a:hover {
     text-decoration: underline;
     color: var(--matrix-secondary);
     text-decoration-color: var(--matrix-secondary);

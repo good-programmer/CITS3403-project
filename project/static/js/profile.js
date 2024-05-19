@@ -29,10 +29,39 @@ window.addEventListener('load', async function() {
 });
 
 function formatDate(date) {
-    const year = date.getFullYear().toString().padStart(4,'0');
+    let now = new Date();
+    let secs = Math.abs(now.getTime() - date.getTime()) / 1000;
+    console.log(secs)
+    let mins = secs / 60
+    let hours = mins / 60;
+    let days = hours / 24;
+    let weeks = days / 7;
+    let months = weeks / 4.35;
+    let years = months / 12;
+    if (secs < 90) {
+        return Math.floor(secs) + ' seconds ago'
+    }
+    if (mins < 60) {
+        return Math.floor(mins) + ' minutes ago'
+    }
+    if (hours < 24) {
+        return Math.floor(hours) + ' hours ago'
+    }
+    if (days < 14) {
+        return Math.floor(days) + ' days ago'
+    }
+    if (weeks < 5) {
+        return Math.floor(weeks) + ' weeks ago'
+    }
+    if (months < 12) {
+        return Math.floor(months) + ' months ago'
+    }
+    return Math.floor(years) + ' years ago'
+
+    /*const year = date.getFullYear().toString().padStart(4,'0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    return year + '-' + month + '-' + day;
+    return year + '-' + month + '-' + day;*/
 }
 
 async function createUserFeed() {
@@ -44,9 +73,9 @@ async function createUserFeed() {
             if (post.type == 'created'){
                 console.log("entered")
                 const createdPost = createdPostTemplate.content.cloneNode(true)
-                const puzzle = createdPost.getElementById("followed-creator-puzzle-title")
-                const followed = createdPost.getElementById("followed-creator-name")
-                const date = createdPost.getElementById("followed-date-created")
+                const puzzle = createdPost.querySelector(".followed-creator-puzzle-title")
+                const followed = createdPost.querySelector(".followed-creator-name")
+                const date = createdPost.querySelector(".followed-date-created")
                 const dateAsDate = new Date(post.date)
 
                 puzzle.textContent = post.title
@@ -62,10 +91,10 @@ async function createUserFeed() {
             if (post.type == 'rated'){
                 console.log("entered")
                 const ratedPost = ratedPostTemplate.content.cloneNode(true)
-                const puzzle = ratedPost.getElementById("followed-creator-puzzle-title")
-                const followed = ratedPost.getElementById("followed-name")
-                const date = ratedPost.getElementById("followed-date-rated")
-                const rating = ratedPost.getElementById("followed-given-rating")
+                const puzzle = ratedPost.querySelector(".followed-creator-puzzle-title")
+                const followed = ratedPost.querySelector(".followed-name")
+                const date = ratedPost.querySelector(".followed-date-rated")
+                const rating = ratedPost.querySelector(".followed-given-rating")
                 const dateAsDate = new Date(post.date)
 
                 puzzle.textContent = post.title
@@ -76,7 +105,7 @@ async function createUserFeed() {
 
                 date.textContent = formatDate(dateAsDate)
 
-                rating.textContent = post.rated
+                rating.textContent = post.rated.toFixed(1);
 
                 feedContainer.append(ratedPost)
             }
