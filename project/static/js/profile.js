@@ -69,14 +69,15 @@ async function createUserFeed() {
     fetch('/user/feed')
     .then(response => response.json())
     .then(data => {
-        data.slice().reverse().forEach(post => {
+        data.slice().forEach(post => {
             if (post.type == 'created'){
                 //console.log("entered")
                 const createdPost = createdPostTemplate.content.cloneNode(true)
                 const puzzle = createdPost.querySelector(".followed-creator-puzzle-title")
                 const followed = createdPost.querySelector(".followed-creator-name")
                 const date = createdPost.querySelector(".followed-date-created")
-                const dateAsDate = new Date(post.date)
+                console.log(post.date);
+                const dateAsDate = new Date(post.date + '+08:00');
 
                 puzzle.textContent = post.title
                 puzzle.href = '/puzzle/'+String(post.id)+'/info'
@@ -95,7 +96,8 @@ async function createUserFeed() {
                 const followed = ratedPost.querySelector(".followed-name")
                 const date = ratedPost.querySelector(".followed-date-rated")
                 const rating = ratedPost.querySelector(".followed-given-rating")
-                const dateAsDate = new Date(post.date)
+                console.log(post.date);
+                const dateAsDate = new Date(post.date + '+08:00');
 
                 puzzle.textContent = post.title
                 puzzle.href = '/puzzle/'+String(post.id)+'/info'

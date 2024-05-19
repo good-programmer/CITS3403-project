@@ -5,6 +5,7 @@ from flask import url_for
 from project.blueprints.models import User, Puzzle
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
+from project import config
 from project.config import TestingConfig, PATH
 
 import os
@@ -101,7 +102,7 @@ class TestObject:
                 user = self.get_random_user()
                 content = ''.join(random.choice(string.ascii_uppercase) for _ in range(10))
                 puzzle = puzzle_utils.add_puzzle(title = self.identifier + self.generate_puzzletitle(i), creator=user, content=content)
-                puzzle.dateCreated = random_date(datetime.datetime(year=2000, month=1, day=1), datetime.datetime.now())
+                puzzle.dateCreated = random_date(datetime.datetime(year=2020, month=1, day=1), datetime.datetime.now() - datetime.timedelta(weeks=11))
                 self.commit_db()
 
     def get_random_puzzle(self) -> Puzzle:
@@ -110,8 +111,9 @@ class TestObject:
     def generate_scores(self):
         for puzzle in Puzzle.query.all():
             for user in User.query.order_by(sqlalchemy.func.random()).limit(random.randint(0,self.numScores)):
-                puzzle.add_record(user, random.randrange(1, 1000))
-                puzzle.get_record(user).dateSubmitted = random_date(puzzle.dateCreated, datetime.datetime(year=2500, month=12, day=31))
+                puzzle.add_record(user, random.randrange(1, 51))
+                date = random_date(puzzle.dateCreated, datetime.datetime.now() - datetime.timedelta(weeks=10))
+                puzzle.get_record(user).dateSubmitted = date
         self.commit_db()
 
     def generate_ratings(self):
@@ -121,7 +123,8 @@ class TestObject:
                 if puzzle.has_rating(user):
                     continue
                 puzzle.add_rating(user, random.randrange(0, 10) / 2)
-                puzzle.get_rating(user).dateRated = random_date(puzzle.get_record(user).dateSubmitted, datetime.datetime(year=3000, month=12, day=31))
+                dateSubmitted = puzzle.get_record(user).dateSubmitted
+                puzzle.get_rating(user).dateRated = random_date(dateSubmitted, datetime.datetime.now())
         self.commit_db()
     
     def generate_followers(self):
@@ -154,7 +157,7 @@ def create_test_db(app=None, msg='Generating standard test database...'):
     #disable & reenable commit for batch commit
     start = datetime.datetime.now()
     print(msg)
-    TestingConfig.COMMITS_DISABLED = True
+    config.current_config.COMMITS_DISABLED = True
     t = TestObject(app, db)
     print('Users...')
     t.generate_users()
@@ -166,7 +169,7 @@ def create_test_db(app=None, msg='Generating standard test database...'):
     t.generate_ratings()
     print('Followers...')
     t.generate_followers()
-    TestingConfig.COMMITS_DISABLED = False
+    config.current_config.COMMITS_DISABLED = False
     db.session.commit()
     print('Done.')
     app_context.pop()
