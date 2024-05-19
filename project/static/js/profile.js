@@ -30,7 +30,7 @@ window.addEventListener('load', async function() {
 
 function formatDate(date) {
     let now = new Date();
-    let secs = Math.abs(now.getTime() - date.getTime()) / 1000;
+    let secs = (now.getTime() - date.getTime()) / 1000;
     //console.log(secs)
     let mins = secs / 60
     let hours = mins / 60;
@@ -69,7 +69,7 @@ async function createUserFeed() {
     fetch('/user/feed')
     .then(response => response.json())
     .then(data => {
-        data.forEach(post => {
+        data.slice().reverse().forEach(post => {
             if (post.type == 'created'){
                 //console.log("entered")
                 const createdPost = createdPostTemplate.content.cloneNode(true)
