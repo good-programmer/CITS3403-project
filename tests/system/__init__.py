@@ -94,6 +94,7 @@ class WebDriverCase(unittest.TestCase):
         '''Grouped steps involved in registering a new user'''
         driver = self.get_driver()
         driver.get(localhost + url_for(route.register))
+        WebDriverWait(driver, 2).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "#username-input")))
         driver.find_element(By.ID, "username-input").clear()
         driver.find_element(By.ID, "username-input").send_keys(username)
         driver.find_element(By.ID, "password-input").send_keys(password)
@@ -104,6 +105,7 @@ class WebDriverCase(unittest.TestCase):
         '''Grouped steps involved in logging in a user'''
         driver = self.get_driver()
         driver.get(localhost + url_for(route.login))
+        WebDriverWait(driver, 2).until(expected_conditions.presence_of_element_located((By.CSS_SELECTOR, "#username-input")))
         driver.find_element(By.ID, "username-input").clear()
         driver.find_element(By.ID, "username-input").send_keys(username)
         driver.find_element(By.ID, "password-input").send_keys(password)
