@@ -502,7 +502,7 @@ pre {
     margin: 0
 }
 
-.post-container a:hover,.post-list a:hover {
+.post-container a:hover,.post-list a:hover, #feed-container > div a:hover {
     text-decoration: none;
     animation: none;
     background-color: var(--matrix-tertiary);
