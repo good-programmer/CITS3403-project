@@ -79,7 +79,7 @@ async function createUserFeed() {
                 const dateAsDate = new Date(post.date)
 
                 puzzle.textContent = post.title
-                puzzle.href = '/puzzle/'+String(post.id)+'/play'
+                puzzle.href = '/puzzle/'+String(post.id)+'/info'
 
                 followed.textContent = post.followed
                 followed.href = '/user/'+String(post.followedID)+'/profile'
@@ -98,7 +98,7 @@ async function createUserFeed() {
                 const dateAsDate = new Date(post.date)
 
                 puzzle.textContent = post.title
-                puzzle.href = '/puzzle/'+String(post.id)+'/play'
+                puzzle.href = '/puzzle/'+String(post.id)+'/info'
 
                 followed.textContent = post.followed
                 followed.href = '/user/'+String(post.followedID)+'/profile'
