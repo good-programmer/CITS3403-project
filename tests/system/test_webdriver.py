@@ -6,6 +6,7 @@ class ChromeWebDriverCase(tests.system.WebDriverCase):
     def setUpClass(cls) -> None:
         options = webdriver.ChromeOptions()
         options.add_argument("--headless=new")
+        options.add_argument("--window-size=1920,1080")
         cls.driver = webdriver.Chrome(options=options)
 
         super().setUpClass()

@@ -3,9 +3,16 @@ const searchMap = new Map()
 const defaultMap = new Map()
 const storedMap = new Map()
 
+let pageSize = 10
+
+let currentURL = ''
+
+defaultMap.set('page', '1');
+defaultMap.set('page_size', '10')
 defaultMap.set('query', '');
 defaultMap.set('rating', '0-5');
-defaultMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
+defaultMap.set('after', '0000-01-01')
+defaultMap.set('to', '9999-01-01')
 defaultMap.set('completed', 'any');
 defaultMap.set('play_count', '0-999999');
 defaultMap.set('sort_by', 'date');
@@ -13,26 +20,45 @@ defaultMap.set('order', 'desc');
 defaultMap.set('following', 'false');
 
 storedMap.set('rating', '0-5');
-storedMap.set('date', { after: '0000-01-01', to: '9999-01-01' });
+storedMap.set('after', '0000-01-01')
+storedMap.set('to', '9999-01-01')
 storedMap.set('play_count', '0-999999');
 
 function setDefault (keyName){
     searchMap.set(keyName, defaultMap.get(keyName))
 }
 
-const keyNameList = ['query', 'rating', 'date', 'completed', 'play_count', 'following', 'sort_by', 'order']
+
+const keyNameList = ['page', 'page_size', 'query', 'rating', 'after', 'to', 'completed', 'play_count', 'following', 'sort_by', 'order']
 
 function handleSubmit(){
-    var urlInjection ='?'
-        for (const keyName of keyNameList){
-            if (searchMap.get(keyName)==defaultMap.get(keyName)) {
-                continue
+    let urlInjection ='?'
+    for (const keyName of keyNameList){
+        if (searchMap.get(keyName)==defaultMap.get(keyName)) {
+            if (keyName == 'page'){
+                urlInjection += "page=1&";
             }
-            urlInjection += '&' + keyName + '=' + searchMap.get(keyName)
+            continue;
         }
-        clearTemplates()
-        loadTemplates(urlInjection)
-        window.history.pushState({},null,urlInjection)
+        urlInjection += keyName + '=' + searchMap.get(keyName) + '&';
+    }
+    urlInjection = urlInjection.replace(/&$/, '');
+    clearTemplates()
+    window.history.pushState({}, null, urlInjection)
+    updatePageDisplay()
+    loadTemplates(urlInjection)
+}
+
+function updatePageForSize(){
+    searchMap.set('page', '1')
+    searchMap.set('page_size', pageSize)
+    handleSubmit()
+}
+
+goToPage = function (page) {
+    currentPage = page
+    searchMap.set('page', currentPage)
+    handleSubmit()
 }
 
 //event listeners for rating
@@ -60,7 +86,7 @@ minRating.addEventListener('change', function() {
     }
     const newValue = String(minRating.value) + '-' + String(maxRating.value)
     searchMap.set('rating', newValue)
-    console.log(searchMap.get('rating')) 
+    //console.log(searchMap.get('rating')) 
 });
 maxRating.addEventListener('change', function() {
     const previousMinValue = minRating.value;
@@ -83,27 +109,41 @@ maxRating.addEventListener('change', function() {
     }
     const newValue = String(minRating.value) + '-' + String(maxRating.value)
     searchMap.set('rating', newValue)
-    console.log(searchMap.get('rating'))
+    //console.log(searchMap.get('rating'))
 })
 
 //event listeners for button labels
 function toggleRowLabel (isOn, browseClass){
-    const elmnts = document.querySelectorAll(browseClass)
-    const labels = document.querySelectorAll(browseClass + '-label')
+    /*const elmnts = document.querySelectorAll(browseClass + " *");
     elmnts.forEach(elmnt =>{
         elmnt.style['display'] = isOn ? 'block' : 'none'
-    })
-    labels.forEach(label =>{
-        label.style['display'] = isOn ? 'block' : 'none'
-    })
+    })*/
+    const container = document.querySelector(browseClass);
+    container.dataset.display = isOn;
+}
+
+function handleDate(isOn){
+    if (!isOn){
+        storedMap.set('after', searchMap.get('after'))
+        storedMap.set('to', searchMap.get('to'))
+        setDefault('after')
+        setDefault('to')
+    }
+    else{
+        searchMap.set('after', storedMap.get('after'))
+        searchMap.set('to', storedMap.get('to'))
+    }
 }
 document.querySelectorAll(".row-label").forEach(rowLabel=>{
     rowLabel.addEventListener("click", () => {
         rowLabel.classList.toggle("row-label--selected")
         const isOn = rowLabel.classList.contains('row-label--selected');
         const keyName = rowLabel.textContent.replace(" ","_")
-
-        if (!isOn){
+        
+        if (keyName == 'date'){
+            handleDate(isOn)
+        }
+        else if (!isOn){
             storedMap.set(keyName, searchMap.get(keyName))
             setDefault(keyName)
         }
@@ -111,12 +151,29 @@ document.querySelectorAll(".row-label").forEach(rowLabel=>{
             searchMap.set(keyName, storedMap.get(keyName))
         }
 
-        const className = '.' + keyName
+        const className = '#' + rowLabel.dataset.toggletarget
         toggleRowLabel(isOn, className)
-        console.log(searchMap.get(keyName))
+        if (keyName == 'date'){
+            //console.log(searchMap.get('after'))
+            //console.log(searchMap.get('to'))
+        }
+        else{
+            //console.log(searchMap.get(keyName))
+        }
     })
 })
 
+//event listeners for page size
+const pageSizeMenu = document.getElementById("page-size")
+pageSizeMenu.addEventListener("change", function(){
+    pageSize = pageSizeMenu.value
+    updatePageForSize()
+})
+
+//event listerners for page number
+const pageNumDisplay = document.getElementById("page-select")
+const leftArrow = document.getElementById("left-arrow")
+const rightArrow = document.getElementById("right-arrow")
 //event listeners for playcount
 document.querySelectorAll(".play_count").forEach(numInput=>{
     numInput.addEventListener('input', function(){
@@ -137,7 +194,7 @@ minPlaycount.addEventListener('blur', function(){
 
     const newValue = String(minPlaycount.value) + '-' + String(maxPlaycount.value)
     searchMap.set('play_count', newValue)
-    console.log(searchMap.get('play_count'))
+    //console.log(searchMap.get('play_count'))
 })
 maxPlaycount.addEventListener('blur', function(){
     const minimumCount = parseFloat(minPlaycount.value)
@@ -149,9 +206,8 @@ maxPlaycount.addEventListener('blur', function(){
 
     const newValue = String(minPlaycount.value) + '-' + String(maxPlaycount.value)
     searchMap.set('play_count', newValue)
-    console.log(searchMap.get('play_count'))
+    //console.log(searchMap.get('play_count'))
 })
-
 //event listeners for date
 function formatDate(date) {
     const year = date.getFullYear().toString().padStart(4,'0');
@@ -172,8 +228,10 @@ minDate.addEventListener('input', function() {
         maxDate.valueAsDate = minDateVal;
     }
 
-    searchMap.set('date', { after: formatDate(minDateVal), to: formatDate(maxDateVal) })
-    console.log(searchMap.get('date'))
+    searchMap.set('after', formatDate(minDateVal))
+    searchMap.set('to', formatDate(maxDateVal))
+    //console.log(searchMap.get('after'))
+    //console.log(searchMap.get('to'))
 });
 maxDate.addEventListener('input', function() {
     const minDateVal = new Date(minDate.value);
@@ -185,8 +243,11 @@ maxDate.addEventListener('input', function() {
     if (maxDateVal < minDateVal) {
         minDate.valueAsDate = maxDateVal;
     }
-    searchMap.set('date', { after: formatDate(minDateVal), to: formatDate(maxDateVal) })
-    console.log(searchMap.get('date'))
+
+    searchMap.set('after', formatDate(minDateVal))
+    searchMap.set('to', formatDate(maxDateVal))
+    //console.log(searchMap.get('after'))
+    //console.log(searchMap.get('to'))
 });
 
 //event listers for basic-toggle
@@ -207,7 +268,7 @@ orderButton.addEventListener("click", () =>{
         orderButton.textContent = 'Ascending'
         searchMap.set('order', 'asc')
     }
-    console.log(searchMap.get('order'))
+    //console.log(searchMap.get('order'))
 })
 
 let currentCompletedState = 'any';
@@ -234,7 +295,7 @@ const followButton = document.getElementById("filter-following");
 followButton.addEventListener("click", () =>{
     const follow = followButton.classList.contains('basic-toggle--selected');
     if (follow){
-        console.log('set to true');
+        //console.log('set to true');
         searchMap.set('following', 'true')
     }
     else{
@@ -248,17 +309,24 @@ const submitButton = document.getElementById("submit-search")
 searchInput.addEventListener("input", e =>{
     const input = e.target.value
     searchMap.set('query', input)
-    console.log(searchMap.get("query"))
+    //console.log(searchMap.get("query"))
 })
 searchInput.addEventListener("keypress", function(event){
     if (event.key === 'Enter'){
+        setDefault('page');
+        currentPage = 1;
         handleSubmit()
     }
 })
-submitButton.addEventListener("click", handleSubmit)
+submitButton.addEventListener("click", function(){
+    setDefault('page');
+    currentPage = 1;
+    handleSubmit();
+}
+)
 
 function updateSearchWithParams() {
-    let currentParams = new URLSearchParams(window.location.search);
+    currentParams = new URLSearchParams(window.location.search);
     for (const keyName of keyNameList){
         if (currentParams.get(keyName) === null) {
             setDefault(keyName)
@@ -266,6 +334,7 @@ function updateSearchWithParams() {
             searchMap.set(keyName, currentParams.get(keyName));
         }
     }
+    currentPage = parseInt(searchMap.get('page')) || currentPage;
     if (currentParams.size > 0){
         handleSubmit();
     } else {
@@ -274,7 +343,7 @@ function updateSearchWithParams() {
 }
 
 window.addEventListener('popstate', function () {
-    console.log('history changed');
+    //console.log('history changed');
     updateSearchWithParams();
 })
 
@@ -289,6 +358,100 @@ document.querySelectorAll("#sort-filter-container .toggle-button").forEach(togBu
 
         searchMap.set('sort_by', sortBy)
 
-        console.log(searchMap.get('sort_by'))
+        //console.log(searchMap.get('sort_by'))
     })
 })
+
+function updatePageDisplay(){
+    currentParams = new URLSearchParams(window.location.search)
+    keyNameList.forEach(key => {
+        const value = currentParams.get(key);
+        if (value !== null) {
+          switch (key) {
+            case 'page_size':
+                pageSizeMenu.value = value
+                break;
+            case 'query':
+                searchInput.value = value
+                break;
+            case 'rating':
+                const ratingButton =  document.getElementById("rating-row-label")
+                ratingButton.classList.add("row-label--selected")
+                toggleRowLabel(true, '#rating-filter-container')
+                minRating.value = parseInt(value[0])
+                maxRating.value = parseInt(value[2])
+                break;
+            case 'completed':
+                if (value === 'true'){
+                    ignoreCompleted.classList.add("basic-toggle--selected");
+                    ignoreCompleted.textContent = "Show completed";
+                    currentCompletedState = 'true';
+                }
+                else{
+                    ignoreCompleted.classList.add("basic-toggle--selected");
+                    ignoreCompleted.textContent = "Ignore completed";
+                    currentCompletedState = 'false';
+                }
+              break;
+            case 'play_count':
+                const playcountButton =  document.getElementById("playcount-row-label")
+                playcountButton.classList.add("row-label--selected");
+                toggleRowLabel(true, '#playcount-filter-container');
+                const divs = value.split('-');
+                minPlaycount.value = parseInt(divs[0]);
+                maxPlaycount.value = parseInt(divs[1]);
+                break;
+            case 'following':
+                followButton.classList.add("basic-toggle--selected")
+                break;
+            case 'sort_by':
+                let sorting = value.toString().toLowerCase().trim()
+                const togBut = document.getElementById(sorting)
+                document.querySelectorAll(".toggle-button").forEach(otherBut => {
+                    if (otherBut !== togBut) {
+                        otherBut.classList.remove("toggle-button--selected")
+                    }
+                })
+                togBut.classList.toggle("toggle-button--selected", true)
+                break;
+            case 'order':
+                orderButton.classList.remove("basic-toggle--selected")
+                orderButton.textContent = "Ascending"
+                break;
+            }
+        }
+        else if (key == 'order'){
+            orderButton.classList.add("basic-toggle--selected")
+        }
+        else if (key == 'rating'){
+            const button =  document.getElementById("rating-row-label")
+            button.classList.remove("row-label--selected")
+            toggleRowLabel(false, '#rating-filter-container')
+        }
+        else if (key == 'play_count'){
+            const button =  document.getElementById("rating-row-label")
+            button.classList.remove("row-label--selected")
+            toggleRowLabel(false, '#rating-filter-container')
+        }
+        else if (key == 'following'){
+            followButton.classList.remove("basic-toggle--selected")
+        }
+        else if (key == 'completed'){
+            ignoreCompleted.classList.remove("basic-toggle--selected")
+            ignoreCompleted.textContent = "Ignore completed"
+        }
+    })
+    if (currentParams.get('after')!=null || currentParams.get('to')!=null){
+        const dateButton =  document.getElementById("date-row-label")
+        dateButton.classList.add("row-label--selected")
+        toggleRowLabel(true, '#date-filter-container')
+        minDate.value = currentParams.get('after')
+        maxDate.value = currentParams.get('to')
+    }
+    else{
+        const dateButton =  document.getElementById("date-row-label")
+        dateButton.classList.remove("row-label--selected")
+        toggleRowLabel(false, '#date-filter-container')
+    }
+
+}

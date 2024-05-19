@@ -2,14 +2,19 @@ let debounce = false;
 let follow;
 let data;
 let userid;
+const createdPostTemplate = document.querySelector(".created-feed-template")
+const ratedPostTemplate = document.querySelector(".rated-feed-template")
 window.addEventListener('load', async function() {
+    if (createdPostTemplate && ratedPostTemplate){
+        await createUserFeed()
+    }
     follow = document.getElementById("follow-button");
     data = await getUserData();
     if (follow) {
         userid = follow.dataset.targetuser;
         follow.addEventListener('click', postFollow);
     }
-    console.log(data);
+    //console.log(data);
     let sortCreatedSelect = document.getElementById('created-puzzles-sort');
     sortCreated(sortCreatedSelect.value, data['puzzles'])
     sortCreatedSelect.onchange = function() {sortCreated(sortCreatedSelect.value, data['puzzles']);}
@@ -23,9 +28,95 @@ window.addEventListener('load', async function() {
     sortRatedSelect.onchange = function() {sortRated(sortRatedSelect.value, data['ratings']);}
 });
 
+function formatDate(date) {
+    let now = new Date();
+    let secs = (now.getTime() - date.getTime()) / 1000;
+    //console.log(secs)
+    let mins = secs / 60
+    let hours = mins / 60;
+    let days = hours / 24;
+    let weeks = days / 7;
+    let months = weeks / 4.35;
+    let years = months / 12;
+    if (secs < 120) {
+        return Math.floor(secs) + ' seconds ago'
+    }
+    if (mins < 120) {
+        return Math.floor(mins) + ' minutes ago'
+    }
+    if (hours < 48) {
+        return Math.floor(hours) + ' hours ago'
+    }
+    if (days < 14) {
+        return Math.floor(days) + ' days ago'
+    }
+    if (weeks < 9) {
+        return Math.floor(weeks) + ' weeks ago'
+    }
+    if (months < 24) {
+        return Math.floor(months) + ' months ago'
+    }
+    return Math.floor(years) + ' years ago'
+
+    /*const year = date.getFullYear().toString().padStart(4,'0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return year + '-' + month + '-' + day;*/
+}
+
+async function createUserFeed() {
+    const feedContainer = document.getElementById("feed-container")
+    fetch('/user/feed')
+    .then(response => response.json())
+    .then(data => {
+        data.forEach(post => {
+            if (post.type == 'created'){
+                //console.log("entered")
+                const createdPost = createdPostTemplate.content.cloneNode(true)
+                const puzzle = createdPost.querySelector(".followed-creator-puzzle-title")
+                const followed = createdPost.querySelector(".followed-creator-name")
+                const date = createdPost.querySelector(".followed-date-created")
+                const dateAsDate = new Date(post.date + '+08:00');
+
+                puzzle.textContent = post.title
+                puzzle.href = '/puzzle/'+String(post.id)+'/info'
+
+                followed.textContent = post.followed
+                followed.href = '/user/'+String(post.followedID)+'/profile'
+
+                date.textContent = formatDate(dateAsDate)
+
+                feedContainer.append(createdPost)
+            }
+            if (post.type == 'rated'){
+                //console.log("entered")
+                const ratedPost = ratedPostTemplate.content.cloneNode(true)
+                const puzzle = ratedPost.querySelector(".followed-creator-puzzle-title")
+                const followed = ratedPost.querySelector(".followed-name")
+                const date = ratedPost.querySelector(".followed-date-rated")
+                const rating = ratedPost.querySelector(".followed-given-rating")
+                const dateAsDate = new Date(post.date + '+08:00');
+
+                puzzle.textContent = post.title
+                puzzle.href = '/puzzle/'+String(post.id)+'/info'
+
+                followed.textContent = post.followed
+                followed.href = '/user/'+String(post.followedID)+'/profile'
+
+                date.textContent = formatDate(dateAsDate)
+
+                rating.textContent = post.rated.toFixed(1);
+
+                feedContainer.append(ratedPost)
+            }
+        })
+
+    })
+}
+
 async function getUserData() {
     let userid = window.location.pathname.split('/')[2];
-    console.log(userid)
+    //console.log(userid)
     const response = await fetch('/user/' + userid);
     const data = await response.json();
     return data;

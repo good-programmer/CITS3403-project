@@ -375,7 +375,8 @@ a {
     flex-direction: row;
     margin-bottom: .3rem;
     align-items: baseline;
-    margin-left: 5%
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 .toggle-button {
@@ -400,6 +401,35 @@ a {
     width: 80%;
     margin-top: 1rem;
     overflow: hidden
+}
+.page-change-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1rem;
+    margin-bottom: 1rem
+}
+
+#page-num-container{
+    display: flex;
+    flex-direction: row;
+}
+.page-number-button,
+.arrow-button{
+    padding: 0.5rem 1rem;
+    border: solid 1px var(--matrix-tertiary);
+    color: var(--matrix-tertiary);
+    background-color: #1a0600;
+}
+
+.current-page{
+    background-color: var(--matrix-tertiary);
+    color: #1a0600;
+}
+
+.page-number-button:disabled,
+.arrow-button:disabled{
+    display:none;
 }
 
 .puzzle-row {
@@ -480,7 +510,7 @@ pre {
     margin: 0
 }
 
-.post-container a:hover,.post-list a:hover {
+.post-container a:hover,.post-list a:hover, #feed-container > div a:hover {
     text-decoration: none;
     animation: none;
     background-color: var(--matrix-tertiary);
@@ -894,11 +924,12 @@ input[type=checkbox] {
 }
 
 #search {
-    width: 40%
+    width: clamp(40%, calc(94% - 5em), 400px);
 }
 
 #search-results {
     position: relative;
+    min-height: 200px;
 }
 
 #search-results[data-empty="true"]::after {
@@ -950,6 +981,10 @@ input[type=checkbox] {
     animation: Loading 2s steps(1) infinite;
 }
 
+#rating-filter-container[data-display="false"], #playcount-filter-container[data-display="false"], #date-filter-container[data-display="false"] {
+    display: none;
+}
+
 
 .row-label:before {
     content: ">Browse by "
@@ -967,7 +1002,6 @@ input[type=checkbox] {
 
 .panel-container label {
     margin-right: .75rem;
-    display: none
 }
 
 .button-label {
@@ -976,8 +1010,7 @@ input[type=checkbox] {
     margin-bottom: 0
 }
 
-.rating {
-    display: none;
+.rating,.dropdown {
     width: 15rem;
     margin-right: .5rem;
     padding: .5em 1em;
@@ -986,13 +1019,15 @@ input[type=checkbox] {
     color: var(--matrix-tertiary);
     background-color: #1a0600
 }
+.dropdown{
+    display: block;
+}
 
-.rating option:first-child {
+.rating option:first-child,.dropdown option:first-child {
     display: none
 }
 
 .date,.play_count {
-    display: none;
     width: 15rem;
     margin-right: .5rem;
     padding: .5rem 1rem;
@@ -1053,10 +1088,10 @@ h1 {
     font-size: 25px
 }
 
-#puzzle-info p,#user-info p {
+#puzzle-info p,#user-info p,#feed-container {
     margin-top: 5px;
     margin-bottom: 5px;
-    margin-left: 25px
+    margin-left: 1.5%
 }
 
 #rate-slider {
@@ -1231,18 +1266,51 @@ h2 {
     font-size: 18px
 }
 
-#user-info {
-    margin: auto auto 5%;
+#user-and-feed-container {
+    margin: auto auto;
+    display: flex;
+    flex-direction: row;
+    gap: 3%;
+    width: 90%;
+}
+@media (max-width: 767px) {
+    #user-and-feed-container {
+        flex-direction: column;
+    }
+}
+#user-info, #user-feed {
+    margin-left: auto;
+    margin-bottom: 5%;
     background: radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px)0 0/3px 3px,radial-gradient(rgba(55,70,55,.2) 1px,transparent .5px) 1px 1px/3px 3px,radial-gradient(rgba(55,70,55,.2) .5px,transparent .5px) 2px 2px/3px 3px;
     background-color: #000
 }
-
-#user-info * {
+#user-feed{
+    margin-left: 0;
+    margin-right: auto;
+}
+#user-info *, #user-feed * {
     font-family: "VT323",monospace;
-    font-size: 25px
+    font-size: 20px
+}
+#feed-container *{
+    font-size: 1.2rem;
+    padding-bottom: 2px;
 }
 
-#completed-puzzles-sort,#created-puzzles-sort,#rated-puzzles-sort,#user-info,.post-body {
+#feed-container > div {
+    max-width: 90%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#feed-container > div > .followed-creator-puzzle-title {
+    vertical-align:top;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    max-width: 4ch;
+}
+
+#completed-puzzles-sort,#created-puzzles-sort,#rated-puzzles-sort,#user-info,#user-feed,.post-body {
     border: 1px solid var(--matrix-tertiary);
     padding: .5rem;
     border-radius: .125rem;
@@ -1250,6 +1318,9 @@ h2 {
     margin-top: 1rem
 }
 
+#user-info, #user-feed{
+    width: 100%;
+}
 .post-body {
     height: auto;
     margin: 0 0 5px 5%
@@ -1284,7 +1355,7 @@ h2 {
     animation: ScreenEffect .3s ease infinite
 }
 
-a:hover {
+#login a:hover {
     text-decoration: underline;
     color: var(--matrix-secondary);
     text-decoration-color: var(--matrix-secondary);

@@ -1,27 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
+<br>
 <h1>user: {{user['username']}}</h1>
-
-<div class="Screen MatrixTextGreen" id="user-info">
-  
-  <p class="no-indent">user_info {</p>
-  <p>highest_score: <span class="matrix-number">{{user['highscore']}}</span></p>
-  <p>total_completed_puzzles: <span class="matrix-number">{{user['scores']|length}}</span></p>
-  <p>total_ratings: <span class="matrix-number">{{user['ratings']|length}}</span></p>
-  <p>total_created puzzles: <span class="matrix-number">{{user['puzzles']|length}}</span></p>
-  <p>followers: <span class="matrix-number">{{user['followers']|length}}</span></p>
-  <p>following: <span class="matrix-number">{{user['following']|length}}</span></p>
-  <p class="no-indent">}</p>
-  {% if current_user.is_authenticated %}
-    {% if current_user.id != user['id'] %}
-      {% if not following %}
-        <button class="Screen MatrixTextGreen" id="follow-button" data-targetaction="follow" data-targetuser="{{user['id']}}">[FOLLOW]</button>
-      {% else %}
-        <button class="Screen MatrixTextGreen" id="follow-button" data-targetaction="unfollow" data-targetuser="{{user['id']}}">[UNFOLLOW]</button>
+<div id="user-and-feed-container">
+  <div class="Screen MatrixTextGreen" id="user-info">
+    <p class="no-indent">user_info {</p>
+    <p>highest_score: <span class="matrix-number">{{user['highscore']}}</span></p>
+    <p>total_completed_puzzles: <span class="matrix-number">{{user['scores']|length}}</span></p>
+    <p>total_ratings: <span class="matrix-number">{{user['ratings']|length}}</span></p>
+    <p>total_created puzzles: <span class="matrix-number">{{user['puzzles']|length}}</span></p>
+    <p>followers: <span class="matrix-number">{{user['followers']|length}}</span></p>
+    <p>following: <span class="matrix-number">{{user['following']|length}}</span></p>
+    <p class="no-indent">}</p>
+    {% if current_user.is_authenticated %}
+      {% if current_user.id != user['id'] %}
+        {% if not following %}
+          <button class="Screen MatrixTextGreen" id="follow-button" data-targetaction="follow" data-targetuser="{{user['id']}}">[FOLLOW]</button>
+        {% else %}
+          <button class="Screen MatrixTextGreen" id="follow-button" data-targetaction="unfollow" data-targetuser="{{user['id']}}">[UNFOLLOW]</button>
+        {% endif %}
       {% endif %}
+    {% else %}
+      <p><i>Log in to follow</i></p>
     {% endif %}
-  {% else %}
-    <p><i>Log in to follow</i></p>
+  </div>
+  {% if current_user.is_authenticated %}
+    {% if current_user.id == user['id'] %}
+      <div class="Screen MatrixTextGreen" id="user-feed">
+        <p class="no-indent">user_feed {</p>
+        <div id="feed-container">
+          <template class="created-feed-template">
+            <div><span class="followed-date-created matrix-secondary"></span> > <a href="" class="followed-creator-name matrix-user"></a> created a new puzzle <a href="" class="followed-creator-puzzle-title matrix-puzzle"></a></div>
+          </template>
+          <template class="rated-feed-template">
+            <div><span class="followed-date-rated matrix-secondary"></span> > <a href="" class="followed-name matrix-user"></a> rated <a href="" class="followed-creator-puzzle-title matrix-puzzle"></a> <span class="followed-given-rating matrix-number"></span></div>
+          </template>
+        </div>
+        <p class="no-indent">}</p>
+      </div>
+    {% endif %}
   {% endif %}
 </div>
 

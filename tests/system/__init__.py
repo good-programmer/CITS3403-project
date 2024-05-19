@@ -1,11 +1,11 @@
 import multiprocessing.process
-import unittest, multiprocessing, logging
+import unittest, multiprocessing, logging, datetime, time
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions
 
 from flask import url_for, cli 
@@ -33,6 +33,46 @@ class WebDriverCase(unittest.TestCase):
 
     def get_driver(self) -> webdriver.Chrome:
         return self.__class__.driver
+    
+    def generate_search_test_puzzles(self):
+        user1 = user_utils.add_user("user1", "password1")
+        user2 = user_utils.add_user("user2", "password2")
+        user3 = user_utils.add_user("user3", "password3")
+
+        user1.follow_user(user2)
+
+        #create puzzles
+        puzzle1 = puzzle_utils.add_puzzle("First Puzzle", user1, "abcdefghij")
+        puzzle2 = puzzle_utils.add_puzzle("Second Puzzle", user2, "afjsfdfjsj")
+        puzzle3 = puzzle_utils.add_puzzle("Another Puzzle", user3, "psdozxcvkx")
+
+        #set different creation dates
+        puzzle1.dateCreated = datetime.datetime.now() - datetime.timedelta(days=10)
+        puzzle2.dateCreated = datetime.datetime.now() - datetime.timedelta(days=5)
+        puzzle3.dateCreated = datetime.datetime.now() - datetime.timedelta(days=1)
+
+        #add play counts
+        puzzle1.play_count = 100
+        puzzle2.play_count = 50
+        puzzle3.play_count = 75
+
+        #add ratings
+        puzzle1.add_rating(user1, 4)
+        puzzle1.add_rating(user2, 5)
+        puzzle2.add_rating(user1, 5)
+        puzzle2.add_rating(user3, 4)
+        puzzle3.add_rating(user1, 3)
+        puzzle3.add_rating(user2, 3)
+
+        #add scores
+        puzzle1.add_record(user1, 1000)
+        puzzle1.add_record(user2, 900)
+        puzzle2.add_record(user1, 500)
+        puzzle2.add_record(user3, 450)
+        puzzle3.add_record(user1, 750)
+        puzzle3.add_record(user2, 700)
+
+        db.session.commit()
 
     def setUp(self):
         self.server_thread = multiprocessing.Process(target=app.run, kwargs=dict(debug=False, use_reloader=False))
@@ -276,5 +316,177 @@ class WebDriverCase(unittest.TestCase):
         WebDriverWait(driver, 2).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, "#leaderboard")))
         self.assertTrue(puzzle.has_record(user))
         
-    def test_search(self):
-        pass
+    def test_basic_search_query(self):
+        driver = self.get_driver()
+        driver.get(localhost + url_for(route.puzzle.search))
+
+        self.generate_search_test_puzzles()
+
+        for filter_toggle in driver.find_elements(By.CSS_SELECTOR, ".row-label[data-toggletarget]"):
+            filter_toggle.click()
+
+        # search query
+        search_input = driver.find_element(By.CSS_SELECTOR, "#search")
+        search_input.send_keys("First Puzzle")
+
+        #submit
+        submit_button = driver.find_element(By.CSS_SELECTOR, "#submit-search")
+        submit_button.click()
+
+        #wait for results
+        WebDriverWait(driver, 10).until(
+            expected_conditions.text_to_be_present_in_element_attribute((By.CSS_SELECTOR, "#search-results"),"data-loading","false")
+        )
+
+        #verify
+        result_titles = [elem.text for elem in driver.find_elements(By.CSS_SELECTOR, "#search-results > .post .puzzle-title")]
+        self.assertIn("First Puzzle", result_titles)
+        self.assertEqual([p.title for p in puzzle_utils.search_puzzles(query="First Puzzle").limit(10).all()], result_titles)
+        
+    def test_filter_by_rating(self):
+        driver = self.get_driver()
+        driver.get(localhost + url_for(route.puzzle.search))
+
+        self.generate_search_test_puzzles()
+
+        for filter_toggle in driver.find_elements(By.CSS_SELECTOR, ".row-label[data-toggletarget]"):
+            filter_toggle.click()
+
+        #rating range
+        min_rating = Select(driver.find_element(By.CSS_SELECTOR, "#min-rating"))
+        min_rating.select_by_value("4")
+        
+        max_rating = Select(driver.find_element(By.CSS_SELECTOR, "#max-rating"))
+        max_rating.select_by_value("5")
+
+        #submit
+        submit_button = driver.find_element(By.CSS_SELECTOR, "#submit-search")
+        submit_button.click()
+
+        #wait for results
+        WebDriverWait(driver, 10).until(
+            expected_conditions.text_to_be_present_in_element_attribute((By.CSS_SELECTOR, "#search-results"),"data-loading","false")
+        )
+
+        #verify
+        result_titles = [elem.text for elem in driver.find_elements(By.CSS_SELECTOR, "#search-results > .post .puzzle-title")]
+        self.assertGreaterEqual(len(result_titles), 1)
+        self.assertEqual([p.title for p in puzzle_utils.search_puzzles(rating=(4,5)).limit(10).all()], result_titles)
+
+    def test_filter_by_completion_status(self):
+        driver = self.get_driver()
+        self.generate_search_test_puzzles()
+        self.emulate_login("user1", "password1")
+        driver.get(localhost + url_for(route.puzzle.search))
+
+        for filter_toggle in driver.find_elements(By.CSS_SELECTOR, ".row-label[data-toggletarget]"):
+            filter_toggle.click()
+
+        #cycle to 'ignore completed' status
+        ignore_completed_button = driver.find_element(By.CSS_SELECTOR, "#ignore-completed")
+        ignore_completed_button.click()
+        ignore_completed_button.click()
+
+        #submit
+        submit_button = driver.find_element(By.CSS_SELECTOR, "#submit-search")
+        submit_button.click()
+
+        #wait for results
+        WebDriverWait(driver, 10).until(
+            expected_conditions.text_to_be_present_in_element_attribute((By.CSS_SELECTOR, "#search-results"),"data-loading","false")
+        )
+
+        #verify
+        result_titles = [elem.text for elem in driver.find_elements(By.CSS_SELECTOR, "#search-results > .post .puzzle-title")]
+        self.assertGreaterEqual(len(result_titles), 1)
+        self.assertEqual([p.title for p in puzzle_utils.search_puzzles(completed=(user_utils.get_user("user1"), True)).limit(10).all()], result_titles)
+
+    def test_filter_by_play_count(self):
+        driver = self.get_driver()
+        driver.get(localhost + url_for(route.puzzle.search))
+
+        self.generate_search_test_puzzles()
+
+        for filter_toggle in driver.find_elements(By.CSS_SELECTOR, ".row-label[data-toggletarget]"):
+            filter_toggle.click()
+
+        #play count range
+        min_playcount = driver.find_element(By.CSS_SELECTOR, "#min-playcount")
+        min_playcount.clear()
+        min_playcount.send_keys("1")
+        
+        max_playcount = driver.find_element(By.CSS_SELECTOR, "#max-playcount")
+        max_playcount.clear()
+        max_playcount.send_keys("1")
+
+        #submit
+        submit_button = driver.find_element(By.CSS_SELECTOR, "#submit-search")
+        submit_button.click()
+
+        #wait for results
+        WebDriverWait(driver, 10).until(
+            expected_conditions.text_to_be_present_in_element_attribute((By.CSS_SELECTOR, "#search-results"),"data-loading","false")
+        )
+
+        #verify
+        result_titles = [elem.text for elem in driver.find_elements(By.CSS_SELECTOR, "#search-results > .post .puzzle-title")]
+        self.assertGreaterEqual(len(result_titles), 1)
+        self.assertEqual([p.title for p in puzzle_utils.search_puzzles(play_count=(1,1)).limit(10).all()], result_titles)
+
+    def test_filter_by_following(self):
+        driver = self.get_driver()
+        self.generate_search_test_puzzles()
+        self.emulate_login("user1", "password1")
+        driver.get(localhost + url_for(route.puzzle.search))
+
+        for filter_toggle in driver.find_elements(By.CSS_SELECTOR, ".row-label[data-toggletarget]"):
+            filter_toggle.click()
+
+        #toggle following filter
+        following_toggle = driver.find_element(By.CSS_SELECTOR, "#filter-following")
+        following_toggle.click()
+
+        # Submit search
+        submit_button = driver.find_element(By.CSS_SELECTOR, "#submit-search")
+        submit_button.click()
+
+        #wait for results
+        WebDriverWait(driver, 10).until(
+            expected_conditions.text_to_be_present_in_element_attribute((By.CSS_SELECTOR, "#search-results"),"data-loading","false")
+        )
+
+        #verify
+        result_titles = [elem.text for elem in driver.find_elements(By.CSS_SELECTOR, "#search-results > .post .puzzle-title")]
+        self.assertGreaterEqual(len(result_titles), 1)
+        self.assertEqual([p.title for p in puzzle_utils.search_puzzles(following=(user_utils.get_user("user1"), True)).limit(10).all()], result_titles)
+
+    def test_sort_by_rating_ascending(self):
+        driver = self.get_driver()
+        driver.get(localhost + url_for(route.puzzle.search))
+
+        self.generate_search_test_puzzles()
+
+        for filter_toggle in driver.find_elements(By.CSS_SELECTOR, ".row-label[data-toggletarget]"):
+            filter_toggle.click()
+
+        #sort by rating
+        sort_buttons = driver.find_elements(By.CSS_SELECTOR, "#sort-filter-container button")
+        sort_buttons[3].click()
+
+        #order to ascending
+        order_toggle = driver.find_element(By.CSS_SELECTOR, "#order")
+        order_toggle.click()
+
+        #submit
+        submit_button = driver.find_element(By.CSS_SELECTOR, "#submit-search")
+        submit_button.click()
+
+        #wait for results
+        WebDriverWait(driver, 10).until(
+            expected_conditions.text_to_be_present_in_element_attribute((By.CSS_SELECTOR, "#search-results"),"data-loading","false")
+        )
+
+        #verify results
+        result_titles = [elem.text for elem in driver.find_elements(By.CSS_SELECTOR, "#search-results > .post .puzzle-title")]
+        self.assertGreaterEqual(len(result_titles), 1)
+        self.assertEqual([p.title for p in puzzle_utils.search_puzzles(sort_by='rating', order='asc').limit(10).all()], result_titles)

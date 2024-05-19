@@ -1,6 +1,8 @@
 from flask import session, flash, redirect, url_for
 from ..config import PATH
 import re
+from ..blueprints.models import db, User, Puzzle, Rating, LeaderboardRecord, Follow
+from sqlalchemy import func, desc
 
 from . import route_utils as route
 
