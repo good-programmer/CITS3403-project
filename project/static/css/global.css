@@ -417,8 +417,8 @@ a {
 .current-page{
     background-color: var(--matrix-tertiary);
     color: #1a0600;
-    border: solid 1px var(--matrix-tertiary);
 }
+
 .page-number-button:disabled,
 .arrow-button:disabled{
     display:none;
@@ -1263,7 +1263,7 @@ h2 {
     background-color: #000
 }
 #user-feed{
-    margin-left: none;
+    margin-left: 0;
     margin-right: auto;
 }
 #user-info *, #user-feed * {
