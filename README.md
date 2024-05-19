@@ -9,9 +9,10 @@
 
 A website for uploading "Spelling Bee"-esque puzzles. Users can upload a set of ten letters (A-Z) and 'request' for other users to create words using combinations of the given letters.
 Others can solve these puzzles by inputting up to five words that use these letters and receive a score based on the total number of characters used.
-Users can rate each puzzle (by enjoyment or by difficulty). For example, a puzzle that has a high variance could be seen as 'better' than a puzzle with low variance (i.e. 'AAAAAAAAAA').
-Users can follow each other and access a follow-only leaderboard and view recent follow activity (i.e. followees' recent creations or ratings).
-Users can search puzzles by name or creator, sort by date or rating, and filter by play count, completion status, date and more.
+
+Users can rate each puzzle (by enjoyment or by difficulty). For example, a puzzle that has a high variance could be seen as 'better' than a puzzle with low variance.
+Users can follow each other and access a follow-only leaderboard and view recent follow activity (i.e. their recent creations or ratings).
+They can also search puzzles by name or creator, sort by date or rating, and filter by play count, completion status, date and more.
 
 Primary webpages include:
 - login
@@ -24,11 +25,11 @@ Primary webpages include:
 
 ## Getting started
 
-These instructions are for a linux environment (native/vm/wsl).
+**! These instructions are for a linux environment (native/vm/wsl).**
 
 Setting up a virtual environment:
 - This app uses a number of external modules. You may want to keep these separate.
-- Execute `python -m venv /path/to/env` to create the virtual environment.
+- Execute `python3 -m venv /path/to/env` to create the virtual environment.
 - Execute `source <venv>/bin/activate` to activate the virtual environment
 - Make sure you are in the repository directory (the directory of this README)
 - Execute `pip install -r requirements.txt` to install dependencies.
@@ -49,11 +50,14 @@ To start the app:
 
 To run tests, execute `run_tests.py` from CLI in the repository directory, i.e. `cd project_repository; python3 run_tests.py`.
 
+>You should have Chrome installed on your machine for the Selenium tests to run.
+
 This will create a temporary database for testing purposes (which should take around 5sec on default settings), then run all tests. This includes a unit test suite and a system (selenium) test suite.
+>Currently not using `:memory:` db because of separation of processes (see [here](https://stackoverflow.com/questions/15720700/can-two-processes-access-in-memory-memory-sqlite-database-concurrently)) meaning database changes are not reflected across test and server processes. This meant that testing if a POST request correctly created a record in a table was difficult, as records were updated on the server process but not on the test process.
 
 You should *not* run individual tests with `python3 -m unittest tests` or similar. The database the tests rely on is only generated once for all tests, and methodically cleaned on tearDown. 
 
-The alternative was to create and destroy the database before and after each test, which led to very large overhead for the number of tests performed (40+).
+The alternative was to create and destroy the database before and after each test, which led to very large overhead for the number of tests performed (40+), even with an in-memory database.
 
 ## Databases
 
@@ -100,3 +104,5 @@ Update your current database:
 - Google and Peter Hull  for the [VT323](https://fonts.google.com/specimen/VT323) font.
 - [Flask](https://flask.palletsprojects.com/en/3.0.x/) and its related packages for the web framework.
 - [Selenium](https://www.selenium.dev/documentation/webdriver/) for system testing.
+- Stackoverflow user [Temani Afif](https://stackoverflow.com/users/8620333/temani-afif) for their [CRT/Scanline .css background](https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css)
+- Codepen.io user [freelesio](https://codepen.io/freelesio) for their [Matrix Hacker Text Effect](https://codepen.io/freelesio/pen/MWQaGPb), which was modified for use in this project

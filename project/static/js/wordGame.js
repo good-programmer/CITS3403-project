@@ -272,6 +272,23 @@ function setEventListeners() {
         clearInterval(Game.shuffleInterval);
     });
 
+    document.getElementById('shuffleButton').addEventListener('click', function() {
+        Game.shuffleString();
+    });
+    
+    document.getElementById('resetButton').addEventListener('click', function() {
+        Game.reset();
+    });
+    
+    document.getElementById('submitButton').addEventListener('click', function() {
+        Game.solve();
+    });
+
+    document.getElementById('userInput').addEventListener('input', function() {
+        Game.updateString();
+    });
+    
+
     // highlight shuffleButton on hover
     document.getElementById('shuffleButton').addEventListener('mouseover', function() {
         this.classList.add('MatrixTextYellow')
@@ -301,11 +318,45 @@ function setEventListeners() {
         this.classList.remove('MatrixTextGreen')
         this.classList.add('MatrixTextYellow')
     });
+
+    // highlight showGameInstructions on hover
+    document.getElementById('showGameInstructions').addEventListener('mouseover', function() {
+        this.classList.remove('MatrixTextYellow')
+        this.classList.add('MatrixTextGreen')
+    });
+
+    document.getElementById('showGameInstructions').addEventListener('mouseout', function() {
+        this.classList.remove('MatrixTextGreen')
+        this.classList.add('MatrixTextYellow')
+    });
 }
 
 window.addEventListener('load', function() {
     Game.init();
     setEventListeners();
+
+    //Function to toggle the instructions visibility
+    let instructionsContainer = $("#instructions-container");
+    let instructions = $("#instructions");
+    $("#showGameInstructions").click(function(){
+        let currentDisplay = instructions.attr("data-display");
+        if (currentDisplay === "true") {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        } else {
+            instructions.slideDown();
+            instructions.attr("data-display", "true");
+            instructionsContainer.css("display", "block");
+        }
+    });
+
+    // Hide instructions when clicked anywhere on the document
+    $(document).click(function(event) {
+        if (instructions.attr("data-display") === "true" && !instructions.is(event.target) && !$("#showGameInstructions").is(event.target)) {
+            instructions.slideUp();
+            instructions.attr("data-display", "false");
+        }
+    });
 });
 
 function displayLeaderboard() {

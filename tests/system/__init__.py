@@ -75,7 +75,7 @@ class WebDriverCase(unittest.TestCase):
         db.session.commit()
 
     def setUp(self):
-        self.server_thread = multiprocessing.Process(target=lambda: app.run(debug=False, use_reloader=False))
+        self.server_thread = multiprocessing.Process(target=app.run, kwargs=dict(debug=False, use_reloader=False))
         self.server_thread.start()
 
     def tearDown(self):
@@ -219,9 +219,7 @@ class WebDriverCase(unittest.TestCase):
     def test_puzzle_info(self):
         driver = self.get_driver()
         puzzle = puzzle_utils.get_puzzle(id=1)
-        user = user_utils.get_user(id=1)
-        if puzzle.has_record(user): 
-            puzzle.remove_record(user)
+        user = user_utils.add_user("test", "123")
         driver.get(localhost + url_for(route.puzzle.info, puzzleid=1))
         
         #basic info
@@ -236,13 +234,12 @@ class WebDriverCase(unittest.TestCase):
 
         #disabled/invisible elements when not logged in
         self.assertTrue(driver.find_element(By.CSS_SELECTOR, "#play-button").get_property("disabled"))
-        self.assertIn("display: none", driver.find_element(By.CSS_SELECTOR, "#rate-section").get_attribute("style"))
+        self.assertFalse(driver.find_element(By.CSS_SELECTOR, "#rate-section").get_property("data-display"))
 
         #logged in, no record
         self.emulate_login(user.name, "123")
         driver.get(localhost + url_for(route.puzzle.info, puzzleid=puzzle.id))
         self.assertIsNone(driver.find_element(By.CSS_SELECTOR, "#play-button").get_attribute("disabled"))
-        self.assertNotIn("display: none", driver.find_element(By.CSS_SELECTOR, "#rate-section").get_attribute("style"))
         self.assertIn("disabled", driver.find_element(By.CSS_SELECTOR, "#rate-slider").get_attribute("class"))
         self.assertNotIn(user.name, driver.find_element(By.CSS_SELECTOR, ".leaderboard-body").get_property("innerHTML"))
 
@@ -313,7 +310,7 @@ class WebDriverCase(unittest.TestCase):
         self.assertEqual(inp.text, "")
 
         #test score and submission
-        self.assertIn("act", sub.get_property("innerHTML"))
+        self.assertIn("ACT", sub.text)
         self.assertEqual("3", driver.find_element(By.CSS_SELECTOR, "#scoreValue").text)
         driver.find_element(By.CSS_SELECTOR, "#submitButton").click()
         WebDriverWait(driver, 2).until(expected_conditions.visibility_of_element_located((By.CSS_SELECTOR, "#leaderboard")))

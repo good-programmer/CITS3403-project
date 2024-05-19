@@ -6,6 +6,7 @@ from project.blueprints.models import User, Puzzle
 from project.utils import user_utils, puzzle_utils, route_utils as route
 
 from project import config
+from project import config
 from project.config import TestingConfig, PATH
 
 import os
@@ -158,6 +159,7 @@ def create_test_db(app=None, msg='Generating standard test database...'):
     start = datetime.datetime.now()
     print(msg)
     config.current_config.COMMITS_DISABLED = True
+    config.current_config.COMMITS_DISABLED = True
     t = TestObject(app, db)
     print('Users...')
     t.generate_users()
@@ -169,6 +171,7 @@ def create_test_db(app=None, msg='Generating standard test database...'):
     t.generate_ratings()
     print('Followers...')
     t.generate_followers()
+    config.current_config.COMMITS_DISABLED = False
     config.current_config.COMMITS_DISABLED = False
     db.session.commit()
     print('Done.')

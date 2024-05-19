@@ -1,4 +1,12 @@
 @import url(https://fonts.googleapis.com/css?family=VT323);
+/*
+SOURCES:
+    `background` in `.container`, `#user-info`, `#puzzle-info` is based on:
+        https://stackoverflow.com/questions/61431316/how-to-get-scanlines-over-background-image-in-css
+    `.MatrixText<colour>` is a modified version of:
+        https://codepen.io/freelesio/pen/MWQaGPb
+*/
+
 
 @keyframes QuickBlink {
     0%,30%,50% {
@@ -687,7 +695,12 @@ pre {
     left: calc(max(50%,700px)/2 - max(30%,700px)/4 - max(20vw,300px)/2)
 }
 
+#body #instructions-container {
+    margin-top: 25vh;
+}
+
 #instructions {
+    display: block;
     opacity: 0%;
     color: var(--matrix-secondary);
     width: max(20vw,300px);
@@ -813,11 +826,6 @@ input[type=checkbox] {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-
-#following-leaderboard {
-    display: none
 }
 
 #leaderboard-container {
@@ -1090,6 +1098,11 @@ h1 {
     margin: 0 0 0 25px
 }
 
+#rate-slider[class="disabled"] {
+    color: darkgrey;
+    opacity: 0.6
+}
+
 .no-indent {
     margin-left: 0!important
 }
@@ -1194,6 +1207,10 @@ h1 {
     border-radius: 1px;
 }
 
+#following-leaderboard[data-display="false"] {
+    display: none
+}
+
 #following-leaderboard .post-body, #main-leaderboard .post-body {
     margin: 0;
     width: auto;
@@ -1236,6 +1253,11 @@ h1 {
 #following-leaderboard .post-body[data-self="true"], #main-leaderboard .post-body[data-self="true"] {
     background-color: color-mix(in srgb, var(--matrix-tertiary) 90%, black);
     color: black;
+}
+
+#following-leaderboard .post-body[data-following="true"], #main-leaderboard .post-body[data-following="true"] {
+    background: linear-gradient(to right, color-mix(in srgb, var(--matrix-tertiary) 60%, black) 0.5%, transparent 4%);
+
 }
 
 h2 {
@@ -1482,7 +1504,7 @@ h2 {
     padding-right: 10px
 }
 
-#closeButton,#exitButton,#submitButton,#userButtons button {
+#closeButton,#exitButton,#submitButton,#userButtons button,#showGameInstructions {
     text-align: center;
     margin-top: 0;
     background-color: transparent;
@@ -1504,7 +1526,7 @@ h2 {
     min-width: fit-content
 }
 
-#closeButton,#exitButton,#submitButton,#userButtons,#userInput,#userInputContainer label,.wordTile {
+#closeButton,#exitButton,#submitButton,#showGameInstructions,#userButtons,#userInput,#userInputContainer label,.wordTile {
     font-size: 30px
 }
 
@@ -1548,6 +1570,16 @@ h2 {
     text-align: center
 }
 
+#gameContent {
+    border: 1px solid var(--matrix-tertiary);
+    border-radius: .125rem;
+}
+
+#leaderboard {
+    border: 1px solid var(--matrix-secondary);
+    border-radius: .125rem;    
+}
+
 #leaderboard h2 {
     font-size: 50px;
     padding-top: 5px
@@ -1587,6 +1619,11 @@ h2 {
     box-sizing: border-box
 }
 
+#closeButton:hover,#exitButton:hover {
+    background-color: var(--matrix-secondary);
+    color: rgb(0,0,0,1)    
+}
+
 .Screen {
     animation: ScreenEffect .3s ease infinite
 }
@@ -1618,4 +1655,8 @@ h2 {
 
 #about-container a{
     color: var(--matrix-secondary)
+}
+
+[data-display=false] {
+    display: none
 }
