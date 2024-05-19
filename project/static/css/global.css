@@ -1491,11 +1491,16 @@ a:hover {
 }
 
 .wordTile {
+    cursor: pointer;
     align-items: center;
     max-height: 35px;
     width: fit-content;
     padding: 0;
     margin-left: 46px
+}
+
+.inline-block {
+    display: inline-block;
 }
 
 #gameContent,#leaderboard {
